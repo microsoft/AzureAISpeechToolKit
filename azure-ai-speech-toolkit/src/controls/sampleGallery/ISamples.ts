@@ -32,10 +32,12 @@ export interface SampleInfo {
   configuration: string;
   suggested: boolean;
   downloadUrlInfo: {
-    owner: string;
-    repository: string;
-    ref: string;
-    dir: string;
+    owner:string,
+    repository: string,
+    ref:string,
+    dir:string,
+    gitHubViewUrl: string;
+    dirsAndFileUrls: Map<string, string>;
   };
   thumbnailPath: string;
   gifUrl?: string;

@@ -347,7 +347,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
     const sampleInfo = sample.downloadUrlInfo;
     vscode.postMessage({
       command: Commands.OpenExternalLink,
-      data: `https://github.com/${sampleInfo.owner}/${sampleInfo.repository}/tree/${sampleInfo.ref}/${sampleInfo.dir}`,
+      data: sampleInfo.gitHubViewUrl,
     });
   };
 

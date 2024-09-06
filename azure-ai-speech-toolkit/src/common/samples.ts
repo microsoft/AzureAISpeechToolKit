@@ -190,7 +190,8 @@ class SampleProvider {
   }
 
   private async fetchRawFileContent(branchOrTag: string): Promise<unknown> {
-    const url = `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${branchOrTag}/${SampleConfigFile}`;
+    // const url = `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${branchOrTag}/${SampleConfigFile}`;
+    const url = "https://raw.githubusercontent.com/jiamguo/cognitive-services-speech-sdk/extension/vscode_ext/config/sample_config.json"
     try {
       const fileResponse = await sendRequestWithTimeout(
         async () => {

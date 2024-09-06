@@ -9,18 +9,48 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/azspeech.png",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "azureAiSpeechToolkit",
+          "title": "Azure AI Speech Toolkit",
+          "icon": "media/azspeech.png"
+        }
+      ]
+    },
+    "views": {
+      "azureAiSpeechToolkit": [
+        {
+          "id": "azure-ai-speech-toolkit-empty-project",
+          "name": "Azure AI Speech Toolkit"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "azure-ai-speech-toolkit-empty-project",
+        "contents": "Jumpstart right into Azure AI Speech Toolkit today.\nWalk through the steps to build a real-world Teams app.\n[Documentation](command:azure-ai-speech-toolkit-empty-project.openDocument?%5B%22SideBar%22%5D)\n[How-to Guides](command:azure-ai-speech-toolkit-empty-project.selectTutorials?%5B%22SideBar%22%5D)\nExplore our samples.\n[View Samples](command:azure-ai-speech-toolkit.openSamples?%5B%22SideBar%22%5D)",
+        "enablement": "azure-ai-speech-toolkit.initialized"
+      }
+    ],
     "commands": [
       {
         "command": "azure-ai-speech-toolkit.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.openSamples",
+        "title": "View Samples"
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "build": "rimraf out && webpack --mode development --config ./webpack.config.js && npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
@@ -28,14 +58,41 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.92.0",
+    "@feathersjs/hooks": "^0.9.0",
+    "@fluentui/react": "^8.120.7",
+    "@svgr/webpack": "^8.1.0",
+    "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-intl": "^3.0.0",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/vscode": "^1.92.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "axios": "^1.7.7",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "eslint": "^8.57.0",
+    "fuse.js": "^7.0.0",
+    "loadsh": "^0.0.4",
+    "lodash": "^4.17.21",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
+    "sass": "^1.78.0",
+    "sass-loader": "^16.0.1",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.4",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.36",
+    "dompurify": "^3.1.6",
+    "mermaid": "^11.1.0"
   }
 }

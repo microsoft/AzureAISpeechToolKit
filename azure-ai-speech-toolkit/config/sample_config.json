@@ -1,0 +1,83 @@
+{
+    "filterOptions": {
+        "capabilities": [
+            "Speech To Text",
+            "Text To Speech",
+            "Speech Translation"
+        ],
+        "languages": [
+            "C++",
+            "C#",
+            "Java",
+            "JavaScript",
+            "Objective-C",
+            "Swift",
+            "Python"
+        ],
+        "Platform": [
+            "Linux",
+            "Windows",
+            "IOS",
+            "MacOS"
+        ]
+    },
+    "samples": [
+        {
+            "id": "batch-transcription-from-blob-restapi-csharp",
+            "onboardDate": "2024-09-06",
+            "title": "Batch Transcription From Blob (REST API) C#",
+            "shortId": "template-batch-transcrpition-csharp",
+            "shortDescription": "An app template of Speech Batch Transcription in C#",
+            "fullDescription": "An app template of Azure AI Speech Batch Transcription with REST API in C#",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "assets/thumbnail.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "suggested": false
+        },
+        {
+            "id": "batch-transcription-from-blob-restapi-js",
+            "onboardDate": "2024-09-06",
+            "title": "Batch Transcription From Blob (REST API) Node JS",
+            "shortId": "template-batch-transcrpition-js",
+            "shortDescription": "An app template of Speech Batch Transcription in Node JS",
+            "fullDescription": "An app template of Azure AI Speech Batch Transcription with REST API in Node JS",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "assets/thumbnail.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "suggested": false
+        },
+        {
+            "id": "batch-transcription-from-blob-restapi-python",
+            "onboardDate": "2024-09-06",
+            "title": "Batch Transcription From Blob (REST API) Python",
+            "shortId": "template-batch-transcrpition-python",
+            "shortDescription": "An app template of Speech Batch Transcription in Python",
+            "fullDescription": "An app template of Azure AI Speech Batch Transcription with REST API in Python",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "assets/thumbnail.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "suggested": true
+        }   
+    ]
+}

@@ -101,6 +101,7 @@ export default class SampleDetailPage extends React.Component<SampleProps, Sampl
     }
     return (
       <div className="sample-detail-page">
+
         <ActionButton iconProps={{ iconName: "ChevronLeft" }} onClick={this.onBack}>
           Back
         </ActionButton>

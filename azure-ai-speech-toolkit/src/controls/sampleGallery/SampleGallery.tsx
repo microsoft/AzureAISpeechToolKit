@@ -58,6 +58,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   }
 
   public render() {
+
     const titleSection = (
       <div id="title">
         <div className="logo">
@@ -98,6 +99,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
           viewGitHub={this.onViewGithub}
           upgradeToolkit={this.onUpgradeToolkit}
         />
+
       );
     } else {
       const featuredSamples = (this.state.filteredSamples ?? this.samples).filter(
@@ -226,19 +228,19 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   };
 
   private onSampleSelected = (id: string/*, triggerFrom: TelemetryTriggerFrom*/) => {
-    vscode.postMessage({
-      command: Commands.SendTelemetryEvent,
-      data: {
-        eventName: "TelemetryEvent.SelectSample",
-        properties: {
-          // [TelemetryProperty.TriggerFrom]: triggerFrom,
-          // [TelemetryProperty.SampleAppName]: id,
-          // [TelemetryProperty.SearchText]: this.state.query,
-          // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
-          // [TelemetryProperty.Layout]: this.state.layout,
-        },
-      },
-    });
+    // vscode.postMessage({
+    //   command: Commands.SendTelemetryEvent,
+    //   data: {
+    //     eventName: "TelemetryEvent.SelectSample",
+    //     properties: {
+    //       // [TelemetryProperty.TriggerFrom]: triggerFrom,
+    //       // [TelemetryProperty.SampleAppName]: id,
+    //       // [TelemetryProperty.SearchText]: this.state.query,
+    //       // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
+    //       // [TelemetryProperty.Layout]: this.state.layout,
+    //     },
+    //   },
+    // });
     this.setState({
       selectedSampleId: id,
     });
@@ -248,18 +250,18 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
     if (newLayout === this.state.layout) {
       return;
     }
-    vscode.postMessage({
-      command: Commands.SendTelemetryEvent,
-      data: {
-        eventName: "TelemetryEvent.ChangeLayout",
-        properties: {
-          // [TelemetryProperty.TriggerFrom]: TelemetryTriggerFrom.SampleGallery,
-          // [TelemetryProperty.Layout]: newLayout,
-          // [TelemetryProperty.SearchText]: this.state.query,
-          // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
-        },
-      },
-    });
+    // vscode.postMessage({
+    //   command: Commands.SendTelemetryEvent,
+    //   data: {
+    //     eventName: "TelemetryEvent.ChangeLayout",
+    //     properties: {
+    //       // [TelemetryProperty.TriggerFrom]: TelemetryTriggerFrom.SampleGallery,
+    //       // [TelemetryProperty.Layout]: newLayout,
+    //       // [TelemetryProperty.SearchText]: this.state.query,
+    //       // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
+    //     },
+    //   },
+    // });
     vscode.postMessage({
       command: Commands.StoreData,
       data: {
@@ -308,19 +310,19 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   };
 
   private onCreateSample = (sample: SampleInfo/*, triggerFrom: TelemetryTriggerFrom*/) => {
-    vscode.postMessage({
-      command: Commands.SendTelemetryEvent,
-      data: {
-        eventName: "TelemetryEvent.CloneSample",
-        properties: {
-          // [TelemetryProperty.TriggerFrom]: triggerFrom,
-          // [TelemetryProperty.SampleAppName]: sample.id,
-          // [TelemetryProperty.SearchText]: this.state.query,
-          // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
-          // [TelemetryProperty.Layout]: this.state.layout,
-        },
-      },
-    });
+    // vscode.postMessage({
+    //   command: Commands.SendTelemetryEvent,
+    //   data: {
+    //     eventName: "TelemetryEvent.CloneSample",
+    //     properties: {
+    //       // [TelemetryProperty.TriggerFrom]: triggerFrom,
+    //       // [TelemetryProperty.SampleAppName]: sample.id,
+    //       // [TelemetryProperty.SearchText]: this.state.query,
+    //       // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
+    //       // [TelemetryProperty.Layout]: this.state.layout,
+    //     },
+    //   },
+    // });
     vscode.postMessage({
       command: Commands.CloneSampleApp,
       data: {
@@ -331,19 +333,19 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   };
 
   private onViewGithub = (sample: SampleInfo/*, triggerFrom: TelemetryTriggerFrom*/) => {
-    vscode.postMessage({
-      command: Commands.SendTelemetryEvent,
-      data: {
-        eventName: "TelemetryEvent.ViewSampleInGitHub",
-        properties: {
-          // [TelemetryProperty.TriggerFrom]: triggerFrom,
-          // [TelemetryProperty.SampleAppName]: sample.id,
-          // [TelemetryProperty.SearchText]: this.state.query,
-          // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
-          // [TelemetryProperty.Layout]: this.state.layout,
-        },
-      },
-    });
+    // vscode.postMessage({
+    //   command: Commands.SendTelemetryEvent,
+    //   data: {
+    //     eventName: "TelemetryEvent.ViewSampleInGitHub",
+    //     properties: {
+    //       // [TelemetryProperty.TriggerFrom]: triggerFrom,
+    //       // [TelemetryProperty.SampleAppName]: sample.id,
+    //       // [TelemetryProperty.SearchText]: this.state.query,
+    //       // [TelemetryProperty.SampleFilters]: this.state.filterTags.join(","),
+    //       // [TelemetryProperty.Layout]: this.state.layout,
+    //     },
+    //   },
+    // });
     const sampleInfo = sample.downloadUrlInfo;
     vscode.postMessage({
       command: Commands.OpenExternalLink,
@@ -352,16 +354,16 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   };
 
   private onUpgradeToolkit = (sample: SampleInfo/*, triggerFrom: TelemetryTriggerFrom*/) => {
-    vscode.postMessage({
-      command: Commands.SendTelemetryEvent,
-      data: {
-        eventName:" TelemetryEvent.UpgradeToolkitForSample",
-        properties: {
-          // [TelemetryProperty.TriggerFrom]: triggerFrom,
-          // [TelemetryProperty.SampleAppName]: sample.id,
-        },
-      },
-    });
+    // vscode.postMessage({
+    //   command: Commands.SendTelemetryEvent,
+    //   data: {
+    //     eventName:" TelemetryEvent.UpgradeToolkitForSample",
+    //     properties: {
+    //       // [TelemetryProperty.TriggerFrom]: triggerFrom,
+    //       // [TelemetryProperty.SampleAppName]: sample.id,
+    //     },
+    //   },
+    // });
     vscode.postMessage({
       command: Commands.UpgradeToolkit,
       data: {

@@ -10,7 +10,7 @@ import * as vscode from "vscode";
 //   isChatParticipantEnabled,
 //   sampleProvider,
 // } from "@microsoft/teamsfx-core";
-import { sampleProvider } from "../common/samples"
+import { sampleProvider, SampleConfig } from "../common/samples"
 // import { SampleProvider as sampleProvider } from "../samples/sampleProvider";
 // import * as extensionPackage from "../../package.json";
 import { GlobalKey } from "../constants";
@@ -168,7 +168,7 @@ export class WebviewPanel {
             await this.LoadSampleCollection();
             break;
           case Commands.LoadSampleReadme:
-            // await this.LoadSampleReadme(msg.data);
+            await this.LoadSampleReadme(msg.data);
             break;
           case Commands.UpgradeToolkit:
             // await this.OpenToolkitInExtensionView(msg.data.version);
@@ -254,27 +254,27 @@ export class WebviewPanel {
     }
   }
 
-//   private async LoadSampleReadme(sample: SampleConfig) {
-//     let htmlContent = "";
-//     try {
-//       htmlContent = await sampleProvider.getSampleReadmeHtml(sample);
-//     } catch (e: unknown) {
-//       await this.panel.webview.postMessage({
-//         message: Commands.LoadSampleReadme,
-//         error: e,
-//         readme: "",
-//       });
-//       return;
-//     }
-//     if (this.panel && this.panel.webview) {
-//       let readme = this.replaceRelativeImagePaths(htmlContent, sample);
-//       readme = this.replaceMermaidRelatedContent(readme);
-//       await this.panel.webview.postMessage({
-//         message: Commands.LoadSampleReadme,
-//         readme: readme,
-//       });
-//     }
-//   }
+  private async LoadSampleReadme(sample: SampleConfig) {
+    let htmlContent = "";
+    try {
+      htmlContent = await sampleProvider.getSampleReadmeHtml(sample);
+    } catch (e: unknown) {
+      await this.panel.webview.postMessage({
+        message: Commands.LoadSampleReadme,
+        error: e,
+        readme: "",
+      });
+      return;
+    }
+    if (this.panel && this.panel.webview) {
+      let readme = this.replaceRelativeImagePaths(htmlContent, sample);
+      readme = this.replaceMermaidRelatedContent(readme);
+      await this.panel.webview.postMessage({
+        message: Commands.LoadSampleReadme,
+        readme: readme,
+      });
+    }
+  }
 
 //   private async OpenToolkitInExtensionView(version: string) {
 //     // await vscode.commands.executeCommand(
@@ -284,19 +284,19 @@ export class WebviewPanel {
 //     await vscode.commands.executeCommand("workbench.extensions.action.checkForUpdates");
 //   }
 
-//   private replaceRelativeImagePaths(htmlContent: string, sample: SampleConfig) {
-//     const urlInfo = sample.downloadUrlInfo;
-//     const imageUrl = `https://github.com/${urlInfo.owner}/${urlInfo.repository}/blob/${urlInfo.ref}/${urlInfo.dir}/${sample.thumbnailPath}?raw=1`;
-//     const imageRegex = /img\s+src="(?!https:\/\/camo\.githubusercontent\.com\/.)([^"]+)"/gm;
-//     return htmlContent.replace(imageRegex, `img src="${imageUrl}"`);
-//   }
+  private replaceRelativeImagePaths(htmlContent: string, sample: SampleConfig) {
+    const urlInfo = sample.downloadUrlInfo;
+    const imageUrl = `https://github.com/${urlInfo.owner}/${urlInfo.repository}/blob/${urlInfo.ref}/${urlInfo.dir}/${sample.thumbnailPath}?raw=1`;
+    const imageRegex = /img\s+src="(?!https:\/\/camo\.githubusercontent\.com\/.)([^"]+)"/gm;
+    return htmlContent.replace(imageRegex, `img src="${imageUrl}"`);
+  }
 
-//   private replaceMermaidRelatedContent(htmlContent: string): string {
-//     const mermaidRegex = /<pre lang="mermaid"/gm;
-//     const loaderRegex = /<span(.*)>\s.*\s*<circle(.*)<\/circle>\s.*<\/path>\s.*\s*<\/span>/gm;
-//     const loaderRemovedHtmlContent = htmlContent.replace(loaderRegex, "");
-//     return loaderRemovedHtmlContent.replace(mermaidRegex, `<pre class="mermaid"`);
-//   }
+  private replaceMermaidRelatedContent(htmlContent: string): string {
+    const mermaidRegex = /<pre lang="mermaid"/gm;
+    const loaderRegex = /<span(.*)>\s.*\s*<circle(.*)<\/circle>\s.*<\/path>\s.*\s*<\/span>/gm;
+    const loaderRemovedHtmlContent = htmlContent.replace(loaderRegex, "");
+    return loaderRemovedHtmlContent.replace(mermaidRegex, `<pre class="mermaid"`);
+  }
 
   private getWebpageTitle(panelType: PanelType): string {
     switch (panelType) {

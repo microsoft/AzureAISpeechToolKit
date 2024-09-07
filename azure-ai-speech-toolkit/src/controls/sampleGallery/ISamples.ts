@@ -45,6 +45,8 @@ export interface SampleInfo {
   versionComparisonResult: -1 | 0 | 1;
   minimumToolkitVersion?: string;
   maximumToolkitVersion?: string;
+  readmePath: string;
+  githubPath: string;
 }
 
 export type SampleProps = {
@@ -58,7 +60,7 @@ export type SampleProps = {
 export type SampleFilterOptionType = {
   capabilities: string[];
   languages: string[];
-  technologies: string[];
+  platform: string[];
 };
 
 export type SampleFilterProps = {

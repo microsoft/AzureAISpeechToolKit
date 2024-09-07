@@ -46,6 +46,8 @@ export interface SampleConfig {
   minimumToolkitVersion?: string;
   minimumCliVersion?: string;
   downloadUrlInfo: SampleUrlInfo;
+  readmePath: string;
+  githubPath: string;
 }
 
 interface SampleCollection {
@@ -53,7 +55,7 @@ interface SampleCollection {
   filterOptions: {
     capabilities: string[];
     languages: string[];
-    technologies: string[];
+    platform: string[];
   };
 }
 
@@ -156,14 +158,15 @@ class SampleProvider {
       filterOptions: {
         capabilities: samplesConfig?.filterOptions["capabilities"] || [],
         languages: samplesConfig?.filterOptions["languages"] || [],
-        technologies: samplesConfig?.filterOptions["technologies"] || [],
+        platform: samplesConfig?.filterOptions["platform"] || [],
       },
     };
   }
 
   public async getSampleReadmeHtml(sample: SampleConfig): Promise<string> {
-    const urlInfo = sample.downloadUrlInfo;
-    const url = `https://api.github.com/repos/${urlInfo.owner}/${urlInfo.repository}/readme/${urlInfo.dir}/?ref=${urlInfo.ref}`;
+    // const urlInfo = sample.downloadUrlInfo;
+    // const url = `https://api.github.com/repos/${urlInfo.owner}/${urlInfo.repository}/readme/${urlInfo.dir}/?ref=${urlInfo.ref}`;
+    const url = sample.readmePath
     try {
       const readmeResponse = await sendRequestWithTimeout(
         async () => {

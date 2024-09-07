@@ -31,7 +31,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
   private filterOptions: SampleFilterOptionType = {
     capabilities: [],
     languages: [],
-    technologies: [],
+    platform: [],
   };
 
   constructor(props: SampleGalleryProps) {
@@ -278,7 +278,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
         return true;
       }
       for (const target of targets) {
-        if (tags.findIndex((value) => value.toLowerCase().includes(target.toLowerCase())) >= 0) {
+        if (tags.findIndex((value) => value.toLowerCase() == target.toLowerCase()) >= 0) {
           return true;
         }
       }
@@ -290,14 +290,14 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
     const languagesFilter = filterTags.filter(
       (tag) => this.filterOptions.languages.indexOf(tag) >= 0
     );
-    const technologiesFilter = filterTags.filter(
-      (tag) => this.filterOptions.technologies.indexOf(tag) >= 0
+    const platformFilter = filterTags.filter(
+      (tag) => this.filterOptions.platform.indexOf(tag) >= 0
     );
     let filteredSamples = this.samples.filter((sample: SampleInfo) => {
       return (
         containsTag(capabilitiesFilter, sample.tags) &&
         containsTag(languagesFilter, sample.tags) &&
-        containsTag(technologiesFilter, sample.tags)
+        containsTag(platformFilter, sample.tags)
       );
     });
     if (query !== "") {
@@ -346,10 +346,9 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
     //     },
     //   },
     // });
-    const sampleInfo = sample.downloadUrlInfo;
     vscode.postMessage({
       command: Commands.OpenExternalLink,
-      data: sampleInfo.gitHubViewUrl,
+      data: sample.githubPath,
     });
   };
 

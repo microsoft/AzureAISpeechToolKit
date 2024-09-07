@@ -285,8 +285,8 @@ export class WebviewPanel {
 //   }
 
   private replaceRelativeImagePaths(htmlContent: string, sample: SampleConfig) {
-    const urlInfo = sample.downloadUrlInfo;
-    const imageUrl = `https://github.com/${urlInfo.owner}/${urlInfo.repository}/blob/${urlInfo.ref}/${urlInfo.dir}/${sample.thumbnailPath}?raw=1`;
+    // const urlInfo = sample.downloadUrlInfo;
+    const imageUrl = sample.thumbnailPath;
     const imageRegex = /img\s+src="(?!https:\/\/camo\.githubusercontent\.com\/.)([^"]+)"/gm;
     return htmlContent.replace(imageRegex, `img src="${imageUrl}"`);
   }

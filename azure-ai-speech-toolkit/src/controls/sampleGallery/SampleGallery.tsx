@@ -325,10 +325,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
     // });
     vscode.postMessage({
       command: Commands.CloneSampleApp,
-      data: {
-        appName: sample.title,
-        appFolder: sample.id,
-      },
+      data: sample,
     });
   };
 

@@ -16,7 +16,7 @@ import { sampleProvider, SampleConfig } from "../common/samples"
 import { GlobalKey } from "../constants";
 // import { TreatmentVariableValue } from "../exp/treatmentVariables";
 import * as globalVariables from "../globalVariables";
-// import { downloadSampleApp } from "../handlers";
+import { downloadSampleApp } from "../handlers";
 // import { ExtTelemetry } from "../telemetry/extTelemetry";
 // import {
 //   InProductGuideInteraction,
@@ -147,6 +147,7 @@ export class WebviewPanel {
             // await Correlator.run(async () => {
             //   await downloadSampleApp(TelemetryTriggerFrom.Webview, msg.data.appFolder);
             // });
+            await downloadSampleApp(/* TelemetryTriggerFrom.Webview, */ msg.data, 2, "C:\\Users\\jiamguo\\Downloads\\test_sample\\", 20);
             break;
           case Commands.DisplayCommands:
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

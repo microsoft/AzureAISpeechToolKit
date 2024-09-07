@@ -14,9 +14,10 @@ import { SampleProps } from "./ISamples";
 export default class SampleCard extends React.Component<SampleProps, { imageUrl: string }> {
   constructor(props: SampleProps) {
     super(props);
-    const downloadUrlInfo = props.sample.downloadUrlInfo;
+    // const downloadUrlInfo = props.sample.downloadUrlInfo;
     this.state = {
-      imageUrl: `https://github.com/${downloadUrlInfo.owner}/${downloadUrlInfo.repository}/blob/${downloadUrlInfo.ref}/${downloadUrlInfo.dir}/${props.sample.thumbnailPath}?raw=1`,
+      // imageUrl: `https://github.com/${downloadUrlInfo.owner}/${downloadUrlInfo.repository}/blob/${downloadUrlInfo.ref}/${downloadUrlInfo.dir}/${props.sample.thumbnailPath}?raw=1`,
+      imageUrl: props.sample.thumbnailPath
     };
   }
 

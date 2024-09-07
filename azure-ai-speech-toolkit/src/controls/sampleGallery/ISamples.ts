@@ -32,10 +32,12 @@ export interface SampleInfo {
   configuration: string;
   suggested: boolean;
   downloadUrlInfo: {
-    owner: string;
-    repository: string;
-    ref: string;
-    dir: string;
+    owner:string,
+    repository: string,
+    ref:string,
+    dir:string,
+    gitHubViewUrl: string;
+    dirsAndFileUrls: Map<string, string>;
   };
   thumbnailPath: string;
   gifUrl?: string;
@@ -43,6 +45,8 @@ export interface SampleInfo {
   versionComparisonResult: -1 | 0 | 1;
   minimumToolkitVersion?: string;
   maximumToolkitVersion?: string;
+  readmePath: string;
+  githubPath: string;
 }
 
 export type SampleProps = {
@@ -56,7 +60,7 @@ export type SampleProps = {
 export type SampleFilterOptionType = {
   capabilities: string[];
   languages: string[];
-  technologies: string[];
+  platform: string[];
 };
 
 export type SampleFilterProps = {

@@ -18,6 +18,14 @@ export const SampleConfigTag = "v2.5.0";
 // prerelease tag is always using a branch.
 export const SampleConfigBranchForPrerelease = "main";
 
+export type SampleFileInfo = {
+  tree: {
+    path: string;
+    type: string;
+  }[];
+  sha: string;
+};
+
 export type SampleUrlInfo = {
   owner: string;
   repository: string;

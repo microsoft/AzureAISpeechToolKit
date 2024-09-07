@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 // import { TelemetryTriggerFrom } from "../../telemetry/extTelemetryEvents";
-
 export type SampleGalleryState = {
   loading: boolean;
   filteredSamples?: Array<SampleInfo>;

@@ -104,7 +104,7 @@ export class WebviewPanel {
 
     // Listen for when the panel is disposed
     // This happens when the user closes the panel or when the panel is closed programatically
-    // this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+    this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
     // this.panel.onDidChangeViewState(
     //   (e) => {
@@ -387,8 +387,8 @@ export class WebviewPanel {
 //     return undefined;
 //   }
 
-//   public dispose() {
-    // const panelIndex = WebviewPanel.currentPanels.indexOf(this);
+  public dispose() {
+    const panelIndex = WebviewPanel.currentPanels.indexOf(this);
     // if (TreatmentVariableValue.inProductDoc && this.panelType === PanelType.RespondToCardActions) {
     //   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.InteractWithInProductDoc, {
     //     [TelemetryProperty.TriggerFrom]: TelemetryTriggerFrom.InProductDoc,
@@ -403,16 +403,16 @@ export class WebviewPanel {
     //   });
     // }
 
-    // WebviewPanel.currentPanels.splice(panelIndex, 1);
+    WebviewPanel.currentPanels.splice(panelIndex, 1);
 
     // Clean up our resources
-    // this.panel.dispose();
+    this.panel.dispose();
 
-    // while (this.disposables.length) {
-    //   const x = this.disposables.pop();
-    //   if (x) {
-    //     x.dispose();
-    //   }
-    // }
-//   }
+    while (this.disposables.length) {
+      const x = this.disposables.pop();
+      if (x) {
+        x.dispose();
+      }
+    }
+  }
 }

@@ -33,18 +33,15 @@
     "viewsWelcome": [
       {
         "view": "azure-ai-speech-toolkit-empty-project",
-        "contents": "Jumpstart right into Azure AI Speech Toolkit today.\nWalk through the steps to build a real-world Teams app.\n[Documentation](command:azure-ai-speech-toolkit-empty-project.openDocument?%5B%22SideBar%22%5D)\n[How-to Guides](command:azure-ai-speech-toolkit-empty-project.selectTutorials?%5B%22SideBar%22%5D)\nExplore our samples.\n[View Samples](command:azure-ai-speech-toolkit.openSamples?%5B%22SideBar%22%5D)",
+        "contents": "Jumpstart right into Azure AI Speech Toolkit today.\nWalk through the steps to build a real-world Azure AI Speech app.\n[Documentation](command:azure-ai-speech-toolkit-empty-project.openDocument?%5B%22SideBar%22%5D)\n[How-to Guides](command:azure-ai-speech-toolkit-empty-project.selectTutorials?%5B%22SideBar%22%5D)\nExplore our samples.\n[View Samples](command:azure-ai-speech-toolkit.openSamples?%5B%22SideBar%22%5D)",
         "enablement": "azure-ai-speech-toolkit.initialized"
       }
     ],
     "commands": [
       {
-        "command": "azure-ai-speech-toolkit.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "azure-ai-speech-toolkit.openSamples",
-        "title": "View Samples"
+        "title": "View Samples",
+        "category": "Azure AI Speech Toolkit"
       }
     ]
   },

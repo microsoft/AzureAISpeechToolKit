@@ -68,7 +68,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
           <h1>Samples</h1>
           {this.props.shouldShowChat === "true" ? (
             <h3>
-              Explore our sample gallery filled with solutions that work seamlessly with Teams
+              Explore our sample gallery filled with solutions that work seamlessly with Azure AI Speech
               Toolkit. Need help choosing? Let{" "}
               <Link
                 onClick={() => {
@@ -81,8 +81,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
             </h3>
           ) : (
             <h3>
-              Explore our sample gallery filled with solutions that work seamlessly with Teams
-              Toolkit.
+              Explore our sample gallery filled with solutions that work seamlessly with Azure AI Speech Toolkit.
             </h3>
           )}
         </div>

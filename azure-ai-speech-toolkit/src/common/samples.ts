@@ -18,6 +18,14 @@ export const SampleConfigTag = "v2.5.0";
 // prerelease tag is always using a branch.
 export const SampleConfigBranchForPrerelease = "main";
 
+export type SampleFileInfo = {
+  tree: {
+    path: string;
+    type: string;
+  }[];
+  sha: string;
+};
+
 export type SampleUrlInfo = {
   owner: string;
   repository: string;
@@ -46,6 +54,8 @@ export interface SampleConfig {
   minimumToolkitVersion?: string;
   minimumCliVersion?: string;
   downloadUrlInfo: SampleUrlInfo;
+  readmePath: string;
+  githubPath: string;
 }
 
 interface SampleCollection {
@@ -53,7 +63,7 @@ interface SampleCollection {
   filterOptions: {
     capabilities: string[];
     languages: string[];
-    technologies: string[];
+    platform: string[];
   };
 }
 
@@ -156,14 +166,15 @@ class SampleProvider {
       filterOptions: {
         capabilities: samplesConfig?.filterOptions["capabilities"] || [],
         languages: samplesConfig?.filterOptions["languages"] || [],
-        technologies: samplesConfig?.filterOptions["technologies"] || [],
+        platform: samplesConfig?.filterOptions["platform"] || [],
       },
     };
   }
 
   public async getSampleReadmeHtml(sample: SampleConfig): Promise<string> {
-    const urlInfo = sample.downloadUrlInfo;
-    const url = `https://api.github.com/repos/${urlInfo.owner}/${urlInfo.repository}/readme/${urlInfo.dir}/?ref=${urlInfo.ref}`;
+    // const urlInfo = sample.downloadUrlInfo;
+    // const url = `https://api.github.com/repos/${urlInfo.owner}/${urlInfo.repository}/readme/${urlInfo.dir}/?ref=${urlInfo.ref}`;
+    const url = sample.readmePath
     try {
       const readmeResponse = await sendRequestWithTimeout(
         async () => {
@@ -190,7 +201,8 @@ class SampleProvider {
   }
 
   private async fetchRawFileContent(branchOrTag: string): Promise<unknown> {
-    const url = `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${branchOrTag}/${SampleConfigFile}`;
+    // const url = `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${branchOrTag}/${SampleConfigFile}`;
+    const url = "https://raw.githubusercontent.com/jiamguo/cognitive-services-speech-sdk/extension/vscode_ext/config/sample_config.json"
     try {
       const fileResponse = await sendRequestWithTimeout(
         async () => {

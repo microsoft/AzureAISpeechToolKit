@@ -26,7 +26,7 @@ export default class SampleFilter extends React.Component<SampleFilterProps, unk
   render() {
     const sampleTypes = this.props.filterOptions.capabilities;
     const sampleLanguages = this.props.filterOptions.languages;
-    const sampleTechniques = this.props.filterOptions.technologies;
+    const samplePlatforms = this.props.filterOptions.platform;
     const typeOptions: IDropdownOption[] = sampleTypes.map((type) => {
       const selected = this.props.filterTags.indexOf(type) >= 0;
       return { key: type, text: type, selected };
@@ -35,7 +35,7 @@ export default class SampleFilter extends React.Component<SampleFilterProps, unk
       const selected = this.props.filterTags.indexOf(type) >= 0;
       return { key: type, text: type, selected };
     });
-    const techniqueOptions: IDropdownOption[] = sampleTechniques.map((type) => {
+    const platformOptions: IDropdownOption[] = samplePlatforms.map((type) => {
       const selected = this.props.filterTags.indexOf(type) >= 0;
       return { key: type, text: type, selected };
     });
@@ -52,7 +52,7 @@ export default class SampleFilter extends React.Component<SampleFilterProps, unk
             <span slot="start" className="codicon codicon-search"></span>
           </VSCodeTextField>
           <Dropdown
-            placeholder="Platform capability"
+            placeholder="AI capability"
             multiSelect
             options={typeOptions}
             styles={dropdownStyles}
@@ -74,12 +74,12 @@ export default class SampleFilter extends React.Component<SampleFilterProps, unk
             dropdownWidth="auto"
           />
           <Dropdown
-            placeholder="Technology"
+            placeholder="Platform"
             multiSelect
-            options={techniqueOptions}
+            options={platformOptions}
             styles={dropdownStyles}
             onChange={this.onFilterTagsChanged}
-            selectedKeys={sampleTechniques.filter((type) => {
+            selectedKeys={samplePlatforms.filter((type) => {
               return this.props.filterTags.indexOf(type) >= 0;
             })}
             dropdownWidth="auto"

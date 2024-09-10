@@ -15,6 +15,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	const openSamples = vscode.commands.registerCommand(CommandKeys.OpenSamples, handlers.openSamplesHandler);
 	context.subscriptions.push(openSamples);
 
+	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
+	context.subscriptions.push(openDocument);
+
 	await vscode.commands.executeCommand("setContext", "azure-ai-speech-toolkit.initialized", true);
 }
 

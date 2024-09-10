@@ -1,8 +1,14 @@
 {
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
-  "description": "Azure AI Speech Toolkit Extension includes all Speech Services/solutions that developers can directly consume and integrate within VS Code.",
+  "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
   "version": "0.0.1",
+  "publisher": "Rivendell-test",
+  "author": "Rivendell team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/AzureAISpeechToolKit"
+  },
   "engines": {
     "vscode": "^1.92.0"
   },
@@ -11,7 +17,7 @@
   ],
   "icon": "media/azspeech.png",
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -46,7 +52,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "rimraf out && webpack --mode production --config ./webpack.config.js",
     "build": "rimraf out && webpack --mode development --config ./webpack.config.js && npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",

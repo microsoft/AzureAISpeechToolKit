@@ -1,6 +1,6 @@
 # azure-ai-speech-toolkit README
 
-This is the README for your extension "azure-ai-speech-toolkit". After writing up a brief description, we recommend including the following sections.
+This extension is aimed to showcase Azure AI Speech Service capabilities. Try the "View Sample" command.
 
 ## Features
 

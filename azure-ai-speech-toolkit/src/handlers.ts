@@ -6,17 +6,44 @@ import {SampleInfo} from "./controls/sampleGallery/ISamples";
 import {SampleUrlInfo, SampleFileInfo} from "./common/samples";
 const path = require('node:path');
 import * as fs from "fs-extra";
+import * as vscode from "vscode";
+import { hasUncaughtExceptionCaptureCallback } from "process";
 
 export async function openSamplesHandler(...args: unknown[]) {
   WebviewPanel.createOrShow(PanelType.SampleGallery, args);
   return;
 }
 
+export async function openDocumentHandler(...args: unknown[]) {
+  vscode.env.openExternal(vscode.Uri.parse("https://learn.microsoft.com/en-us/azure/ai-services/speech-service/"));
+  return;
+}
+
 export async function downloadSampleApp(...args: unknown[]) {
   const sampleInfo = args[0] as SampleInfo;
   const retryLimits = args[1] as number;
-  const dstPath = args[2] as string;
-  const concurrencyLimits = args[3] as number
+  const concurrencyLimits = args[2] as number
+  const options: vscode.OpenDialogOptions = {
+      canSelectFiles: false,
+      canSelectFolders: true,
+      openLabel: 'Select'
+  };
+
+  const dstPath = await vscode.window.showOpenDialog(options).then(fileUri => {
+    if (fileUri && fileUri[0]) {
+        console.log('Selected file: ' + fileUri[0].fsPath);
+        return fileUri[0].fsPath
+    }
+    else{
+      throw new URIError("No destination folder selected.")
+    }
+  });
+
+  if (dstPath == ""){
+    throw new URIError("Destination path is empty.")
+  }
+
+  
   const { samplePaths, fileUrlPrefix } = await getSampleFileInfo(sampleInfo, retryLimits);
   await downloadSampleFiles(
     sampleInfo.downloadUrlInfo,
@@ -26,7 +53,10 @@ export async function downloadSampleApp(...args: unknown[]) {
     retryLimits,
     concurrencyLimits
   );
-  return samplePaths;
+  
+  const success = await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(dstPath))
+
+  return success
 }
 
 export async function getSampleFileInfo(sampleInfo: SampleInfo, retryLimits: number): Promise<any> {

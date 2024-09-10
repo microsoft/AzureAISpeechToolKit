@@ -6,7 +6,7 @@ export enum CommandKey {
     // OpenWelcome = "azure-ai-speech-toolkit.openWelcome",
     // BuildIntelligentAppsWalkthrough = "azure-ai-speech-toolkit.buildIntelligentAppsWalkthrough",
     // CheckCopilotAccess = "azure-ai-speech-toolkit.checkCopilotAccess",
-    // OpenDocument = "azure-ai-speech-toolkit.openDocument",
+    OpenDocument = "azure-ai-speech-toolkit.openDocument",
     OpenSamples = "azure-ai-speech-toolkit.openSamples",
     DownloadSample = "azure-ai-speech-toolkit.downloadSample",
     // ValidateGetStartedPrerequisites = "azure-ai-speech-toolkit.validate-getStarted-prerequisites",

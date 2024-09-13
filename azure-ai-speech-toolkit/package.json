@@ -33,6 +33,10 @@
         {
           "id": "azure-ai-speech-toolkit-empty-project",
           "name": "Azure AI Speech Toolkit"
+        },
+        {
+          "id": "azure-ai-speech-toolkit-accounts",
+          "name": "Accounts"
         }
       ]
     },
@@ -53,6 +57,16 @@
         "command": "azure-ai-speech-toolkit.openDocument",
         "title": "Documentation",
         "category": "Azure AI Speech Toolkit"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.provision",
+        "title": "Provision Azure Speech Resources",
+        "category": "Azure AI Speech Toolkit"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.signInAzure",
+        "title": "Sign in to Azure account",
+        "category": "Azure AI Speech Toolkit"
       }
     ]
   },
@@ -66,6 +80,9 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@azure/arm-cognitiveservices": "^7.5.0",
+    "@azure/arm-resources-subscriptions": "^2.1.0",
+    "@azure/ms-rest-azure-env": "^2.0.0",
     "@feathersjs/hooks": "^0.9.0",
     "@fluentui/react": "^8.120.7",
     "@svgr/webpack": "^8.1.0",
@@ -73,6 +90,7 @@
     "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/proper-lockfile": "^4.1.4",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/react-intl": "^3.0.0",
@@ -83,6 +101,7 @@
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
     "@vscode/webview-ui-toolkit": "^1.4.0",
+    "async-mutex": "^0.5.0",
     "axios": "^1.7.7",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
@@ -91,7 +110,9 @@
     "fuse.js": "^7.0.0",
     "loadsh": "^0.0.4",
     "lodash": "^4.17.21",
+    "neverthrow": "^8.0.0",
     "path": "^0.12.7",
+    "proper-lockfile": "^4.1.2",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
     "sass": "^1.78.0",

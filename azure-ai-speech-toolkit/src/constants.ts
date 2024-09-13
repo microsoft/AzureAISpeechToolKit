@@ -14,8 +14,9 @@ export enum CommandKey {
     // DebugInTestToolFromMessage = "azure-ai-speech-toolkit.debugInTestToolFromMessage",
     // SigninM365 = "azure-ai-speech-toolkit.signinM365",
     // LocalDebug = "azure-ai-speech-toolkit.localdebug",
-    // SigninAzure = "azure-ai-speech-toolkit.signinAzure",
-    // Provision = "azure-ai-speech-toolkit.provision",
+    SigninAzure = "azure-ai-speech-toolkit.signinAzure",
+    SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
+    Provision = "azure-ai-speech-toolkit.provision",
     // Deploy = "azure-ai-speech-toolkit.deploy",
     // Publish = "azure-ai-speech-toolkit.publish",
     // Preview = "azure-ai-speech-toolkit.preview",
@@ -36,4 +37,13 @@ export enum CommandKey {
     SampleGalleryLayout = "teamsToolkit:sampleGallery:layout",
     AutoInstallDependency = "teamsToolkit:autoInstallDependency",
   }
-  
+export const AzureScopes = ["https://management.core.windows.net/user_impersonation"];
+export const TerminalName = "Azure AI Speech Toolkit";
+
+// Enum for environment keys
+export enum EnvKeys {
+  SpeechServiceKey = 'SPEECH_SERVICE_KEY',
+  ServiceRegion = 'SERVICE_REGION',
+  AzureSubscriptionId = 'AZURE_SUBSCRIPTION_ID',
+  TenantId = 'TENANT_ID',
+}

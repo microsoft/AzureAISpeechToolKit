@@ -2,17 +2,20 @@
 // Licensed under the MIT license.
 
 import { SubscriptionClient, TenantIdDescription } from "@azure/arm-resources-subscriptions";
+import { CognitiveServicesManagementClient, Account } from '@azure/arm-cognitiveservices';
 import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
 // import { LoginFailureError } from "./codeFlowLogin";
 import { Environment } from "@azure/ms-rest-azure-env";
+import { SpeechServiceInfo } from "../api/login";
 
 export const Microsoft = "microsoft";
 
 // Licensed under the MIT license.
 export class VSCodeAzureSubscriptionProvider {
+
   private async getSubscriptionClient(
     tenantId?: string,
     scopes?: string[]
@@ -88,6 +91,86 @@ export class VSCodeAzureSubscriptionProvider {
     const sortSubscriptions = (subscriptions: AzureSubscription[]): AzureSubscription[] =>
       subscriptions.sort((a, b) => a.name.localeCompare(b.name));
     return sortSubscriptions(results);
+  }
+
+  public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string|undefined, region: string|undefined }>  {
+    const session = await getSessionFromVSCode(AzureScopes, undefined, {
+      createIfNone: false,
+      silent: true,
+    });
+    if (!session) {
+      return Promise.reject(Error("Failed to get VS code session when try to get speech service details."));
+    }
+
+    const credential: TokenCredential = {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      getToken: async () => {
+        return {
+          token: session.accessToken,
+          expiresOnTimestamp: 0,
+        };
+      },
+    };
+    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+    
+    try {
+      // Fetch Speech Service details, including the region
+      const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechServiceName);
+      const region = speechService.location;
+
+      // Fetch the keys for the Speech Service
+      const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechServiceName);
+      const primaryKey = keys.key1;
+
+      return {
+        key: primaryKey,
+        region: region
+      };
+    } catch (error) {
+      console.error('Error fetching speech service details:', error);
+      throw new Error(`Unable to retrieve keys and region for Speech Service: ${speechServiceName}`);
+    }
+  }
+
+  public async getSpeechServiceList(subscriptionId: string, tenantId?: string, scopes?: string[]): Promise<SpeechServiceInfo[]> {
+    const session = await getSessionFromVSCode(scopes, tenantId, {
+      createIfNone: false,
+      silent: true,
+    });
+    if (!session) {
+      return Promise.reject(Error("Failed to get VS code session when try to get speech service list."));
+    }
+
+    const credential: TokenCredential = {
+      // eslint-disable-next-line @typescript-eslint/require-await
+      getToken: async () => {
+        return {
+          token: session.accessToken,
+          expiresOnTimestamp: 0,
+        };
+      },
+    };
+    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+    const accountsIterator = await cognitiveClient.accounts.list();
+
+    // Collect all accounts from the iterator
+    const accounts: Account[] = [];
+    for await (const account of accountsIterator) {
+        accounts.push(account);
+    }
+
+    const speechAccounts = accounts.filter(account => account.kind === 'SpeechServices');
+    console.log("successfully select speechAccounts: " + JSON.stringify(speechAccounts));
+    const speechServices: SpeechServiceInfo[] = [];
+    for (let i = 0; i<speechAccounts.length; i++) {
+      const item = accounts[i];
+      speechServices.push({
+        speechServiceId: item.id!,
+        speechServiceName: item.name!,
+        subscriptionId: subscriptionId
+      })
+    }
+    return speechServices;
   }
 
   /**

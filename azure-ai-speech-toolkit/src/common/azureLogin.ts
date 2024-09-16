@@ -10,6 +10,7 @@ import type { TokenCredential } from "@azure/core-auth";
 // import { AzureAccountProvider } from "../api/login";
 import {
   AzureAccountProvider,
+  SpeechServiceInfo,
 //   UserError,
   SubscriptionInfo,
 //   SingleSelectConfig,
@@ -307,6 +308,19 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
+  
+  /**
+   * list all subscriptions
+   */
+  async listSpeechServices(subscriptionId: string): Promise<SpeechServiceInfo[]> {
+    let speechServices: SpeechServiceInfo[] = [];
+    if (await this.isUserLogin()) {
+      speechServices = await this.vscodeAzureSubscriptionProvider.getSpeechServiceList(subscriptionId, undefined, AzureScopes);
+    }
+
+    return speechServices;
+  }
+
   /**
    * set tenantId and subscriptionId
    */
@@ -395,6 +409,14 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
+  async fetchSpeechServiceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string|undefined, region: string|undefined }> {
+    if (AzureAccountManager.currentStatus !== loggedIn) {
+      throw new Error("can only fetch speech service details when logged in.");
+    }
+    const {key, region} = await this.vscodeAzureSubscriptionProvider.getSpeechServiceDetails(subscriptionId, resourceGroupName, speechServiceName);
+    return {key, region};
+  }
+
   async getSelectedSubscription(triggerUI = false): Promise<SubscriptionInfo | undefined> {
     if (triggerUI) {
       if (AzureAccountManager.currentStatus !== loggedIn) {
@@ -424,17 +446,44 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       return undefined;
     }
   }
+  
+  async getSelectedSpeechService(subscriptionId: string): Promise<SpeechServiceInfo | undefined> {
+    if (AzureAccountManager.currentStatus !== loggedIn) {
+      throw new Error("can only select speech service when logged in.");
+    }
+
+    const speechServiceList = await this.listSpeechServices(subscriptionId);
+    if (!speechServiceList || speechServiceList.length == 0) {
+      vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech service! Retry command and select a different subscription.");
+      return;
+    }
+
+    const options: OptionItem[] = speechServiceList.map((speechService) => {
+      return {
+        id: speechService.speechServiceId,
+        label: speechService.speechServiceName,
+        // data: sub.tenantId,
+      } as OptionItem;
+    });
+    const config: SingleSelectConfig = {
+      name: "speech service",
+      title: "Select Speech Service",
+      options: options,
+    };
+    const result = await VS_CODE_UI.selectOption(config);
+    if (result.isErr()) {
+      throw result.error;
+    } else {
+      const selectedSpeechServiceId = result.value.result as string;
+
+      return speechServiceList.find(service => service.speechServiceId == selectedSpeechServiceId);
+    }
+  }
 
   async selectSubscription(): Promise<void> {
     const subscriptionList = await this.listSubscriptions();
     if (!subscriptionList || subscriptionList.length == 0) {
         throw new Error("[UserError] failToFindSubscription");
-    //   throw new UserError(
-    //     getDefaultString("teamstoolkit.codeFlowLogin.loginComponent"),
-    //     getDefaultString("teamstoolkit.azureLogin.noSubscriptionFound"),
-    //     getDefaultString("teamstoolkit.azureLogin.failToFindSubscription"),
-    //     localize("teamstoolkit.azureLogin.failToFindSubscription")
-    //   );
     }
     if (subscriptionList && subscriptionList.length == 1) {
       await this.setSubscription(subscriptionList[0].subscriptionId);

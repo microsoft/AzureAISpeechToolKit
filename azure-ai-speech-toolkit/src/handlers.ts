@@ -11,7 +11,7 @@ import { hasUncaughtExceptionCaptureCallback } from "process";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
 import { EnvKeys } from "./constants";
-import { SubscriptionInfo } from "./api/login";
+import { SpeechServiceInfo, SubscriptionInfo } from "./api/login";
 
 // export async function signInAzureHandler(...args: unknown[]) {
 //   // const azureAccountProvider = AzureAccountManager.getInstance();
@@ -64,10 +64,14 @@ export async function provisionHandler(...args: unknown[]) {
   if (!speechServiceKey || !serviceRegion || !tenantId || !subscriptionId) {
     // Step 3: If the values are missing, prompt the user for subscription and service selection.
     const subscriptionInfo = await askUserForSubscription();
-    const speechService = await askUserForSpeechService(subscriptionInfo);
+    const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
+    if (!speechServiceInfo) {
+      // Fail to find a speech service.
+      return;
+    }
 
     // Fetch the Speech Service Key and Region.
-    const { key, region } = await fetchSpeechServiceKeyAndRegion(subscriptionInfo, speechService);
+    const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
 
     // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
     envContent = updateEnvContent(envContent, EnvKeys.SpeechServiceKey, key);
@@ -107,40 +111,46 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const subscriptionInAccount = await azureAccountProvider.getSelectedSubscription(true);
   if (!subscriptionInAccount) {
-    // this case will not happen actually
-    // return err(new SelectSubscriptionError());
-    // console.log("SelectSubscriptionError");
     throw new Error("SelectSubscriptionError");
 
   } else {
-    console.log("successful to select subscription: " + JSON.stringify(subscriptionInAccount));
+    console.log("successfully select subscription: " + JSON.stringify(subscriptionInAccount));
 
-    // TOOLS.logProvider.info(
-    //   `successful to select subscription: ${subscriptionInAccount.subscriptionId}`
-    // );
-    // return ok(subscriptionInAccount);
     return subscriptionInAccount;
-
   }
-  // const subscriptions = ['Subscription 1', 'Subscription 2', 'Subscription 3']; // Replace with actual subscription fetching logic
-  // const selection = await vscode.window.showQuickPick(subscriptions, { placeHolder: 'Select an Azure Subscription' });
-  // return selection || '';
 }
 
 // Mock function to ask user for Azure Speech Service.
-async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<string> {
-  const services = ['Speech Service 1', 'Speech Service 2', 'Speech Service 3']; // Replace with actual service fetching logic
-  const selection = await vscode.window.showQuickPick(services, { placeHolder: 'Select a Speech Service' });
-  return selection || '';
+async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<SpeechServiceInfo|undefined> {
+  let azureAccountProvider = AzureAccountManager.getInstance();
+  const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo.subscriptionId);
+  if (!speechServiceInfo) {
+    return;
+  }
+  console.log("successfully select speech service: " + JSON.stringify(speechServiceInfo));
+
+  return speechServiceInfo;
 }
 
 // Mock function to fetch the Speech Service key and region from Azure.
-async function fetchSpeechServiceKeyAndRegion(subscriptionInfo: SubscriptionInfo, service: string): Promise<{ key: string, region: string }> {
-  // Replace this with actual Azure API call to get the speech service key and region.
+async function fetchSpeechServiceKeyAndRegion(speechServiceInfo: SpeechServiceInfo): Promise<{ key: string, region: string }> {
+  let azureAccountProvider = AzureAccountManager.getInstance();
+  const resourceGroupName = getResourceGroupNameFromId(speechServiceInfo.speechServiceId);
+  const { key, region } = await azureAccountProvider.fetchSpeechServiceKeyAndRegion(speechServiceInfo.subscriptionId, resourceGroupName, speechServiceInfo.speechServiceName);
+  if (!key || !region) {
+    throw new Error("Fail to fetch key and region");
+  }
+
   return {
-    key: 'your-speech-service-key', // Mock key
-    region: 'westus' // Mock region
+    key: key,
+    region: region
   };
+}
+
+function getResourceGroupNameFromId(speechServiceId: string): string {
+  const segments = speechServiceId.split('/');
+  const resourceGroupIndex = segments.indexOf('resourceGroups') + 1;
+  return segments[resourceGroupIndex];
 }
 
 export async function downloadSampleApp(...args: unknown[]) {

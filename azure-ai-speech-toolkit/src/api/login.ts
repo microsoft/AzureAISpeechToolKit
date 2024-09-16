@@ -139,6 +139,12 @@ export type SubscriptionInfo = {
   tenantId: string;
 };
 
+export type SpeechServiceInfo = {
+  speechServiceName: string;
+  speechServiceId: string;
+  subscriptionId: string;
+};
+
 export declare type TokenRequest = {
   scopes: Array<string>;
   showDialog?: boolean;

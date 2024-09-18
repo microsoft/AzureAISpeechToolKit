@@ -9,7 +9,8 @@ import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
 // import { LoginFailureError } from "./codeFlowLogin";
 import { Environment } from "@azure/ms-rest-azure-env";
-import { SpeechServiceInfo } from "../api/login";
+import { AzureResourceInfo } from "../api/login";
+import { AzureResourceAccountType } from "./constants";
 
 export const Microsoft = "microsoft";
 
@@ -94,23 +95,7 @@ export class VSCodeAzureSubscriptionProvider {
   }
 
   public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string|undefined, region: string|undefined }>  {
-    const session = await getSessionFromVSCode(AzureScopes, undefined, {
-      createIfNone: false,
-      silent: true,
-    });
-    if (!session) {
-      return Promise.reject(Error("Failed to get VS code session when try to get speech service details."));
-    }
-
-    const credential: TokenCredential = {
-      // eslint-disable-next-line @typescript-eslint/require-await
-      getToken: async () => {
-        return {
-          token: session.accessToken,
-          expiresOnTimestamp: 0,
-        };
-      },
-    };
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
     
     try {
@@ -132,24 +117,8 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async getSpeechServiceList(subscriptionId: string, tenantId?: string, scopes?: string[]): Promise<SpeechServiceInfo[]> {
-    const session = await getSessionFromVSCode(scopes, tenantId, {
-      createIfNone: false,
-      silent: true,
-    });
-    if (!session) {
-      return Promise.reject(Error("Failed to get VS code session when try to get speech service list."));
-    }
-
-    const credential: TokenCredential = {
-      // eslint-disable-next-line @typescript-eslint/require-await
-      getToken: async () => {
-        return {
-          token: session.accessToken,
-          expiresOnTimestamp: 0,
-        };
-      },
-    };
+  public async getAzureResourceListWithType(subscriptionId: string, accountType: AzureResourceAccountType): Promise<AzureResourceInfo[]> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
     const accountsIterator = await cognitiveClient.accounts.list();
 
@@ -158,19 +127,30 @@ export class VSCodeAzureSubscriptionProvider {
     for await (const account of accountsIterator) {
         accounts.push(account);
     }
+    const azureResourceAccounts = accounts.filter(account => account.kind === accountType);
 
-    const speechAccounts = accounts.filter(account => account.kind === 'SpeechServices');
-    console.log("successfully select speechAccounts: " + JSON.stringify(speechAccounts));
-    const speechServices: SpeechServiceInfo[] = [];
-    for (let i = 0; i<speechAccounts.length; i++) {
-      const item = accounts[i];
-      speechServices.push({
-        speechServiceId: item.id!,
-        speechServiceName: item.name!,
+    const azureResources: AzureResourceInfo[] = [];
+    for (let i = 0; i<azureResourceAccounts.length; i++) {
+      const item = azureResourceAccounts[i];
+      azureResources.push({
+        id: item.id!,
+        name: item.name!,
         subscriptionId: subscriptionId
       })
     }
-    return speechServices;
+    return azureResources;
+  }
+
+  public async getSpeechServiceList(subscriptionId: string): Promise<AzureResourceInfo[]> {
+    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.SpeechServices);
+  }
+  
+  public async getAIServiceList(subscriptionId: string): Promise<AzureResourceInfo[]> {
+    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.AIService);
+  }
+  
+  public async getAIServiceMultiServiceAccountList(subscriptionId: string): Promise<AzureResourceInfo[]> {
+    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.CognitiveServices);
   }
 
   /**
@@ -239,6 +219,30 @@ function getScopes(scopes: string | string[] | undefined, tenantId?: string): st
   }
   return scopeArr;
 }
+
+async function getCredentialFromVSCodeSession(
+  tenantId?: string,
+  scopes?: string[]): Promise<TokenCredential> {
+  const session = await getSessionFromVSCode(scopes, tenantId, {
+    createIfNone: false,
+    silent: true,
+  });
+  if (!session) {
+    return Promise.reject(Error("Fail to get session from VS Code."));
+  }
+
+  const credential: TokenCredential = {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    getToken: async () => {
+      return {
+        token: session.accessToken,
+        expiresOnTimestamp: 0,
+      };
+    },
+  };
+
+  return credential;
+} 
 
 /**
  * Represents a means of obtaining authentication data for an Azure subscription.

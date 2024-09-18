@@ -11,7 +11,7 @@ import { hasUncaughtExceptionCaptureCallback } from "process";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
 import { EnvKeys } from "./constants";
-import { SpeechServiceInfo, SubscriptionInfo } from "./api/login";
+import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
 
 // export async function signInAzureHandler(...args: unknown[]) {
 //   // const azureAccountProvider = AzureAccountManager.getInstance();
@@ -121,7 +121,7 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
 }
 
 // Mock function to ask user for Azure Speech Service.
-async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<SpeechServiceInfo|undefined> {
+async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceInfo|undefined> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo.subscriptionId);
   if (!speechServiceInfo) {
@@ -133,10 +133,10 @@ async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Prom
 }
 
 // Mock function to fetch the Speech Service key and region from Azure.
-async function fetchSpeechServiceKeyAndRegion(speechServiceInfo: SpeechServiceInfo): Promise<{ key: string, region: string }> {
+async function fetchSpeechServiceKeyAndRegion(speechServiceInfo: AzureResourceInfo): Promise<{ key: string, region: string }> {
   let azureAccountProvider = AzureAccountManager.getInstance();
-  const resourceGroupName = getResourceGroupNameFromId(speechServiceInfo.speechServiceId);
-  const { key, region } = await azureAccountProvider.fetchSpeechServiceKeyAndRegion(speechServiceInfo.subscriptionId, resourceGroupName, speechServiceInfo.speechServiceName);
+  const resourceGroupName = getResourceGroupNameFromId(speechServiceInfo.id);
+  const { key, region } = await azureAccountProvider.fetchSpeechServiceKeyAndRegion(speechServiceInfo.subscriptionId, resourceGroupName, speechServiceInfo.name);
   if (!key || !region) {
     throw new Error("Fail to fetch key and region");
   }

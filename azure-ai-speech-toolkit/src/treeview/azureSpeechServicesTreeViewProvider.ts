@@ -3,7 +3,7 @@
 
 import * as vscode from "vscode";
 
-import { TokenProvider } from "../api/login";
+import { AzureResourceInfo, TokenProvider } from "../api/login";
 // import { DynamicNode } from "./dynamicNode";
 // import envTreeProviderInstance from "../environmentTreeViewProvider";
 import { AzureAccountNode } from "./account/azureNode";
@@ -12,6 +12,7 @@ import { AzureAccountManager } from "../common/azureLogin";
 // import { AppStudioScopes } from "@microsoft/teamsfx-core";
 // import { isSPFxProject } from "../../globalVariables";
 import * as path from 'path'; 
+import { AzureResourceAccountType } from "../common/constants";
 
 class azureSpeechServicesTreeViewProvider implements vscode.TreeDataProvider<SpeechServiceTreeItem> {
   private static instance: azureSpeechServicesTreeViewProvider;
@@ -57,20 +58,35 @@ class azureSpeechServicesTreeViewProvider implements vscode.TreeDataProvider<Spe
       const subItems = subs.map(sub => new SpeechServiceTreeItem(sub.subscriptionName!, sub.subscriptionId!, vscode.TreeItemCollapsibleState.Collapsed, ItemType.Subscription));
       return subItems;
     }
+    else if (element.itemType === ItemType.Subscription) {
+      // Second level: Show resource types under each subscription
+      const resourceTypes: SpeechServiceTreeItem[] = [
+          new SpeechServiceTreeItem("Speech Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.SpeechService),
+          new SpeechServiceTreeItem("AI Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIService),
+          new SpeechServiceTreeItem("Cognitive Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIServiceMultiServiceAccount)
+      ];
+      return resourceTypes;
+    }
     else {
-      // Child level: Get Speech Services under each subscription
-      if (!element.subscriptionId) {
-        throw new Error("element label is undefine!");
+      // Third level: Show certain type Services under the subscription
+      let resourceType = AzureResourceAccountType.SpeechServices;
+      switch (element.itemType) {
+        case ItemType.AIService:
+          resourceType = AzureResourceAccountType.AIService;
+          break;
+        case ItemType.AIServiceMultiServiceAccount:
+          resourceType = AzureResourceAccountType.CognitiveServices;
+          break;
       }
-      
-      const speechServices = await this.azureAccountProvider.listSpeechServices(element.subscriptionId);
-      const speechServicesItems = speechServices.map(speechService => new SpeechServiceTreeItem(
-        speechService.speechServiceName,
-        speechService.speechServiceId,
+      const azureResources = await this.azureAccountProvider.listAzureServices(element.subscriptionId, resourceType);
+      const azureResourceItems = azureResources.map(azureResource => new SpeechServiceTreeItem(
+        azureResource.name,
+        azureResource.id,
         vscode.TreeItemCollapsibleState.None,
-        ItemType.SpeechService
+        element.itemType
       ));
-      return speechServicesItems;
+
+      return azureResourceItems;
     }
   }
 }
@@ -90,7 +106,18 @@ class SpeechServiceTreeItem extends vscode.TreeItem {
 
   // Helper function to return the correct icon path
   private getIconPath(itemType: ItemType): { light: string; dark: string } {
-      const iconName = itemType === ItemType.Subscription ? 'subscription.png' : 'speech-service-icon.png';
+    let iconName = 'subscription.png';
+    switch (itemType) {
+      case ItemType.SpeechService:
+        iconName = 'speech-service-icon.png';
+        break;
+      case ItemType.AIService:
+        iconName = 'azure-ai-service.png';
+        break;
+      case ItemType.AIServiceMultiServiceAccount:
+        iconName = 'azure-ai-service-multiservice-account.png';
+        break;
+    }
       const iconPathLight = path.join(__filename, '..', '..', '..', 'media', iconName); // For light theme
       const iconPathDark = path.join(__filename, '..', '..', '..', 'media', iconName); // For dark theme
       return { light: iconPathLight, dark: iconPathDark };
@@ -99,7 +126,9 @@ class SpeechServiceTreeItem extends vscode.TreeItem {
 
 enum ItemType {
   Subscription = 'SUBSCRIPTION',
-  SpeechService = 'SPEECH_SERVICE'
+  SpeechService = 'SPEECH_SERVICE',
+  AIService = 'AI_SERVICE',
+  AIServiceMultiServiceAccount = 'AI_SERVICE_MULTI_SERVICE_ACCOUNT'
 }
 // async function m365AccountStatusChangeHandler(
 //   source: string,

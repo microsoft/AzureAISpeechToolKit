@@ -10,7 +10,7 @@ import type { TokenCredential } from "@azure/core-auth";
 // import { AzureAccountProvider } from "../api/login";
 import {
   AzureAccountProvider,
-  SpeechServiceInfo,
+  AzureResourceInfo,
 //   UserError,
   SubscriptionInfo,
 //   SingleSelectConfig,
@@ -21,7 +21,7 @@ import { OptionItem} from "../api/types";
 // import { ExtensionErrors } from "../error";
 // import { LoginFailureError } from "./codeFlowLogin";
 import * as vscode from "vscode";
-import { loggedIn, loggedOut, loggingIn, signedIn, signedOut, signingIn } from "./constants";
+import { AzureResourceAccountType, loggedIn, loggedOut, loggingIn, signedIn, signedOut, signingIn } from "./constants";
 import { login, LoginStatus } from "./login";
 import * as util from "util";
 // import { ExtTelemetry } from "../telemetry/extTelemetry";
@@ -308,14 +308,10 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
-  
-  /**
-   * list all subscriptions
-   */
-  async listSpeechServices(subscriptionId: string): Promise<SpeechServiceInfo[]> {
-    let speechServices: SpeechServiceInfo[] = [];
+  async listAzureServices(subscriptionId: string, type: AzureResourceAccountType): Promise<AzureResourceInfo[]> {
+    let speechServices: AzureResourceInfo[] = [];
     if (await this.isUserLogin()) {
-      speechServices = await this.vscodeAzureSubscriptionProvider.getSpeechServiceList(subscriptionId, undefined, AzureScopes);
+      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionId, type);
     }
 
     return speechServices;
@@ -447,12 +443,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
   
-  async getSelectedSpeechService(subscriptionId: string): Promise<SpeechServiceInfo | undefined> {
+  async getSelectedSpeechService(subscriptionId: string): Promise<AzureResourceInfo | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only select speech service when logged in.");
     }
 
-    const speechServiceList = await this.listSpeechServices(subscriptionId);
+    const speechServiceList = await this.listAzureServices(subscriptionId, AzureResourceAccountType.SpeechServices);
     if (!speechServiceList || speechServiceList.length == 0) {
       vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech service! Retry command and select a different subscription.");
       return;
@@ -460,8 +456,8 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
     const options: OptionItem[] = speechServiceList.map((speechService) => {
       return {
-        id: speechService.speechServiceId,
-        label: speechService.speechServiceName,
+        id: speechService.id,
+        label: speechService.name,
         // data: sub.tenantId,
       } as OptionItem;
     });
@@ -476,7 +472,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     } else {
       const selectedSpeechServiceId = result.value.result as string;
 
-      return speechServiceList.find(service => service.speechServiceId == selectedSpeechServiceId);
+      return speechServiceList.find(service => service.id == selectedSpeechServiceId);
     }
   }
 

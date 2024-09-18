@@ -19,12 +19,18 @@ export const codeSpacesAuthComplete = "auth-complete";
 export const vscodeRedirect = "https://vscode.dev/redirect";
 
 export enum SummaryConstant {
-    Succeeded = "(√) Done:",
-    Failed = "(×) Error:",
-    NotExecuted = "(!) Warning:",
-    Warning = "(!) Warning:",
-  }
+  Succeeded = "(√) Done:",
+  Failed = "(×) Error:",
+  NotExecuted = "(!) Warning:",
+  Warning = "(!) Warning:",
+}
 
 
 export const ConfigFolderName = "azureSpeech";
 export const ProductName = "azureAISpeech";
+
+export enum AzureResourceAccountType {
+  SpeechServices = "SpeechServices",
+  AIService = "AIServices",
+  CognitiveServices = "CognitiveServices"
+}

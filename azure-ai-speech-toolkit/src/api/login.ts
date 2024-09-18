@@ -139,9 +139,9 @@ export type SubscriptionInfo = {
   tenantId: string;
 };
 
-export type SpeechServiceInfo = {
-  speechServiceName: string;
-  speechServiceId: string;
+export type AzureResourceInfo = {
+  name: string;
+  id: string;
   subscriptionId: string;
 };
 

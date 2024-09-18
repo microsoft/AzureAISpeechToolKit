@@ -15,7 +15,7 @@
   "categories": [
     "Other"
   ],
-  "icon": "media/cognitive-service.png",
+  "icon": "media/azure-ai-speech-toolkit-icon.png",
   "activationEvents": [],
   "main": "./out/src/extension.js",
   "contributes": {
@@ -24,7 +24,7 @@
         {
           "id": "azureAiSpeechToolkit",
           "title": "Azure AI Speech Toolkit",
-          "icon": "media/cognitive-service.png"
+          "icon": "media/side-bar-icon.png"
         }
       ]
     },

@@ -90,7 +90,7 @@ class SpeechServiceTreeItem extends vscode.TreeItem {
 
   // Helper function to return the correct icon path
   private getIconPath(itemType: ItemType): { light: string; dark: string } {
-      const iconName = itemType === ItemType.Subscription ? 'subscription.png' : 'cognitive-service.png';
+      const iconName = itemType === ItemType.Subscription ? 'subscription.png' : 'speech-service-icon.png';
       const iconPathLight = path.join(__filename, '..', '..', '..', 'media', iconName); // For light theme
       const iconPathDark = path.join(__filename, '..', '..', '..', 'media', iconName); // For dark theme
       return { light: iconPathLight, dark: iconPathDark };

@@ -47,3 +47,10 @@ export enum EnvKeys {
   AzureSubscriptionId = 'AZURE_SUBSCRIPTION_ID',
   TenantId = 'TENANT_ID',
 }
+
+export class ConstantString {
+  // static readonly UTF8Encoding = "utf-8";
+  // static readonly DeploymentResourceType = "Microsoft.Resources/deployments";
+  // static readonly DeploymentNotFound = "DeploymentNotFound";
+  static readonly RootFolder = "AzureAISpeechApps";
+}

@@ -144,10 +144,7 @@ export class WebviewPanel {
             void vscode.env.openExternal(vscode.Uri.parse(msg.data));
             break;
           case Commands.CloneSampleApp:
-            // await Correlator.run(async () => {
-            //   await downloadSampleApp(TelemetryTriggerFrom.Webview, msg.data.appFolder);
-            // });
-            await downloadSampleApp(/* TelemetryTriggerFrom.Webview, */ msg.data, 2, 20);
+            await downloadSampleApp(msg.data);
             break;
           case Commands.DisplayCommands:
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

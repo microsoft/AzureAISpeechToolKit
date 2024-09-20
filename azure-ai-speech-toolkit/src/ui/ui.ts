@@ -693,7 +693,7 @@ export class VSCodeUI implements UserInteraction {
               : []),
             {
               id: "browse",
-              label: `$(folder) Browse...}`,
+              label: `$(folder) Browse...`,
             },
           ];
         };

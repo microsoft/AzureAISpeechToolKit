@@ -1,17 +1,18 @@
 import { PanelType } from "./controls/PanelType";
 import { WebviewPanel } from "./controls/webviewPanel";
 import { sendRequestWithRetry } from "./common/requestUtils";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import { SampleInfo } from "./controls/sampleGallery/ISamples";
 import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
 const path = require('node:path');
+import * as os from "os";
 import * as fs from "fs-extra";
 import * as vscode from "vscode";
-import { hasUncaughtExceptionCaptureCallback } from "process";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
-import { EnvKeys } from "./constants";
+import { ConstantString, EnvKeys } from "./constants";
 import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
+import { VS_CODE_UI } from "./extension";
 
 // export async function signInAzureHandler(...args: unknown[]) {
 //   // const azureAccountProvider = AzureAccountManager.getInstance();
@@ -121,7 +122,7 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
 }
 
 // Mock function to ask user for Azure Speech Service.
-async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceInfo|undefined> {
+async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceInfo | undefined> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo.subscriptionId);
   if (!speechServiceInfo) {
@@ -155,42 +156,64 @@ function getResourceGroupNameFromId(speechServiceId: string): string {
 
 export async function downloadSampleApp(...args: unknown[]) {
   const sampleInfo = args[0] as SampleInfo;
-  const retryLimits = args[1] as number;
-  const concurrencyLimits = args[2] as number
-  const options: vscode.OpenDialogOptions = {
-    canSelectFiles: false,
-    canSelectFolders: true,
-    openLabel: 'Select'
-  };
+  const sampleId = sampleInfo.id;
 
-  const dstPath = await vscode.window.showOpenDialog(options).then(fileUri => {
-    if (fileUri && fileUri[0]) {
-      console.log('Selected file: ' + fileUri[0].fsPath);
-      return fileUri[0].fsPath
-    }
-    else {
-      throw new URIError("No destination folder selected.")
-    }
-  });
 
-  if (dstPath == "") {
-    throw new URIError("Destination path is empty.")
+  // Validate sampleId
+  if (!sampleId || typeof sampleId !== "string") {
+    throw new Error("Invalid sampleId. Received: " + sampleId);
   }
 
+  const res = await VS_CODE_UI.selectFolder({
+    name: "folder",
+    title: "Workspace Folder",
+    placeholder: "Choose the folder where your project root folder will be located",
+    default: path.join(os.homedir(), ConstantString.RootFolder),
+  });
 
-  const { samplePaths, fileUrlPrefix } = await getSampleFileInfo(sampleInfo, retryLimits);
-  await downloadSampleFiles(
-    sampleInfo.downloadUrlInfo,
-    fileUrlPrefix,
-    samplePaths,
-    dstPath,
-    retryLimits,
-    concurrencyLimits
-  );
+  if (res.isErr()) {
+    throw new Error("Fail to select folder for sample app." + res.error);
+  } else {
+    console.log("Selected folder: ", res.value.result);
+    console.log("sampleId: " + sampleId);
 
-  const success = await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(dstPath))
+    // Ensure result is not undefined
+    if (!res.value.result) {
+      throw new Error("No folder selected or result is undefined.");
+    }
+    const selectedFolder = res.value.result as string;
+    let projectPath = path.join(selectedFolder, sampleId);
+    let count = 1;
 
-  return success
+    // Append _{number} if projectPath already exists
+    while (fs.existsSync(projectPath)) {
+      projectPath = path.join(selectedFolder, `${sampleId}_${count}`);
+      count++;
+    }
+
+    // Check if the parent folder exists, create it if not
+    if (!fs.existsSync(selectedFolder)) {
+      fs.mkdirSync(selectedFolder, { recursive: true });
+      console.log("Created parent folder: " + selectedFolder);
+    }
+
+    console.log("projectPath: " + projectPath);
+
+    const sampleDefaultRetryLimits = 2;
+    const sampleConcurrencyLimits = 20;
+    const { samplePaths, fileUrlPrefix } = await getSampleFileInfo(sampleInfo, sampleDefaultRetryLimits);
+    await downloadSampleFiles(
+      sampleInfo.downloadUrlInfo,
+      fileUrlPrefix,
+      samplePaths,
+      projectPath,
+      sampleDefaultRetryLimits,
+      sampleConcurrencyLimits
+    );
+    console.log("Successfully download sample files to project path:" + projectPath);
+
+    return await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(projectPath));
+  }
 }
 
 export async function getSampleFileInfo(sampleInfo: SampleInfo, retryLimits: number): Promise<any> {

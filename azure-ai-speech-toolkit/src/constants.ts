@@ -28,6 +28,7 @@ export enum CommandKey {
 
   export enum VSCodeCommands {
     OpenFolder = "vscode.openFolder",
+    OpenDocument = "vscode.open",
     MarkdownPreview = "markdown.showPreview",
   }
 
@@ -60,5 +61,6 @@ export class ConstantString {
   // static readonly DeploymentNotFound = "DeploymentNotFound";
   static readonly RootFolder = "AzureAISpeechApps";
   static readonly EnvFolderName = ".env";
+  static readonly EnvFileName = ".env.dev";
   static readonly AzureAISpeechAppYmlFileName = "azureAiSpeechApp.yml";
 }

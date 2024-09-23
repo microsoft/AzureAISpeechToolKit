@@ -44,7 +44,7 @@ export async function provisionHandler(...args: unknown[]) {
   }
 
   const envFolderPath = path.join(workspaceFolder, ConstantString.EnvFolderName);
-  const envFilePath = path.join(envFolderPath, '.env.dev');
+  const envFilePath = path.join(envFolderPath, ConstantString.EnvFileName);
 
   // Step 1: Check if .env folder exists, if not, create one.
   if (!fs.existsSync(envFolderPath)) {
@@ -81,7 +81,11 @@ export async function provisionHandler(...args: unknown[]) {
     envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
 
     fs.writeFileSync(envFilePath, envContent);
-    vscode.window.showInformationMessage('.env/.env.dev file updated successfully.');
+    vscode.window.showInformationMessage(envFilePath + " file updated successfully.");
+    await vscode.commands.executeCommand(VSCodeCommands.OpenDocument, vscode.Uri.file(envFilePath), {
+      viewColumn: vscode.ViewColumn.Beside
+    });
+
   } else {
     vscode.window.showInformationMessage('Speech service configuration already exists.');
   }
@@ -236,13 +240,7 @@ export async function downloadSampleApp(...args: unknown[]) {
       fs.writeFileSync(ymlPath, `name: ${sampleId}\nversion: 1.0\n`);
     }
 
-
     return await vscode.commands.executeCommand(VSCodeCommands.OpenFolder, vscode.Uri.file(projectPath));
-    const rootReadmePath = path.join(projectPath, "README.md");
-    if (fs.existsSync(rootReadmePath)) {
-      return await vscode.commands.executeCommand(VSCodeCommands.MarkdownPreview, vscode.Uri.file(rootReadmePath));
-    }
-    // vscode.workspace.openTextDocument
   }
 }
 

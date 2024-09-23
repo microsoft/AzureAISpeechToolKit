@@ -16,7 +16,9 @@
     "Other"
   ],
   "icon": "media/azure-ai-speech-toolkit-icon.png",
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:azureAiSpeechApp.yml"
+  ],
   "main": "./out/src/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -71,6 +73,12 @@
         "command": "azure-ai-speech-toolkit.signInAzure",
         "title": "Sign in to Azure account",
         "category": "Azure AI Speech Toolkit"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.openReadMe",
+        "title": "Open README file",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "never"
       }
     ]
   },

@@ -10,7 +10,7 @@ import * as fs from "fs-extra";
 import * as vscode from "vscode";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
-import { ConstantString, EnvKeys } from "./constants";
+import { ConstantString, EnvKeys, VSCodeCommands } from "./constants";
 import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 
@@ -43,7 +43,7 @@ export async function provisionHandler(...args: unknown[]) {
     return;
   }
 
-  const envFolderPath = path.join(workspaceFolder, '.env');
+  const envFolderPath = path.join(workspaceFolder, ConstantString.EnvFolderName);
   const envFilePath = path.join(envFolderPath, '.env.dev');
 
   // Step 1: Check if .env folder exists, if not, create one.
@@ -84,6 +84,24 @@ export async function provisionHandler(...args: unknown[]) {
     vscode.window.showInformationMessage('.env/.env.dev file updated successfully.');
   } else {
     vscode.window.showInformationMessage('Speech service configuration already exists.');
+  }
+}
+
+export async function openReadMeHandler(...args: unknown[]) {
+  if (!globalVariables.isSpeechFxProject) {
+    console.log("not speech project. Skip open readme file.");
+    return;
+  }
+
+  const workspaceFolder = globalVariables.workspaceUri?.fsPath;
+  if (!workspaceFolder) {
+    vscode.window.showErrorMessage('No workspace folder is open.');
+    return;
+  }
+
+  const rootReadmePath = `${workspaceFolder}/README.md`;
+  if (fs.existsSync(rootReadmePath)) {
+    return await vscode.commands.executeCommand(VSCodeCommands.MarkdownPreview, vscode.Uri.file(rootReadmePath));
   }
 }
 
@@ -212,7 +230,19 @@ export async function downloadSampleApp(...args: unknown[]) {
     );
     console.log("Successfully download sample files to project path:" + projectPath);
 
-    return await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(projectPath));
+    // generate azureAiSpeechApp.yml file
+    const ymlPath = path.join(projectPath, ConstantString.AzureAISpeechAppYmlFileName);
+    if (!fs.existsSync(ymlPath)) {
+      fs.writeFileSync(ymlPath, `name: ${sampleId}\nversion: 1.0\n`);
+    }
+
+
+    return await vscode.commands.executeCommand(VSCodeCommands.OpenFolder, vscode.Uri.file(projectPath));
+    const rootReadmePath = path.join(projectPath, "README.md");
+    if (fs.existsSync(rootReadmePath)) {
+      return await vscode.commands.executeCommand(VSCodeCommands.MarkdownPreview, vscode.Uri.file(rootReadmePath));
+    }
+    // vscode.workspace.openTextDocument
   }
 }
 

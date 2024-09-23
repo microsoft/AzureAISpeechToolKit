@@ -1,5 +1,7 @@
 import * as fs from "fs-extra";
+import path = require("path");
 import * as vscode from "vscode";
+import { ConstantString } from "./constants";
 
 /**
  * Common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -46,8 +48,9 @@ export function initializeGlobalVariables(ctx: vscode.ExtensionContext): void {
 function isValidProject(workspacePath?: string): boolean {
   if (!workspacePath) return false;
 
-  // TODO: have a speechFx signal file inserted into project as a flag showing whether it is a speech project.
-  // right now just take every project as a valid speech project.
+  const ymlPath = path.join(workspacePath, ConstantString.AzureAISpeechAppYmlFileName);
+  if (!fs.existsSync(ymlPath)) {
+    return false;
+  }
   return true;
 }
-  

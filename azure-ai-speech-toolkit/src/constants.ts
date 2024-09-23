@@ -10,7 +10,7 @@ export enum CommandKey {
     OpenSamples = "azure-ai-speech-toolkit.openSamples",
     DownloadSample = "azure-ai-speech-toolkit.downloadSample",
     // ValidateGetStartedPrerequisites = "azure-ai-speech-toolkit.validate-getStarted-prerequisites",
-    // OpenReadMe = "azure-ai-speech-toolkit.openReadMe",
+    OpenReadMe = "azure-ai-speech-toolkit.openReadMe",
     // DebugInTestToolFromMessage = "azure-ai-speech-toolkit.debugInTestToolFromMessage",
     // SigninM365 = "azure-ai-speech-toolkit.signinM365",
     // LocalDebug = "azure-ai-speech-toolkit.localdebug",
@@ -25,6 +25,12 @@ export enum CommandKey {
     // openDeployLink = "azure-ai-speech-toolkit.officeDevDeploy",
     // openOfficeDevDocument = "azure-ai-speech-toolkit.openOfficeDevDocument",
   }
+
+  export enum VSCodeCommands {
+    OpenFolder = "vscode.openFolder",
+    MarkdownPreview = "markdown.showPreview",
+  }
+
 
   export enum GlobalKey {
     SampleGalleryInitialSample = "teamsToolkit:sampleGallery:initialSample",
@@ -53,4 +59,6 @@ export class ConstantString {
   // static readonly DeploymentResourceType = "Microsoft.Resources/deployments";
   // static readonly DeploymentNotFound = "DeploymentNotFound";
   static readonly RootFolder = "AzureAISpeechApps";
+  static readonly EnvFolderName = ".env";
+  static readonly AzureAISpeechAppYmlFileName = "azureAiSpeechApp.yml";
 }

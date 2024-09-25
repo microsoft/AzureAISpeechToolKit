@@ -16,7 +16,7 @@ export enum CommandKey {
     // LocalDebug = "azure-ai-speech-toolkit.localdebug",
     // SigninAzure = "azure-ai-speech-toolkit.signinAzure",
     // SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
-    Provision = "azure-ai-speech-toolkit.provision",
+    ConfigureResource = "azure-ai-speech-toolkit.configureResource",
     // Deploy = "azure-ai-speech-toolkit.deploy",
     // Publish = "azure-ai-speech-toolkit.publish",
     // Preview = "azure-ai-speech-toolkit.preview",
@@ -50,10 +50,12 @@ export const TerminalName = "Azure AI Speech Toolkit";
 
 // Enum for environment keys
 export enum EnvKeys {
-  SpeechServiceKey = 'SPEECH_SERVICE_KEY',
+  SpeechResourceKey = 'SPEECH_RESOURCE_KEY',
   ServiceRegion = 'SERVICE_REGION',
   AzureSubscriptionId = 'AZURE_SUBSCRIPTION_ID',
   TenantId = 'TENANT_ID',
+  SpeechResourceName = 'SPEECH_RESOURCE_NAME',
+  SpeechResourceSKU = 'SPEECH_RESOURCE_SKU',
 }
 
 export class ConstantString {

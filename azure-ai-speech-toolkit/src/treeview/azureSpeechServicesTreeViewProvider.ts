@@ -63,19 +63,20 @@ class azureSpeechServicesTreeViewProvider implements vscode.TreeDataProvider<Spe
       const resourceTypes: SpeechServiceTreeItem[] = [
           new SpeechServiceTreeItem("Speech Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.SpeechService),
           new SpeechServiceTreeItem("AI Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIService),
-          new SpeechServiceTreeItem("Cognitive Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIServiceMultiServiceAccount)
+          // new SpeechServiceTreeItem("Cognitive Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIServiceMultiServiceAccount)
       ];
       return resourceTypes;
     }
     else {
       // Third level: Show certain type Services under the subscription
-      let resourceType = AzureResourceAccountType.SpeechServices;
+      let resourceType: AzureResourceAccountType[] = [];
       switch (element.itemType) {
         case ItemType.AIService:
-          resourceType = AzureResourceAccountType.AIService;
+          // AI Services include Cognitive Services and AI Service
+          resourceType = [AzureResourceAccountType.AIService, AzureResourceAccountType.CognitiveServices];
           break;
-        case ItemType.AIServiceMultiServiceAccount:
-          resourceType = AzureResourceAccountType.CognitiveServices;
+        case ItemType.SpeechService:
+          resourceType =[ AzureResourceAccountType.SpeechServices];
           break;
       }
       const azureResources = await this.azureAccountProvider.listAzureServices(element.subscriptionId, resourceType);
@@ -115,9 +116,9 @@ class SpeechServiceTreeItem extends vscode.TreeItem {
       case ItemType.AIService:
         iconName = 'azure-ai-service.png';
         break;
-      case ItemType.AIServiceMultiServiceAccount:
-        iconName = 'azure-ai-service-multiservice-account.png';
-        break;
+      // case ItemType.AIServiceMultiServiceAccount:
+      //   iconName = 'azure-ai-service-multiservice-account.png';
+      //   break;
     }
       const iconPathLight = path.join(__filename, '..', '..', '..', 'media', iconName); // For light theme
       const iconPathDark = path.join(__filename, '..', '..', '..', 'media', iconName); // For dark theme
@@ -129,7 +130,7 @@ enum ItemType {
   Subscription = 'SUBSCRIPTION',
   SpeechService = 'SPEECH_SERVICE',
   AIService = 'AI_SERVICE',
-  AIServiceMultiServiceAccount = 'AI_SERVICE_MULTI_SERVICE_ACCOUNT'
+  // AIServiceMultiServiceAccount = 'AI_SERVICE_MULTI_SERVICE_ACCOUNT'
 }
 
 export default azureSpeechServicesTreeViewProvider.getInstance();

@@ -143,6 +143,9 @@ export type AzureResourceInfo = {
   name: string;
   id: string;
   subscriptionId: string;
+  region: string;
+  accountType: string;
+  sku: string;
 };
 
 export declare type TokenRequest = {

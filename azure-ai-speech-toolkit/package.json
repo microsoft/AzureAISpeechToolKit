@@ -37,10 +37,6 @@
           "name": "Azure AI Speech Toolkit"
         },
         {
-          "id": "azure-ai-speech-toolkit-accounts",
-          "name": "Accounts"
-        },
-        {
           "id": "azure-ai-speech-toolkit-speechServices",
           "name": "Azure AI Speech Services"
         }
@@ -65,8 +61,8 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
-        "command": "azure-ai-speech-toolkit.provision",
-        "title": "Provision Azure Speech Resources",
+        "command": "azure-ai-speech-toolkit.configureResource",
+        "title": "Configure Azure Speech Resources",
         "category": "Azure AI Speech Toolkit"
       },
       {
@@ -80,16 +76,7 @@
         "title": "Sign out",
         "icon": "$(sign-out)"
       }
-    ],
-    "menus": {
-      "view/item/context": [
-        {
-          "command": "azure-ai-speech-toolkit.signOutAzure",
-          "group": "inline",
-          "when": "view == azure-ai-speech-toolkit-accounts && viewItem == signedinAzure"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "rimraf out && webpack --mode production --config ./webpack.config.js",

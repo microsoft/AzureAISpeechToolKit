@@ -18,7 +18,7 @@ export function isSpeechResourceSeleted(): boolean {
 
     const envContent = fs.readFileSync(envFilePath, 'utf8');
 
-    let speechServiceKey = extractEnvValue(envContent, EnvKeys.SpeechServiceKey);
+    let speechServiceKey = extractEnvValue(envContent, EnvKeys.SpeechResourceKey);
     let serviceRegion = extractEnvValue(envContent, EnvKeys.ServiceRegion);
     let tenantId = extractEnvValue(envContent, EnvKeys.TenantId);
     let subscriptionId = extractEnvValue(envContent, EnvKeys.AzureSubscriptionId);

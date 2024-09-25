@@ -7,7 +7,6 @@ import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
-// import { LoginFailureError } from "./codeFlowLogin";
 import { Environment } from "@azure/ms-rest-azure-env";
 import { AzureResourceInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
@@ -87,17 +86,17 @@ export class VSCodeAzureSubscriptionProvider {
 
         // For each tenant, get the list of subscriptions
         results.push(...(await this.getSubscriptionsForTenant(tenantId)));
-      } catch (e) {}
+      } catch (e) { }
     }
     const sortSubscriptions = (subscriptions: AzureSubscription[]): AzureSubscription[] =>
       subscriptions.sort((a, b) => a.name.localeCompare(b.name));
     return sortSubscriptions(results);
   }
 
-  public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string|undefined, region: string|undefined }>  {
+  public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
-    
+
     try {
       // Fetch Speech Service details, including the region
       const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechServiceName);
@@ -117,7 +116,7 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async getAzureResourceListWithType(subscriptionId: string, accountType: AzureResourceAccountType): Promise<AzureResourceInfo[]> {
+  public async getAzureResourceListWithType(subscriptionId: string, accountTypes: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
     const accountsIterator = await cognitiveClient.accounts.list();
@@ -125,32 +124,37 @@ export class VSCodeAzureSubscriptionProvider {
     // Collect all accounts from the iterator
     const accounts: Account[] = [];
     for await (const account of accountsIterator) {
-        accounts.push(account);
+      accounts.push(account);
     }
-    const azureResourceAccounts = accounts.filter(account => account.kind === accountType);
+
+    const azureResourceAccounts = accounts.filter(account => accountTypes.includes(account.kind as AzureResourceAccountType));
 
     const azureResources: AzureResourceInfo[] = [];
-    for (let i = 0; i<azureResourceAccounts.length; i++) {
+    for (let i = 0; i < azureResourceAccounts.length; i++) {
       const item = azureResourceAccounts[i];
+      if (i === 0) {
+        console.log(item);
+      }
       azureResources.push({
         id: item.id!,
         name: item.name!,
-        subscriptionId: subscriptionId
+        subscriptionId: subscriptionId,
+        region: item.location!,
+        accountType: this.getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
+        sku: item.sku!.name!
       })
     }
     return azureResources;
   }
 
-  public async getSpeechServiceList(subscriptionId: string): Promise<AzureResourceInfo[]> {
-    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.SpeechServices);
-  }
-  
-  public async getAIServiceList(subscriptionId: string): Promise<AzureResourceInfo[]> {
-    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.AIService);
-  }
-  
-  public async getAIServiceMultiServiceAccountList(subscriptionId: string): Promise<AzureResourceInfo[]> {
-    return await this.getAzureResourceListWithType(subscriptionId, AzureResourceAccountType.CognitiveServices);
+  getAzureResourceAccountTypeDisplayName(accountType: AzureResourceAccountType): string {
+    switch (accountType) {
+      case AzureResourceAccountType.SpeechServices:
+        return 'Speech Services';
+      case AzureResourceAccountType.CognitiveServices:
+      case AzureResourceAccountType.AIService:
+        return 'AI Services';
+    }
   }
 
   /**
@@ -242,7 +246,7 @@ async function getCredentialFromVSCodeSession(
   };
 
   return credential;
-} 
+}
 
 /**
  * Represents a means of obtaining authentication data for an Azure subscription.

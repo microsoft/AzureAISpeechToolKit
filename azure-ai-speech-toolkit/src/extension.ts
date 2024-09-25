@@ -24,8 +24,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	const openSamples = vscode.commands.registerCommand(CommandKeys.OpenSamples, handlers.openSamplesHandler);
 	context.subscriptions.push(openSamples);
 
-	const provisionResources = vscode.commands.registerCommand(CommandKeys.Provision, handlers.provisionHandler);
-	context.subscriptions.push(provisionResources);
+	const configureResource = vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.ConfigureResourcehandler);
+	context.subscriptions.push(configureResource);
 
 	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
 	context.subscriptions.push(openDocument);
@@ -48,11 +48,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		if (!isSpeechResourceSeleted()) {
 			vscode.window.showInformationMessage(
-				'Environment file not found. Would you like to provision a Speech Service?',
-				'Provision'
+				'Environment file not found. Would you like to configure a Speech Service?',
+				'Configure a Speech Resource',
 			).then(selection => {
-				if (selection === 'Provision') {
-					vscode.commands.executeCommand(CommandKeys.Provision);
+				if (selection === 'Configure a Speech Resource') {
+					vscode.commands.executeCommand(CommandKeys.ConfigureResource);
 				}
 			});
 			// vscode.commands.executeCommand(CommandKeys.Provision);
@@ -71,7 +71,7 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	// registerTreeViewCommandsInHelper(context);
 	// registerTeamsFxCommands(context);
 	// registerMenuCommands(context);
-	registerAccountMenuCommands(context);
+	// registerAccountMenuCommands(context);
 	console.log("activateSpeechFxRegistration");
 
 	TreeViewManagerInstance.registerTreeViews(context);
@@ -117,28 +117,28 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	// );
 }
 
-async function registerAccountMenuCommands(context: vscode.ExtensionContext) {
-	// Register SignOut tree view command
-	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.SignOutAzure, async (node: TreeViewCommand) => {
-			try {
-				switch (node.contextValue) {
-					// case "signedinM365": {
-					//   await Correlator.run(async () => {
-					// 	await signOutM365(true);
-					//   });
-					//   break;
-					// }
-					case "signedinAzure": {
-						vscode.window.showInformationMessage("Azure account Sign Out is moved to the Accounts section on the bottom left panel. To sign out of Azure, hover on your Azure account email and click Sign Out.");
-						break;
-					}
-				}
-			} catch (e) {
-				console.error(e);
-			}
-		})
-	);
-}
+// async function registerAccountMenuCommands(context: vscode.ExtensionContext) {
+// 	// Register SignOut tree view command
+// 	context.subscriptions.push(
+// 		vscode.commands.registerCommand(CommandKeys.SignOutAzure, async (node: TreeViewCommand) => {
+// 			try {
+// 				switch (node.contextValue) {
+// 					// case "signedinM365": {
+// 					//   await Correlator.run(async () => {
+// 					// 	await signOutM365(true);
+// 					//   });
+// 					//   break;
+// 					// }
+// 					case "signedinAzure": {
+// 						vscode.window.showInformationMessage("Azure account Sign Out is moved to the Accounts section on the bottom left panel. To sign out of Azure, hover on your Azure account email and click Sign Out.");
+// 						break;
+// 					}
+// 				}
+// 			} catch (e) {
+// 				console.error(e);
+// 			}
+// 		})
+// 	);
+// }
 // This method is called when your extension is deactivated
 export function deactivate() { }

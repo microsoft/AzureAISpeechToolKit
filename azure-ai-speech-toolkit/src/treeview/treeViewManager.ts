@@ -38,7 +38,7 @@ class TreeViewManager {
   public registerTreeViews(context: vscode.ExtensionContext): void {
     const disposables: vscode.Disposable[] = [];
 
-    this.registerAccount(disposables);
+    // this.registerAccount(disposables);
     this.registerSpeechService(disposables);
     // this.registerEnvironment(disposables);
     // this.registerDevelopment(disposables);
@@ -176,12 +176,12 @@ class TreeViewManager {
     });
   }
 
-  private registerAccount(disposables: vscode.Disposable[]) {
-    disposables.push(
-      vscode.window.registerTreeDataProvider("azure-ai-speech-toolkit-accounts", accountTreeViewProviderInstance)
-    );
-    this.treeviewMap.set("azure-ai-speech-toolkit-accounts", accountTreeViewProviderInstance);
-  }
+  // private registerAccount(disposables: vscode.Disposable[]) {
+  //   disposables.push(
+  //     vscode.window.registerTreeDataProvider("azure-ai-speech-toolkit-accounts", accountTreeViewProviderInstance)
+  //   );
+  //   this.treeviewMap.set("azure-ai-speech-toolkit-accounts", accountTreeViewProviderInstance);
+  // }
   
   private registerSpeechService(disposables: vscode.Disposable[]) {
     disposables.push(

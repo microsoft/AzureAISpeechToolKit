@@ -1,43 +1,24 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 /* eslint-disable @typescript-eslint/no-empty-function */
-
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 "use strict";
 
 import type { TokenCredential } from "@azure/core-auth";
-// import { AzureAccountProvider } from "../api/login";
 import {
   AzureAccountProvider,
   AzureResourceInfo,
-//   UserError,
   SubscriptionInfo,
-//   SingleSelectConfig,
-//   OptionItem,
 } from "../api/login";
 import {SingleSelectConfig} from "../api/ui";
 import { OptionItem} from "../api/types";
-// import { ExtensionErrors } from "../error";
-// import { LoginFailureError } from "./codeFlowLogin";
 import * as vscode from "vscode";
 import { AzureResourceAccountType, loggedIn, loggedOut, loggingIn, signedIn, signedOut, signingIn } from "./constants";
 import { login, LoginStatus } from "./login";
 import * as util from "util";
-// import { ExtTelemetry } from "../telemetry/extTelemetry";
 import VsCodeLogInstance from "./log";
-// import {
-//   TelemetryEvent,
-//   TelemetryProperty,
-//   TelemetrySuccess,
-//   AccountType,
-//   TelemetryErrorType,
-// } from "../telemetry/extTelemetryEvents";
 import { VS_CODE_UI } from "../extension";
-// import { VSCodeUI as VS_CODE_UI } from "../ui/ui";
-import { AzureScopes } from "../constants";
+import { AzureScopes, CommandKey } from "../constants";
 import { globalStateGet, globalStateUpdate } from "./globalState";
-// import { getDefaultString, localize } from "../utils/localizeUtils";
 import {
   Microsoft,
   VSCodeAzureSubscriptionProvider,
@@ -308,10 +289,10 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
-  async listAzureServices(subscriptionId: string, type: AzureResourceAccountType): Promise<AzureResourceInfo[]> {
+  async listAzureServices(subscriptionId: string, types: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
     let speechServices: AzureResourceInfo[] = [];
     if (await this.isUserLogin()) {
-      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionId, type);
+      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionId, types);
     }
 
     return speechServices;
@@ -448,22 +429,23 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       throw new Error("can only select speech service when logged in.");
     }
 
-    const speechServiceList = await this.listAzureServices(subscriptionId, AzureResourceAccountType.SpeechServices);
-    if (!speechServiceList || speechServiceList.length == 0) {
-      vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech service! Retry command and select a different subscription.");
+    const azureResourceAccountTypesToSelect = [AzureResourceAccountType.SpeechServices, AzureResourceAccountType.CognitiveServices, AzureResourceAccountType.AIService];
+    const speechResourcesList = await this.listAzureServices(subscriptionId, azureResourceAccountTypesToSelect);
+    if (!speechResourcesList || speechResourcesList.length == 0) {
+      vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech resource! Retry command " + CommandKey.ConfigureResource+"and select a different subscription.");
       return;
     }
 
-    const options: OptionItem[] = speechServiceList.map((speechService) => {
+    const options: OptionItem[] = speechResourcesList.map((speechService) => {
       return {
         id: speechService.id,
-        label: speechService.name,
+        label: `${speechService.name} (${speechService.accountType}, ${speechService.region}, ${speechService.sku})`,
         // data: sub.tenantId,
       } as OptionItem;
     });
     const config: SingleSelectConfig = {
-      name: "speech service",
-      title: "Select Speech Service",
+      name: "Azure Speech Resource",
+      title: "Select a Speech Resource",
       options: options,
     };
     const result = await VS_CODE_UI.selectOption(config);
@@ -472,7 +454,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     } else {
       const selectedSpeechServiceId = result.value.result as string;
 
-      return speechServiceList.find(service => service.id == selectedSpeechServiceId);
+      return speechResourcesList.find(service => service.id == selectedSpeechServiceId);
     }
   }
 

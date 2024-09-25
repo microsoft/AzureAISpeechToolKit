@@ -13,6 +13,7 @@ import { AzureAccountManager } from "./common/azureLogin";
 import { ConstantString, EnvKeys, VSCodeCommands } from "./constants";
 import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
+import { isSpeechResourceSeleted } from "./utils";
 
 // export async function signInAzureHandler(...args: unknown[]) {
 //   // const azureAccountProvider = AzureAccountManager.getInstance();
@@ -36,6 +37,10 @@ export async function openDocumentHandler(...args: unknown[]) {
 }
 
 export async function provisionHandler(...args: unknown[]) {
+  if (isSpeechResourceSeleted()) {
+    vscode.window.showInformationMessage('Speech service configuration already exists.');
+    return;
+  }
 
   const workspaceFolder = globalVariables.workspaceUri?.fsPath;
   if (!workspaceFolder) {
@@ -43,52 +48,51 @@ export async function provisionHandler(...args: unknown[]) {
     return;
   }
 
+  // Speech resource is not selected, enable user to select or provision one.
   const envFolderPath = path.join(workspaceFolder, ConstantString.EnvFolderName);
-  const envFilePath = path.join(envFolderPath, ConstantString.EnvFileName);
-
-  // Step 1: Check if .env folder exists, if not, create one.
   if (!fs.existsSync(envFolderPath)) {
     fs.mkdirSync(envFolderPath);
   }
 
-  // Step 2: Check if .env/.env.dev file exists and contains SPEECH_SERVICE_KEY and SERVICE_REGION.
+  const envFilePath = path.join(envFolderPath, ConstantString.EnvFileName);
   let envContent = '';
   if (fs.existsSync(envFilePath)) {
     envContent = fs.readFileSync(envFilePath, 'utf8');
   }
 
-  let speechServiceKey = extractEnvValue(envContent, EnvKeys.SpeechServiceKey);
-  let serviceRegion = extractEnvValue(envContent, EnvKeys.ServiceRegion);
-  let tenantId = extractEnvValue(envContent, EnvKeys.TenantId);
-  let subscriptionId = extractEnvValue(envContent, EnvKeys.AzureSubscriptionId);
+  // let speechServiceKey = extractEnvValue(envContent, EnvKeys.SpeechServiceKey);
+  // let serviceRegion = extractEnvValue(envContent, EnvKeys.ServiceRegion);
+  // let tenantId = extractEnvValue(envContent, EnvKeys.TenantId);
+  // let subscriptionId = extractEnvValue(envContent, EnvKeys.AzureSubscriptionId);
 
-  if (!speechServiceKey || !serviceRegion || !tenantId || !subscriptionId) {
-    // Step 3: If the values are missing, prompt the user for subscription and service selection.
-    const subscriptionInfo = await askUserForSubscription();
-    const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
-    if (!speechServiceInfo) {
-      // Fail to find a speech service.
-      return;
-    }
-
-    // Fetch the Speech Service Key and Region.
-    const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
-
-    // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
-    envContent = updateEnvContent(envContent, EnvKeys.SpeechServiceKey, key);
-    envContent = updateEnvContent(envContent, EnvKeys.ServiceRegion, region);
-    envContent = updateEnvContent(envContent, EnvKeys.AzureSubscriptionId, subscriptionInfo.subscriptionId);
-    envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
-
-    fs.writeFileSync(envFilePath, envContent);
-    vscode.window.showInformationMessage(envFilePath + " file updated successfully.");
-    await vscode.commands.executeCommand(VSCodeCommands.OpenDocument, vscode.Uri.file(envFilePath), {
-      viewColumn: vscode.ViewColumn.Beside
-    });
-
-  } else {
-    vscode.window.showInformationMessage('Speech service configuration already exists.');
+  // if (!speechServiceKey || !serviceRegion || !tenantId || !subscriptionId) {
+  // Step 3: If the values are missing, prompt the user for subscription and service selection.
+  const subscriptionInfo = await askUserForSubscription();
+  const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
+  if (!speechServiceInfo) {
+    // Fail to find a speech service.
+    vscode.window.showErrorMessage('No speech service is selected.');
+    return;
   }
+
+  // Fetch the Speech Service Key and Region.
+  const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
+
+  // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
+  envContent = updateEnvContent(envContent, EnvKeys.SpeechServiceKey, key);
+  envContent = updateEnvContent(envContent, EnvKeys.ServiceRegion, region);
+  envContent = updateEnvContent(envContent, EnvKeys.AzureSubscriptionId, subscriptionInfo.subscriptionId);
+  envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
+
+  fs.writeFileSync(envFilePath, envContent);
+  vscode.window.showInformationMessage(envFilePath + " file updated successfully.");
+  await vscode.commands.executeCommand(VSCodeCommands.OpenDocument, vscode.Uri.file(envFilePath), {
+    viewColumn: vscode.ViewColumn.Beside
+  });
+
+  // } else {
+  //   vscode.window.showInformationMessage('Speech service configuration already exists.');
+  // }
 }
 
 export async function openReadMeHandler(...args: unknown[]) {
@@ -123,13 +127,8 @@ function updateEnvContent(content: string, key: string, value: string): string {
   }
 }
 
-// Helper function to extract env variables from content.
-function extractEnvValue(content: string, key: string): string | undefined {
-  const match = content.match(new RegExp(`^${key}=(.+)$`, 'm'));
-  return match ? match[1] : undefined;
-}
 
-// Mock function to ask user for Azure subscription.
+// Ask user for Azure subscription.
 async function askUserForSubscription(): Promise<SubscriptionInfo> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const subscriptionInAccount = await azureAccountProvider.getSelectedSubscription(true);
@@ -143,7 +142,7 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
   }
 }
 
-// Mock function to ask user for Azure Speech Service.
+// Ask user for Azure Speech Service.
 async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceInfo | undefined> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo.subscriptionId);

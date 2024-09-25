@@ -54,3 +54,4 @@ function isValidProject(workspacePath?: string): boolean {
   }
   return true;
 }
+

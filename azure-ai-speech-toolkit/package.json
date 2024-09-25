@@ -70,17 +70,26 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
-        "command": "azure-ai-speech-toolkit.signInAzure",
-        "title": "Sign in to Azure account",
-        "category": "Azure AI Speech Toolkit"
-      },
-      {
         "command": "azure-ai-speech-toolkit.openReadMe",
         "title": "Open README file",
         "category": "Azure AI Speech Toolkit",
         "enablement": "never"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.signOutAzure",
+        "title": "Sign out",
+        "icon": "$(sign-out)"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "azure-ai-speech-toolkit.signOutAzure",
+          "group": "inline",
+          "when": "view == azure-ai-speech-toolkit-accounts && viewItem == signedinAzure"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "rimraf out && webpack --mode production --config ./webpack.config.js",

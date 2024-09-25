@@ -14,8 +14,8 @@ export enum CommandKey {
     // DebugInTestToolFromMessage = "azure-ai-speech-toolkit.debugInTestToolFromMessage",
     // SigninM365 = "azure-ai-speech-toolkit.signinM365",
     // LocalDebug = "azure-ai-speech-toolkit.localdebug",
-    SigninAzure = "azure-ai-speech-toolkit.signinAzure",
-    SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
+    // SigninAzure = "azure-ai-speech-toolkit.signinAzure",
+    // SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
     Provision = "azure-ai-speech-toolkit.provision",
     // Deploy = "azure-ai-speech-toolkit.deploy",
     // Publish = "azure-ai-speech-toolkit.publish",
@@ -30,6 +30,7 @@ export enum CommandKey {
     OpenFolder = "vscode.openFolder",
     OpenDocument = "vscode.open",
     MarkdownPreview = "markdown.showPreview",
+    SetContext = "setContext",
   }
 
 

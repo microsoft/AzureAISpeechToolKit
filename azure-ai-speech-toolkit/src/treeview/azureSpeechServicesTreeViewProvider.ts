@@ -98,10 +98,11 @@ class SpeechServiceTreeItem extends vscode.TreeItem {
       public readonly collapsibleState: vscode.TreeItemCollapsibleState,
       public readonly itemType: ItemType
   ) {
-      super(label, collapsibleState);
+      super( `${label}`, collapsibleState);
       this.tooltip = `${this.label}`;
       // this.description = this.subscriptionId ? `Subscription ID: ${this.subscriptionId}` : '';
       this.iconPath = this.getIconPath(itemType);
+      // this.checkboxState = vscode.TreeItemCheckboxState.Checked;
   }
 
   // Helper function to return the correct icon path
@@ -130,52 +131,5 @@ enum ItemType {
   AIService = 'AI_SERVICE',
   AIServiceMultiServiceAccount = 'AI_SERVICE_MULTI_SERVICE_ACCOUNT'
 }
-// async function m365AccountStatusChangeHandler(
-//   source: string,
-//   status: string,
-//   token?: string | undefined,
-//   accountInfo?: Record<string, unknown> | undefined
-// ) {
-//   const instance = AccountTreeViewProvider.getInstance();
-//   if (status === "SignedIn") {
-//     if (accountInfo) {
-//       instance.m365AccountNode.setSignedIn(
-//         (accountInfo.upn as string) ? (accountInfo.upn as string) : ""
-//       );
-//       if (token && source === "appStudio") {
-//         instance.m365AccountNode.updateChecks(token, true, true);
-//       }
-//     }
-//   } else if (status === "SigningIn") {
-//     instance.m365AccountNode.setSigningIn();
-//   } else if (status === "SignedOut") {
-//     instance.m365AccountNode.setSignedOut();
-//   } else if (status == "Switching") {
-//     instance.m365AccountNode.setSwitching();
-//   }
-//   await envTreeProviderInstance.reloadEnvironments();
-//   return Promise.resolve();
-// }
-
-// async function azureAccountStatusChangeHandler(
-//   status: string,
-//   token?: string | undefined,
-//   accountInfo?: Record<string, unknown> | undefined
-// ) {
-//   const instance = azureSpeechServicesTreeViewProvider.getInstance();
-//   if (status === "SignedIn") {
-//     const username = (accountInfo?.email as string) || (accountInfo?.upn as string);
-//     if (username) {
-//       instance.azureAccountNode.setSignedIn(username);
-//       // await envTreeProviderInstance.reloadEnvironments();
-//     }
-//   } else if (status === "SigningIn") {
-//     instance.azureAccountNode.setSigningIn();
-//   } else if (status === "SignedOut") {
-//     instance.azureAccountNode.setSignedOut();
-//     // await envTreeProviderInstance.reloadEnvironments();
-//   }
-//   return Promise.resolve();
-// }
 
 export default azureSpeechServicesTreeViewProvider.getInstance();

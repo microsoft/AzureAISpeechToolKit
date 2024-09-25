@@ -1,13 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { CommandKey as CommandKeys, TerminalName } from "./constants";
+import { CommandKey as CommandKeys, TerminalName, VSCodeCommands } from "./constants";
 import * as handlers from "./handlers";
 import { initializeGlobalVariables, isSpeechFxProject } from './globalVariables';
 import { VSCodeUI } from './ui/ui';
 import accountTreeViewProviderInstance from "./treeview/account/accountTreeViewProvider";
 import { AzureAccountManager } from './common/azureLogin';
 import TreeViewManagerInstance from "./treeview/treeViewManager";
+import { isSpeechResourceSeleted } from './utils';
+import { TreeViewCommand } from './treeview/treeViewCommand';
 
 export let VS_CODE_UI: VSCodeUI;
 
@@ -41,13 +43,26 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {
 		activateSpeechFxRegistration(context);
+
 		vscode.commands.executeCommand(CommandKeys.OpenReadMe);
+
+		if (!isSpeechResourceSeleted()) {
+			vscode.window.showInformationMessage(
+				'Environment file not found. Would you like to provision a Speech Service?',
+				'Provision'
+			).then(selection => {
+				if (selection === 'Provision') {
+					vscode.commands.executeCommand(CommandKeys.Provision);
+				}
+			});
+			// vscode.commands.executeCommand(CommandKeys.Provision);
+		}
 	}
 	// UI is ready to show & interact
-	await vscode.commands.executeCommand("setContext", "azure-ai-speech-toolkit.isSpeechFx", isSpeechFxProject);
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, "azure-ai-speech-toolkit.isSpeechFx", isSpeechFxProject);
 
 
-	await vscode.commands.executeCommand("setContext", "azure-ai-speech-toolkit.initialized", true);
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, "azure-ai-speech-toolkit.initialized", true);
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
@@ -56,7 +71,7 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	// registerTreeViewCommandsInHelper(context);
 	// registerTeamsFxCommands(context);
 	// registerMenuCommands(context);
-	// handlers.registerAccountMenuCommands(context);
+	registerAccountMenuCommands(context);
 	console.log("activateSpeechFxRegistration");
 
 	TreeViewManagerInstance.registerTreeViews(context);
@@ -102,5 +117,28 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	// );
 }
 
+async function registerAccountMenuCommands(context: vscode.ExtensionContext) {
+	// Register SignOut tree view command
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.SignOutAzure, async (node: TreeViewCommand) => {
+			try {
+				switch (node.contextValue) {
+					// case "signedinM365": {
+					//   await Correlator.run(async () => {
+					// 	await signOutM365(true);
+					//   });
+					//   break;
+					// }
+					case "signedinAzure": {
+						vscode.window.showInformationMessage("Azure account Sign Out is moved to the Accounts section on the bottom left panel. To sign out of Azure, hover on your Azure account email and click Sign Out.");
+						break;
+					}
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		})
+	);
+}
 // This method is called when your extension is deactivated
 export function deactivate() { }

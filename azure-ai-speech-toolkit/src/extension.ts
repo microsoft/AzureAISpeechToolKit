@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { CommandKey as CommandKeys, TerminalName, VSCodeCommands } from "./constants";
+import { CommandKey as CommandKeys, ContextKeys, TerminalName, VSCodeCommands } from "./constants";
 import * as handlers from "./handlers";
 import { initializeGlobalVariables, isSpeechFxProject } from './globalVariables';
 import { VSCodeUI } from './ui/ui';
@@ -59,10 +59,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 	// UI is ready to show & interact
-	await vscode.commands.executeCommand(VSCodeCommands.SetContext, "azure-ai-speech-toolkit.isSpeechFx", isSpeechFxProject);
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
-
-	await vscode.commands.executeCommand(VSCodeCommands.SetContext, "azure-ai-speech-toolkit.initialized", true);
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {

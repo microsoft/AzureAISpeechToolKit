@@ -17,6 +17,8 @@ export enum CommandKey {
   // SigninAzure = "azure-ai-speech-toolkit.signinAzure",
   // SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
   ConfigureResource = "azure-ai-speech-toolkit.configureResource",
+  BuildSampleApp = "azure-ai-speech-toolkit.buildSampleApp",
+  RunSampleApp = "azure-ai-speech-toolkit.runSampleApp",
   // Deploy = "azure-ai-speech-toolkit.deploy",
   // Publish = "azure-ai-speech-toolkit.publish",
   // Preview = "azure-ai-speech-toolkit.preview",
@@ -71,4 +73,9 @@ export class ConstantString {
   static readonly EnvFolderName = ".env";
   static readonly EnvFileName = ".env.dev";
   static readonly AzureAISpeechAppYmlFileName = "azureAiSpeechApp.yml";
+}
+
+export enum TaskName {
+  BuildApp = "Build the App",
+  RunApp = "Run the App",
 }

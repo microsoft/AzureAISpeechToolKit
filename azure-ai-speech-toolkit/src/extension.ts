@@ -27,6 +27,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	const configureResource = vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.ConfigureResourcehandler);
 	context.subscriptions.push(configureResource);
 
+	const buildSampleApp = vscode.commands.registerCommand(CommandKeys.BuildSampleApp, handlers.buildSampleAppHandler);
+	context.subscriptions.push(buildSampleApp);
+
+	const runSampleApp = vscode.commands.registerCommand(CommandKeys.RunSampleApp, handlers.runSampleAppHandler);
+	context.subscriptions.push(runSampleApp);
+
 	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
 	context.subscriptions.push(openDocument);
 
@@ -55,7 +61,6 @@ export async function activate(context: vscode.ExtensionContext) {
 					vscode.commands.executeCommand(CommandKeys.ConfigureResource);
 				}
 			});
-			// vscode.commands.executeCommand(CommandKeys.Provision);
 		}
 	}
 	// UI is ready to show & interact

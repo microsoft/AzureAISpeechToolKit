@@ -77,7 +77,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       const userConfirmation: boolean = await this.doesUserConfirmLogin();
       if (!userConfirmation) {
         // throw user cancel error
-        throw new Error("[UserError] UserCancel");
+        throw new Error("[UserError] user cancel to login");
         // throw new UserError(
         //   "Login",
         //   ExtensionErrors.UserCancel,
@@ -235,7 +235,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     const userConfirmation: boolean = await this.doesUserConfirmSignout();
     if (!userConfirmation) {
       // throw user cancel error
-        throw new Error("[UserError] UserCancel");
+        throw new Error("[UserError] user cancel to sign out");
     //   throw new UserError(
     //     "SignOut",
     //     ExtensionErrors.UserCancel,
@@ -358,6 +358,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   // eslint-disable-next-line @typescript-eslint/require-await
   async addStatusChangeEvent() {
     if (await this.isUserLogin()) {
+      console.log("[addStatusChangeEvent] logged in");
       AzureAccountManager.currentStatus = loggedIn;
     }
     vscode.authentication.onDidChangeSessions(async (e) => {
@@ -396,7 +397,8 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async getSelectedSubscription(triggerUI = false): Promise<SubscriptionInfo | undefined> {
     if (triggerUI) {
-      if (AzureAccountManager.currentStatus !== loggedIn) {
+      if (AzureAccountManager.currentStatus !== loggedIn && !(await this.isUserLogin())) {
+        console.log("[getSelectedSubscription] not logged in, trigger login");
         await this.login(true);
       }
       // if (AzureAccountManager.currentStatus === loggedIn && !AzureAccountManager.subscriptionId) {

@@ -57,12 +57,12 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
-        "command": "azure-ai-speech-toolkit.buildSampleApp",
+        "command": "azure-ai-speech-toolkit.buildApp",
         "title": "Build the Sample App",
         "category": "Azure AI Speech Toolkit"
       },
       {
-        "command": "azure-ai-speech-toolkit.runSampleApp",
+        "command": "azure-ai-speech-toolkit.runApp",
         "title": "Run the Sample App",
         "category": "Azure AI Speech Toolkit"
       },
@@ -81,11 +81,6 @@
         "title": "Open README file",
         "category": "Azure AI Speech Toolkit",
         "enablement": "never"
-      },
-      {
-        "command": "azure-ai-speech-toolkit.signOutAzure",
-        "title": "Sign out",
-        "icon": "$(sign-out)"
       }
     ]
   },

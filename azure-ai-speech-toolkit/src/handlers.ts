@@ -14,6 +14,7 @@ import { CommandKey, ConstantString, EnvKeys, TaskName, VSCodeCommands } from ".
 import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
+import { has } from "lodash";
 
 // export async function signInAzureHandler(...args: unknown[]) {
 //   // const azureAccountProvider = AzureAccountManager.getInstance();
@@ -27,19 +28,29 @@ import { isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 // }
 
 
-export async function buildSampleAppHandler(...args: unknown[]) {
+export async function buildAppHandler(...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("Not a speech project. Skip building the sample app.");
     return;
   }
 
-  // check is there exists task for build
   const tasks = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
 
   if (!buildTask) {
-    vscode.window.showErrorMessage('No task with name "' + TaskName.BuildApp + '" found in the workspace. Check .vscode/tasks.json file.');
-    return;
+    const hasRunTasks = await runTasksExists();
+    if (hasRunTasks) {
+      vscode.window.showInformationMessage('No build task found. Would you like to run the app directly?', 'Yes', 'No')
+        .then(selection => {
+          if (selection === 'Yes') {
+            vscode.commands.executeCommand(CommandKey.RunApp);
+          }
+        });
+      return;
+    } else {
+      vscode.window.showErrorMessage('No build task found. Check .vscode/tasks.json file.');
+      return;
+    }
   }
 
   vscode.window.showInformationMessage('Building the sample app... Check terminal for task output.');
@@ -49,12 +60,17 @@ export async function buildSampleAppHandler(...args: unknown[]) {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
-        vscode.window.showInformationMessage('Build completed successfully. Would you like to run the app?', 'Yes', 'No')
-          .then(selection => {
-            if (selection === 'Yes') {
-              vscode.commands.executeCommand(CommandKey.RunSampleApp);
-            }
-          });
+        const hasRunTasks = await runTasksExists();
+        if (!hasRunTasks) {
+          vscode.window.showInformationMessage('Build completed successfully.');
+        } else {
+          vscode.window.showInformationMessage('Build completed successfully. Would you like to run the app?', 'Yes', 'No')
+            .then(selection => {
+              if (selection === 'Yes') {
+                vscode.commands.executeCommand(CommandKey.RunApp);
+              }
+            });
+        }
       } else {
         vscode.window.showErrorMessage('Build failed. Please check the terminal output for errors.');
       }
@@ -62,7 +78,19 @@ export async function buildSampleAppHandler(...args: unknown[]) {
   });
 }
 
-export async function runSampleAppHandler(...args: unknown[]) {
+async function buildTasksExists(): Promise<boolean> {
+  const tasks = await vscode.tasks.fetchTasks();
+  const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
+  return !!buildTask;
+}
+
+async function runTasksExists(): Promise<boolean> {
+  const tasks = await vscode.tasks.fetchTasks();
+  const runTask = tasks.find(task => task.name === TaskName.RunApp);
+  return !!runTask;
+}
+
+export async function runAppHandler(...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("Not a speech project. Skip running the sample app.");
     return;
@@ -84,7 +112,7 @@ export async function runSampleAppHandler(...args: unknown[]) {
         vscode.window.showInformationMessage('Sample run successfully. To rerun the sample app, click the button or trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.', 'Run Sample App')
           .then(selection => {
             if (selection === 'Run Sample App') {
-              vscode.commands.executeCommand(CommandKey.RunSampleApp);
+              vscode.commands.executeCommand(CommandKey.RunApp);
             }
           });
       } else {
@@ -166,15 +194,18 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
 
   fs.writeFileSync(envFilePath, envContent);
   await openDocumentInNewColumn(envFilePath);
-  // Ask user if they would like to build the Speech AI App.
-  vscode.window.showInformationMessage(
-    'Successfully updated environment file ' + envFilePath + '. Would you like to Build the Speech AI App?',
-    'Yes',
-  ).then(selection => {
-    if (selection === 'Yes') {
-      vscode.commands.executeCommand(CommandKey.BuildSampleApp);
-    }
-  });
+
+  const hasBuildTasks = await buildTasksExists();
+  if (hasBuildTasks) {
+    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
+      .then(selection => {
+        if (selection === 'Yes') {
+          vscode.commands.executeCommand(CommandKey.BuildApp);
+        }
+      });
+  } else {
+    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
+  }
 }
 
 export async function openReadMeHandler(...args: unknown[]) {

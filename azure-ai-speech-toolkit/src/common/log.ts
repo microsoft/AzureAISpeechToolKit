@@ -9,7 +9,7 @@ import * as fs from "fs-extra";
 import { defaultExtensionLogPath } from "../globalVariables";
 import { SummaryConstant } from "./constants";
 
-const outputChannelDisplayName = "Teams Toolkit";
+const outputChannelDisplayName = "Azure AI Speech Toolkit";
 
 export class VsCodeLogProvider implements LogProvider {
   logLevel: LogLevel = LogLevel.Info;

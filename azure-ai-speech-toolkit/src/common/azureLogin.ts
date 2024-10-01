@@ -177,7 +177,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   }
 
   private async doesUserConfirmLogin(): Promise<boolean> {
-    const message = "The Teams Toolkit will use Microsoft authentication to sign in Azure account and subscription to deploy the Azure resources for your project. You won't be charged until you confirm.";
+    const message = "The Azure AI Speech Toolkit will use Microsoft authentication to sign in Azure account and subscription to fetch Speech Resource Key and information for your project. You won't be charged until you confirm.";
     const signin = "Sign in";
     const readMore = "Read more";
     let userSelected: string | undefined;

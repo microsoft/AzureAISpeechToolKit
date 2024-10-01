@@ -27,11 +27,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	const configureResource = vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.ConfigureResourcehandler);
 	context.subscriptions.push(configureResource);
 
-	const buildSampleApp = vscode.commands.registerCommand(CommandKeys.BuildSampleApp, handlers.buildSampleAppHandler);
-	context.subscriptions.push(buildSampleApp);
+	const buildApp = vscode.commands.registerCommand(CommandKeys.BuildApp, handlers.buildAppHandler);
+	context.subscriptions.push(buildApp);
 
-	const runSampleApp = vscode.commands.registerCommand(CommandKeys.RunSampleApp, handlers.runSampleAppHandler);
-	context.subscriptions.push(runSampleApp);
+	const runApp = vscode.commands.registerCommand(CommandKeys.RunApp, handlers.runAppHandler);
+	context.subscriptions.push(runApp);
 
 	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
 	context.subscriptions.push(openDocument);

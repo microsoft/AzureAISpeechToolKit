@@ -185,6 +185,7 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
     updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region);
   } catch (error) {
     vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
+    return;
   }
 
   // Step 5: Build the app if build tasks exist.

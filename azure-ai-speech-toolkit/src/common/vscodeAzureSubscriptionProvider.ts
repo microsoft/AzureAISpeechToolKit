@@ -111,8 +111,7 @@ export class VSCodeAzureSubscriptionProvider {
         region: region
       };
     } catch (error) {
-      console.error('Error fetching speech service details:', error);
-      throw new Error(`Unable to retrieve keys and region for Speech Service: ${speechServiceName}`);
+      throw new Error(`Unable to retrieve keys and region for Speech Service: ${speechServiceName}. Error: ${error}`);
     }
   }
 

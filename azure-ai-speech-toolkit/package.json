@@ -33,20 +33,33 @@
     "views": {
       "azureAiSpeechToolkit": [
         {
-          "id": "azure-ai-speech-toolkit-empty-project",
-          "name": "Azure AI Speech Toolkit"
+          "id": "azure-ai-speech-toolkit-samples",
+          "name": "Samples"
         },
         {
-          "id": "azure-ai-speech-toolkit-speechServices",
-          "name": "Azure AI Speech Services",
-          "when": "azure-ai-speech-toolkit.isSpeechFx"
+          "id": "azure-ai-speech-toolkit-docs",
+          "name": "Help and Documentation"
+        },
+        {
+          "id": "azure-ai-speech-toolkit-resources",
+          "name": "Resources"
         }
       ]
     },
     "viewsWelcome": [
       {
-        "view": "azure-ai-speech-toolkit-empty-project",
-        "contents": "Jumpstart right into Azure AI Speech Toolkit today.\nWalk through the steps to build a real-world Azure AI Speech app.\n[Documentation](command:azure-ai-speech-toolkit.openDocument?%5B%22SideBar%22%5D)\n[How-to Guides](command:azure-ai-speech-toolkit-empty-project.selectTutorials?%5B%22SideBar%22%5D)\nExplore our samples.\n[View Samples](command:azure-ai-speech-toolkit.openSamples?%5B%22SideBar%22%5D)",
+        "view": "azure-ai-speech-toolkit-samples",
+        "contents": "Explore our samples and select the one that best suit your needs to create your own app.\n[View Samples](command:azure-ai-speech-toolkit.openSamples?%5B%22SideBar%22%5D)",
+        "enablement": "azure-ai-speech-toolkit.initialized"
+      },
+      {
+        "view": "azure-ai-speech-toolkit-docs",
+        "contents": "Checkout more about Azure AI Speech Service through documentation.\n[Documentation](command:azure-ai-speech-toolkit.openDocument?%5B%22SideBar%22%5D)",
+        "enablement": "azure-ai-speech-toolkit.initialized"
+      },
+      {
+        "view": "azure-ai-speech-toolkit-resources",
+        "contents": "Sign in using your Azure Account to view resources, or create a free Azure Account.\n[Sign in to Azure](command:azure-ai-speech-toolkit.signinAzure?%5B%22SideBar%22%5D)\n[Create an Azure Account](command:azure-ai-speech-toolkit.openAzureAccountHelp?%5B%22SideBar%22%5D)",
         "enablement": "azure-ai-speech-toolkit.initialized"
       }
     ],
@@ -70,6 +83,12 @@
         "command": "azure-ai-speech-toolkit.openDocument",
         "title": "Documentation",
         "category": "Azure AI Speech Toolkit"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.openAzureAccountHelp",
+        "title": "Open Azure Account Help",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "never"
       },
       {
         "command": "azure-ai-speech-toolkit.configureResource",

@@ -14,19 +14,16 @@ import { CommandKey, ConstantString, EnvKeys, TaskName, VSCodeCommands } from ".
 import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
-import { has } from "lodash";
 
-// export async function signInAzureHandler(...args: unknown[]) {
-//   // const azureAccountProvider = AzureAccountManager.getInstance();
-//   // await azureAccountProvider.login(true);
-//   // WebviewPanel.createOrShow(PanelType.SampleGallery, args);
-//   return;
-// }
-// export async function signOutAzureHandler(...args: unknown[]) {
-//   // WebviewPanel.createOrShow(PanelType.SampleGallery, args);
-//   return;
-// }
-
+export async function signInAzureHandler(...args: unknown[]) {
+  const azureAccountProvider = AzureAccountManager.getInstance();
+  try {
+    await azureAccountProvider.getIdentityCredentialAsync(true);
+  } catch (error) {
+    vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
+  }
+  return;
+}
 
 export async function buildAppHandler(...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
@@ -132,6 +129,11 @@ export async function openDocumentHandler(...args: unknown[]) {
   return;
 }
 
+export async function openAzureAccountHelpHandler(...args: unknown[]) {
+  vscode.env.openExternal(vscode.Uri.parse("https://azure.microsoft.com/en-us/free/"));
+  return;
+}
+
 export async function ConfigureResourcehandler(...args: unknown[]) {
   if (isSpeechResourceSeleted()) {
     vscode.window.showInformationMessage('Speech service configuration already exists.');
@@ -156,25 +158,60 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
     envContent = fs.readFileSync(envFilePath, 'utf8');
   }
 
-  const subscriptionInfo = await askUserForSubscription();
-  const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
-  if (!speechServiceInfo) {
-    // Fail to find a speech service.
-    vscode.window.showErrorMessage('No speech service is selected.');
-    return;
+  try {
+    const subscriptionInfo = await askUserForSubscription();
+    const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
+    if (!speechServiceInfo) {
+      // Fail to find a speech service.
+      vscode.window.showErrorMessage('No speech service is selected.');
+      return;
+    }
+
+    // Fetch the Speech Service Key and Region.
+    const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
+
+    // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
+    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceKey, key);
+    envContent = updateEnvContent(envContent, EnvKeys.ServiceRegion, region);
+    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceName, speechServiceInfo.name);
+    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceSKU, speechServiceInfo.sku);
+    envContent = updateEnvContent(envContent, EnvKeys.AzureSubscriptionId, subscriptionInfo.subscriptionId);
+    envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
+
+    fs.writeFileSync(envFilePath, envContent);
+    await openDocumentInNewColumn(envFilePath);
+
+    // Update the config.json file with the new values.
+    updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region);
+  } catch (error) {
+    vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
   }
 
-  // Fetch the Speech Service Key and Region.
-  const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
+  // Step 5: Build the app if build tasks exist.
+  const hasBuildTasks = await buildTasksExists();
+  if (hasBuildTasks) {
+    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
+      .then(selection => {
+        if (selection === 'Yes') {
+          vscode.commands.executeCommand(CommandKey.BuildApp);
+        }
+      });
+  } else {
+    const hasRunTasks = await runTasksExists();
+    if (hasRunTasks) {
+      vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Run the app?', 'Yes')
+        .then(selection => {
+          if (selection === 'Yes') {
+            vscode.commands.executeCommand(CommandKey.RunApp);
+          }
+        });
+    } else {
+      vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
+    }
+  }
+}
 
-  // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
-  envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceKey, key);
-  envContent = updateEnvContent(envContent, EnvKeys.ServiceRegion, region);
-  envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceName, speechServiceInfo.name);
-  envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceSKU, speechServiceInfo.sku);
-  envContent = updateEnvContent(envContent, EnvKeys.AzureSubscriptionId, subscriptionInfo.subscriptionId);
-  envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
-
+function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, region: string) {
   const configFilePath = path.join(workspaceFolder, 'config.json');
   if (fs.existsSync(configFilePath)) {
     let configContent = fs.readFileSync(configFilePath, 'utf8');
@@ -192,22 +229,7 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
     vscode.window.showInformationMessage(configFilePath + " file updated successfully.");
   }
 
-  fs.writeFileSync(envFilePath, envContent);
-  await openDocumentInNewColumn(envFilePath);
-
-  const hasBuildTasks = await buildTasksExists();
-  if (hasBuildTasks) {
-    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
-      .then(selection => {
-        if (selection === 'Yes') {
-          vscode.commands.executeCommand(CommandKey.BuildApp);
-        }
-      });
-  } else {
-    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
-  }
 }
-
 export async function openReadMeHandler(...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("not speech project. Skip open readme file.");

@@ -7,6 +7,7 @@ export enum CommandKey {
   // BuildIntelligentAppsWalkthrough = "azure-ai-speech-toolkit.buildIntelligentAppsWalkthrough",
   // CheckCopilotAccess = "azure-ai-speech-toolkit.checkCopilotAccess",
   OpenDocument = "azure-ai-speech-toolkit.openDocument",
+  OpenAzureAccountHelp = "azure-ai-speech-toolkit.openAzureAccountHelp",
   OpenSamples = "azure-ai-speech-toolkit.openSamples",
   DownloadSample = "azure-ai-speech-toolkit.downloadSample",
   // ValidateGetStartedPrerequisites = "azure-ai-speech-toolkit.validate-getStarted-prerequisites",
@@ -14,7 +15,7 @@ export enum CommandKey {
   // DebugInTestToolFromMessage = "azure-ai-speech-toolkit.debugInTestToolFromMessage",
   // SigninM365 = "azure-ai-speech-toolkit.signinM365",
   // LocalDebug = "azure-ai-speech-toolkit.localdebug",
-  // SigninAzure = "azure-ai-speech-toolkit.signinAzure",
+  SigninAzure = "azure-ai-speech-toolkit.signinAzure",
   // SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
   ConfigureResource = "azure-ai-speech-toolkit.configureResource",
   BuildApp = "azure-ai-speech-toolkit.buildApp",
@@ -26,6 +27,11 @@ export enum CommandKey {
   // publishToAppSource = "azure-ai-speech-toolkit.publishToAppSource",
   // openDeployLink = "azure-ai-speech-toolkit.officeDevDeploy",
   // openOfficeDevDocument = "azure-ai-speech-toolkit.openOfficeDevDocument",
+}
+
+export enum ViewId {
+  ResourceView = "azure-ai-speech-toolkit-resources",
+  SampleView = "azure-ai-speech-toolkit-samples"
 }
 
 export enum ContextKeys {

@@ -358,7 +358,6 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   // eslint-disable-next-line @typescript-eslint/require-await
   async addStatusChangeEvent() {
     if (await this.isUserLogin()) {
-      console.log("[addStatusChangeEvent] logged in");
       AzureAccountManager.currentStatus = loggedIn;
     }
     vscode.authentication.onDidChangeSessions(async (e) => {

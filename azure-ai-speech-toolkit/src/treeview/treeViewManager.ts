@@ -12,7 +12,8 @@ import accountTreeViewProviderInstance from "./account/accountTreeViewProvider";
 import { CommandsTreeViewProvider } from "./commandsTreeViewProvider";
 // import envTreeProviderInstance from "./environmentTreeViewProvider";
 import { CommandStatus, TreeViewCommand } from "./treeViewCommand";
-import azureSpeechServicesTreeViewProvider from "./azureSpeechServicesTreeViewProvider";
+import ResourceTreeViewProvider from "./resourceTreeViewProvider";
+import { ViewId } from "../constants";
 
 class TreeViewManager {
   private static instance: TreeViewManager;
@@ -39,7 +40,7 @@ class TreeViewManager {
     const disposables: vscode.Disposable[] = [];
 
     // this.registerAccount(disposables);
-    this.registerSpeechService(disposables);
+    this.registerResources(disposables);
     // this.registerEnvironment(disposables);
     // this.registerDevelopment(disposables);
     // this.registerLifecycle(disposables);
@@ -183,11 +184,11 @@ class TreeViewManager {
   //   this.treeviewMap.set("azure-ai-speech-toolkit-accounts", accountTreeViewProviderInstance);
   // }
   
-  private registerSpeechService(disposables: vscode.Disposable[]) {
+  private registerResources(disposables: vscode.Disposable[]) {
     disposables.push(
-      vscode.window.registerTreeDataProvider("azure-ai-speech-toolkit-speechServices", azureSpeechServicesTreeViewProvider)
+      vscode.window.registerTreeDataProvider(ViewId.ResourceView, ResourceTreeViewProvider)
     );
-    this.treeviewMap.set("azure-ai-speech-toolkit-speechServices", azureSpeechServicesTreeViewProvider);
+    this.treeviewMap.set(ViewId.ResourceView, ResourceTreeViewProvider);
   }
 
   // private registerEnvironment(disposables: vscode.Disposable[]) {

@@ -10,6 +10,7 @@ import { AzureAccountManager } from './common/azureLogin';
 import TreeViewManagerInstance from "./treeview/treeViewManager";
 import { isSpeechResourceSeleted } from './utils';
 import { TreeViewCommand } from './treeview/treeViewCommand';
+import resourceTreeViewProvider from './treeview/resourceTreeViewProvider';
 
 export let VS_CODE_UI: VSCodeUI;
 
@@ -36,15 +37,15 @@ export async function activate(context: vscode.ExtensionContext) {
 	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
 	context.subscriptions.push(openDocument);
 
+	const openAzureAccountHelp = vscode.commands.registerCommand(CommandKeys.OpenAzureAccountHelp, handlers.openAzureAccountHelpHandler);
+	context.subscriptions.push(openAzureAccountHelp);
+
 	// README
 	const openReadMe = vscode.commands.registerCommand(CommandKeys.OpenReadMe, handlers.openReadMeHandler);
 	context.subscriptions.push(openReadMe);
 
-	// const signInAzure = vscode.commands.registerCommand(CommandKeys.SigninAzure, handlers.signInAzureHandler);
-	// context.subscriptions.push(signInAzure);
-
-	// const signOutAzure = vscode.commands.registerCommand(CommandKeys.SignOutAzure, handlers.signOutAzureHandler);
-	// context.subscriptions.push(signOutAzure);
+	const signInAzure = vscode.commands.registerCommand(CommandKeys.SigninAzure, handlers.signInAzureHandler);
+	context.subscriptions.push(signInAzure);
 
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {
@@ -81,7 +82,10 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	TreeViewManagerInstance.registerTreeViews(context);
 	accountTreeViewProviderInstance.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),
-		//   m365TokenProvider: M365TokenInstance,
+	});
+
+	resourceTreeViewProvider.subscribeToStatusChanges({
+		azureAccountProvider: AzureAccountManager.getInstance(),
 	});
 	// // Set region for M365 account every
 	// void M365TokenInstance.setStatusChangeMap(

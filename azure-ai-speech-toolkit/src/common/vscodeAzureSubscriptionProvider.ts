@@ -94,17 +94,17 @@ export class VSCodeAzureSubscriptionProvider {
     return sortSubscriptions(results);
   }
 
-  public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
+  public async fetchSpeechResourceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
 
     try {
-      // Fetch Speech Service details, including the region
-      const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechServiceName);
+      // Fetch Speech Resource details, including the region
+      const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechResourceName);
       const region = speechService.location;
 
       // Fetch the keys for the Speech Service
-      const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechServiceName);
+      const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechResourceName);
       const primaryKey = keys.key1;
 
       return {
@@ -112,7 +112,7 @@ export class VSCodeAzureSubscriptionProvider {
         region: region
       };
     } catch (error) {
-      throw new Error(`Unable to retrieve keys and region for Speech Service: ${speechServiceName}. Error: ${error}`);
+      throw new Error(`Unable to retrieve keys and region for Speech Resource: ${speechResourceName}. Error: ${error}`);
     }
   }
 

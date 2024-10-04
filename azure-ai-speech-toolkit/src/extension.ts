@@ -25,10 +25,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.OpenSamples, handlers.openSamplesHandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.ConfigureResourcehandler));
+		vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.configureResourcehandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.SelectResource, handlers.ConfigureResourcehandler));
+		vscode.commands.registerCommand(CommandKeys.SelectResource, handlers.configureResourcehandler));
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.BuildApp, handlers.buildAppHandler));
@@ -50,7 +50,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.SigninAzure, handlers.signInAzureHandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.ViewSpeechResourceProperties, handlers.ViewSpeechResourcePropertiesHandler));
+		vscode.commands.registerCommand(CommandKeys.ViewSpeechResourceProperties, handlers.viewSpeechResourcePropertiesHandler));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
 
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {

@@ -6,6 +6,7 @@ import { ConstantString, EnvKeys, VSCodeCommands } from "./constants";
 import * as globalVariables from "./globalVariables";
 import { AzureSpeechResourceInfo } from "./api/login";
 import { AzureAccountManager } from "./common/azureLogin";
+import { AzureResourceAccountType } from "./common/constants";
 
 export function isSpeechResourceSeleted(): boolean {
   const workspaceFolder = globalVariables.workspaceUri?.fsPath;
@@ -72,4 +73,14 @@ export async function fetchSpeechServiceKeyAndRegion(speechServiceInfo: AzureSpe
     key: key,
     region: region
   };
+}
+
+export function getAzureResourceAccountTypeDisplayName(accountType: AzureResourceAccountType): string {
+  switch (accountType) {
+    case AzureResourceAccountType.SpeechServices:
+      return 'Speech Services';
+    case AzureResourceAccountType.CognitiveServices:
+    case AzureResourceAccountType.AIService:
+      return 'AI Services';
+  }
 }

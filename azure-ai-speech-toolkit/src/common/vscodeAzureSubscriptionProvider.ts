@@ -10,6 +10,7 @@ import { AzureScopes } from "../constants";
 import { Environment } from "@azure/ms-rest-azure-env";
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
+import { getAzureResourceAccountTypeDisplayName } from "../utils";
 
 export const Microsoft = "microsoft";
 
@@ -141,22 +142,13 @@ export class VSCodeAzureSubscriptionProvider {
         subscriptionName: subscriptionInfo.name,
         tenantId: subscriptionInfo.tenantId,
         region: item.location!,
-        accountType: this.getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
+        accountType: getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
         sku: item.sku!.name!
       })
     }
     return azureResources;
   }
 
-  getAzureResourceAccountTypeDisplayName(accountType: AzureResourceAccountType): string {
-    switch (accountType) {
-      case AzureResourceAccountType.SpeechServices:
-        return 'Speech Services';
-      case AzureResourceAccountType.CognitiveServices:
-      case AzureResourceAccountType.AIService:
-        return 'AI Services';
-    }
-  }
 
   /**
    * Gets the subscriptions for a given tenant.

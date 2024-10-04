@@ -24,6 +24,7 @@ import {
   VSCodeAzureSubscriptionProvider,
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
+import { createAzureAIServiceHandler } from "../handlers";
 
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 
@@ -397,25 +398,15 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   async getSelectedSubscription(triggerUI = false): Promise<SubscriptionInfo | undefined> {
     if (triggerUI) {
       if (AzureAccountManager.currentStatus !== loggedIn && !(await this.isUserLogin())) {
-        console.log("[getSelectedSubscription] not logged in, trigger login");
+        console.log("User is not logged in when trying to get selected subscription. Logging in...");
         await this.login(true);
       }
-      // if (AzureAccountManager.currentStatus === loggedIn && !AzureAccountManager.subscriptionId) {
-      //   await this.selectSubscription();
-      // }
     }
-    //  else {
-    if (AzureAccountManager.currentStatus === loggedIn /*&& !AzureAccountManager.subscriptionId*/) {
+    if (AzureAccountManager.currentStatus === loggedIn) {
       await this.selectSubscription();
-      const subscriptionList = await this.listSubscriptions();
-      if (subscriptionList && subscriptionList.length == 1) {
-        await this.setSubscription(subscriptionList[0].id);
-      }
-    }
-    // }
-    if (AzureAccountManager.currentStatus === loggedIn && AzureAccountManager.subscriptionId) {
+
       const selectedSub: SubscriptionInfo = {
-        id: AzureAccountManager.subscriptionId,
+        id: AzureAccountManager.subscriptionId!,
         tenantId: AzureAccountManager.tenantId!,
         name: AzureAccountManager.subscriptionName ?? "",
       };
@@ -440,18 +431,20 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       return await this.listAzureServices(subscriptionInfo, azureResourceAccountTypesToSelect);
     });
 
-    if (!speechResourcesList || speechResourcesList.length == 0) {
-      vscode.window.showInformationMessage("Subscription " + subscriptionInfo.name + " does not contain any speech resource! Retry command " + CommandKey.ConfigureResource + "and select a different subscription.");
-      return;
-    }
+    const createNewServiceOption: OptionItem = {
+      id: "create-new-service",  // Unique ID for the new service option
+      label: `$(plus) Create a new Azure AI Service`,
+    };
 
-    const options: OptionItem[] = speechResourcesList.map((speechService) => {
-      return {
-        id: speechService.id,
-        label: `${speechService.name} (${speechService.accountType}, ${speechService.region}, ${speechService.sku})`,
-        // data: sub.tenantId,
-      } as OptionItem;
-    });
+    const options: OptionItem[] = [
+      createNewServiceOption,
+      ...speechResourcesList.map((speechService) => {
+        return {
+          id: speechService.id,
+          label: `${speechService.name} (${speechService.accountType}, ${speechService.region}, ${speechService.sku})`,
+        } as OptionItem;
+      })];
+
     const config: SingleSelectConfig = {
       name: "Azure Speech Resource",
       title: "Select a Speech Resource",
@@ -463,12 +456,16 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     } else {
       const selectedSpeechServiceId = result.value.result as string;
 
+      if (selectedSpeechServiceId === createNewServiceOption.id) {
+        const newService = await createAzureAIServiceHandler(subscriptionInfo);
+        return newService;
+      }
+
       return speechResourcesList.find(service => service.id == selectedSpeechServiceId);
     }
   }
 
   async selectSubscription(): Promise<void> {
-
     const subscriptionList = await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
       title: 'Fetching Azure subscriptions...',
@@ -476,10 +473,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }, async (progress) => {
       return await this.listSubscriptions();
     });
-    // const subscriptionList = await this.listSubscriptions();
+
     if (!subscriptionList || subscriptionList.length == 0) {
       throw new Error("[UserError] failToFindSubscription");
     }
+
     if (subscriptionList && subscriptionList.length == 1) {
       await this.setSubscription(subscriptionList[0].id);
     } else if (subscriptionList.length > 1) {

@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 export enum CommandKey {
-  // Create = "azure-ai-speech-toolkit.create",
+  CreateAzureAIService = "azure-ai-speech-toolkit.createAzureAIService",
   // OpenWelcome = "azure-ai-speech-toolkit.openWelcome",
   // BuildIntelligentAppsWalkthrough = "azure-ai-speech-toolkit.buildIntelligentAppsWalkthrough",
   // CheckCopilotAccess = "azure-ai-speech-toolkit.checkCopilotAccess",

@@ -98,7 +98,8 @@
       {
         "command": "azure-ai-speech-toolkit.selectResource",
         "title": "Select",
-        "category": "Azure AI Speech Toolkit"
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
       },
       {
         "command": "azure-ai-speech-toolkit.openReadMe",
@@ -109,6 +110,12 @@
       {
         "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
         "title": "View Speech Resource Properties",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.createAzureAIService",
+        "title": "Create an Azure AI Service",
         "category": "Azure AI Speech Toolkit"
       }
     ],

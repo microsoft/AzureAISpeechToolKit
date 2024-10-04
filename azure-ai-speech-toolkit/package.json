@@ -96,12 +96,36 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
+        "command": "azure-ai-speech-toolkit.selectResource",
+        "title": "Select",
+        "category": "Azure AI Speech Toolkit"
+      },
+      {
         "command": "azure-ai-speech-toolkit.openReadMe",
         "title": "Open README file",
         "category": "Azure AI Speech Toolkit",
         "enablement": "never"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
+        "title": "View Speech Resource Properties",
+        "category": "Azure AI Speech Toolkit"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
+          "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem",
+          "group": "navigation"
+        },
+        {
+          "command": "azure-ai-speech-toolkit.selectResource",
+          "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "rimraf out && webpack --mode production --config ./webpack.config.js",

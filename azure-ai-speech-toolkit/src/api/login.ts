@@ -133,20 +133,21 @@ export interface AzureAccountProvider {
   getSelectedSubscription(triggerUI?: boolean): Promise<SubscriptionInfo | undefined>;
 }
 
-export type SubscriptionInfo = {
-  subscriptionName: string;
-  subscriptionId: string;
-  tenantId: string;
-};
 
-export type AzureResourceInfo = {
+export interface AzureResourceInfo {
   name: string;
   id: string;
+  tenantId: string;
+}
+
+export interface SubscriptionInfo extends AzureResourceInfo {}
+export interface AzureSpeechResourceInfo  extends AzureResourceInfo {
   subscriptionId: string;
+  subscriptionName: string;
   region: string;
   accountType: string;
   sku: string;
-};
+}
 
 export declare type TokenRequest = {
   scopes: Array<string>;

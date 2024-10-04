@@ -5,11 +5,7 @@ import * as vscode from "vscode";
 
 import { TokenProvider } from "../../api/login";
 import { DynamicNode } from "../dynamicNode";
-// import envTreeProviderInstance from "../environmentTreeViewProvider";
 import { AzureAccountNode } from "./azureNode";
-// import { M365AccountNode } from "./m365Node";
-// import { AppStudioScopes } from "@microsoft/teamsfx-core";
-// import { isSPFxProject } from "../../globalVariables";
 
 class AccountTreeViewProvider implements vscode.TreeDataProvider<DynamicNode> {
   private static instance: AccountTreeViewProvider;
@@ -18,7 +14,6 @@ class AccountTreeViewProvider implements vscode.TreeDataProvider<DynamicNode> {
   readonly onDidChangeTreeData: vscode.Event<DynamicNode | undefined | void> =
     this._onDidChangeTreeData.event;
 
-  // public m365AccountNode = new M365AccountNode(this._onDidChangeTreeData);
   public azureAccountNode = new AzureAccountNode(this._onDidChangeTreeData);
 
   private constructor() {}

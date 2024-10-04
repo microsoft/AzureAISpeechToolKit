@@ -6,7 +6,7 @@
 import type { TokenCredential } from "@azure/core-auth";
 import {
   AzureAccountProvider,
-  AzureResourceInfo,
+  AzureSpeechResourceInfo,
   SubscriptionInfo,
 } from "../api/login";
 import { SingleSelectConfig } from "../api/ui";
@@ -279,9 +279,9 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       for (let i = 0; i < subs.length; ++i) {
         const item = subs[i];
         arr.push({
-          subscriptionId: item.subscriptionId,
+          id: item.subscriptionId,
           tenantId: item.tenantId,
-          subscriptionName: item.name,
+          name: item.name,
         });
       }
     }
@@ -289,10 +289,10 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
-  async listAzureServices(subscriptionId: string, types: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
-    let speechServices: AzureResourceInfo[] = [];
+  async listAzureServices(subscriptionInfo: SubscriptionInfo, types: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
+    let speechServices: AzureSpeechResourceInfo[] = [];
     if (await this.isUserLogin()) {
-      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionId, types);
+      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionInfo, types);
     }
 
     return speechServices;
@@ -409,15 +409,15 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       await this.selectSubscription();
       const subscriptionList = await this.listSubscriptions();
       if (subscriptionList && subscriptionList.length == 1) {
-        await this.setSubscription(subscriptionList[0].subscriptionId);
+        await this.setSubscription(subscriptionList[0].id);
       }
     }
     // }
     if (AzureAccountManager.currentStatus === loggedIn && AzureAccountManager.subscriptionId) {
       const selectedSub: SubscriptionInfo = {
-        subscriptionId: AzureAccountManager.subscriptionId,
+        id: AzureAccountManager.subscriptionId,
         tenantId: AzureAccountManager.tenantId!,
-        subscriptionName: AzureAccountManager.subscriptionName ?? "",
+        name: AzureAccountManager.subscriptionName ?? "",
       };
       return selectedSub;
     } else {
@@ -425,7 +425,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async getSelectedSpeechService(subscriptionId: string): Promise<AzureResourceInfo | undefined> {
+  async getSelectedSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only select speech service when logged in.");
     }
@@ -437,11 +437,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       title: 'Fetching Azure Speech Resources...',
       cancellable: false
     }, async (progress) => {
-      return await this.listAzureServices(subscriptionId, azureResourceAccountTypesToSelect);
+      return await this.listAzureServices(subscriptionInfo, azureResourceAccountTypesToSelect);
     });
 
     if (!speechResourcesList || speechResourcesList.length == 0) {
-      vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech resource! Retry command " + CommandKey.ConfigureResource + "and select a different subscription.");
+      vscode.window.showInformationMessage("Subscription " + subscriptionInfo.name + " does not contain any speech resource! Retry command " + CommandKey.ConfigureResource + "and select a different subscription.");
       return;
     }
 
@@ -481,12 +481,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       throw new Error("[UserError] failToFindSubscription");
     }
     if (subscriptionList && subscriptionList.length == 1) {
-      await this.setSubscription(subscriptionList[0].subscriptionId);
+      await this.setSubscription(subscriptionList[0].id);
     } else if (subscriptionList.length > 1) {
       const options: OptionItem[] = subscriptionList.map((sub) => {
         return {
-          id: sub.subscriptionId,
-          label: sub.subscriptionName,
+          id: sub.id,
+          label: sub.name,
           data: sub.tenantId,
         } as OptionItem;
       });

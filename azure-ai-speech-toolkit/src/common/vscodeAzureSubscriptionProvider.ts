@@ -8,7 +8,7 @@ import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
 import { Environment } from "@azure/ms-rest-azure-env";
-import { AzureResourceInfo } from "../api/login";
+import { AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
 
 export const Microsoft = "microsoft";
@@ -115,9 +115,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async getAzureResourceListWithType(subscriptionId: string, accountTypes: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
+  public async getAzureResourceListWithType(subscriptionInfo: SubscriptionInfo, accountTypes: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
     const accountsIterator = await cognitiveClient.accounts.list();
 
     // Collect all accounts from the iterator
@@ -128,7 +128,7 @@ export class VSCodeAzureSubscriptionProvider {
 
     const azureResourceAccounts = accounts.filter(account => accountTypes.includes(account.kind as AzureResourceAccountType));
 
-    const azureResources: AzureResourceInfo[] = [];
+    const azureResources: AzureSpeechResourceInfo[] = [];
     for (let i = 0; i < azureResourceAccounts.length; i++) {
       const item = azureResourceAccounts[i];
       if (i === 0) {
@@ -137,7 +137,9 @@ export class VSCodeAzureSubscriptionProvider {
       azureResources.push({
         id: item.id!,
         name: item.name!,
-        subscriptionId: subscriptionId,
+        subscriptionId: subscriptionInfo.id,
+        subscriptionName: subscriptionInfo.name,
+        tenantId: subscriptionInfo.tenantId,
         region: item.location!,
         accountType: this.getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
         sku: item.sku!.name!

@@ -6,6 +6,7 @@
 import type { TokenCredential } from "@azure/core-auth";
 import {
   AzureAccountProvider,
+  AzureResourceGroupInfo,
   AzureSpeechResourceInfo,
   SubscriptionInfo,
 } from "../api/login";
@@ -273,7 +274,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   /**
    * list all subscriptions
    */
-  async listSubscriptions(): Promise<SubscriptionInfo[]> {
+  public async listSubscriptions(): Promise<SubscriptionInfo[]> {
     const arr: SubscriptionInfo[] = [];
     if (await this.isUserLogin()) {
       const subs = await this.vscodeAzureSubscriptionProvider.getSubscriptions();
@@ -290,7 +291,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
-  async listAzureServices(subscriptionInfo: SubscriptionInfo, types: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
+  public async listAzureServices(subscriptionInfo: SubscriptionInfo, types: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
     let speechServices: AzureSpeechResourceInfo[] = [];
     if (await this.isUserLogin()) {
       speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionInfo, types);
@@ -333,7 +334,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     );
   }
 
-  async getStatus(): Promise<LoginStatus> {
+  public async getStatus(): Promise<LoginStatus> {
     try {
       if (AzureAccountManager.currentStatus === loggingIn) {
         return Promise.resolve({ status: signingIn, token: undefined, accountInfo: undefined });
@@ -357,7 +358,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async addStatusChangeEvent() {
+  private async addStatusChangeEvent() {
     if (await this.isUserLogin()) {
       AzureAccountManager.currentStatus = loggedIn;
     }
@@ -418,7 +419,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async getSelectedSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
-      throw new Error("can only select speech service when logged in.");
+      throw new Error("can only select speech resource when logged in.");
     }
 
     const azureResourceAccountTypesToSelect = [AzureResourceAccountType.SpeechServices, AzureResourceAccountType.CognitiveServices, AzureResourceAccountType.AIService];
@@ -463,6 +464,91 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
       return speechResourcesList.find(service => service.id == selectedSpeechServiceId);
     }
+  }
+
+  async getSelectedResourceGroups(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
+    if (AzureAccountManager.currentStatus !== loggedIn) {
+      throw new Error("can only select resource group when logged in.");
+    }
+
+    const resourceGroupsList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching resource group...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionInfo);
+      // return await this.listResourceGroup(subscriptionInfo);
+    });
+
+    const createNewResourceGroupOption: OptionItem = {
+      id: "create-new-resource-group",  // Unique ID for the new resource group option
+      label: `$(plus) Create a new Resource Group`,
+    };
+
+    const options: OptionItem[] = [
+      createNewResourceGroupOption,
+      ...resourceGroupsList.map((rg) => {
+        return {
+          id: rg.name,
+          label: `${rg.name}`,
+        } as OptionItem;
+      })];
+
+    const config: SingleSelectConfig = {
+      name: "Resource Group",
+      title: "Select a resource group",
+      options: options,
+    };
+    const result = await VS_CODE_UI.selectOption(config);
+    if (result.isErr()) {
+      throw result.error;
+    } else {
+      const selectedResourceGroupId = result.value.result as string;
+
+      if (selectedResourceGroupId === createNewResourceGroupOption.id) {
+        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionInfo.id);
+        return newResourceGroupName;
+      }
+
+      const resourceGroupInfo = resourceGroupsList.find(rg => rg.name == selectedResourceGroupId);
+      return resourceGroupInfo?.name;
+    }
+  }
+
+  async getResourceGroupNameFromUser(subscriptionId: string): Promise<string> {
+    // Generate a default resource group name
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
+    const accountInfo = await this.getAccountInfo();
+    console.log(accountInfo);
+    let username = ((accountInfo?.email as string) || (accountInfo?.upn as string))?.split('@')[0];
+    if (!username) {
+      username = "dummy";
+    }
+    const defaultResourceGroupName = `${username}_speechaiproj_rg_${timestamp}`;
+
+    // Define dropdown options
+    const options: vscode.InputBoxOptions = {
+      prompt: "Enter a resource group name or use the default one",
+      placeHolder: defaultResourceGroupName,
+      value: defaultResourceGroupName, // Set the default value
+      validateInput: async (input) => {
+        // Validate if the resource group name is unique
+        const doesResourceGroupExsit = await this.vscodeAzureSubscriptionProvider.checkResourceGroupExistence(subscriptionId, input.trim());
+        if (doesResourceGroupExsit) {
+          return 'Resource group name already exists, please choose another name.';
+        }
+        return null; // Input is valid
+      }
+    };
+
+    // Show input box to user with default and custom input option
+    const resourceGroupName = await vscode.window.showInputBox(options);
+    if (!resourceGroupName) {
+      // Handle case where user cancels the input
+      throw new Error("[UserError] user cancel to input resource group name");
+    }
+
+    return resourceGroupName.trim(); // Return the valid resource group name
   }
 
   async selectSubscription(): Promise<void> {

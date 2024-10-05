@@ -2,13 +2,14 @@
 // Licensed under the MIT license.
 
 import { SubscriptionClient, TenantIdDescription } from "@azure/arm-resources-subscriptions";
+import { ResourceManagementClient } from "@azure/arm-resources";
 import { CognitiveServicesManagementClient, Account } from '@azure/arm-cognitiveservices';
 import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
 import { Environment } from "@azure/ms-rest-azure-env";
-import { AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
+import { AzureResourceGroupInfo, AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
 import { getAzureResourceAccountTypeDisplayName } from "../utils";
 
@@ -147,6 +148,48 @@ export class VSCodeAzureSubscriptionProvider {
       })
     }
     return azureResources;
+  }
+
+  public async getResourceGroupListBySubscriptionId(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceGroupInfo[]> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
+
+    try {
+      const results: AzureResourceGroupInfo[] = [];
+      const res = rmClient.resourceGroups.list();
+      let result;
+      do {
+        result = await res.next();
+        if (result.value?.name) results.push({ name: result.value.name, location: result.value.location });
+      } while (!result.done);
+      return results;
+
+    } catch (error) {
+      throw new Error(`Unable to retrieve resource groups for subscription: ${subscriptionInfo.name}. Error: ${error}`);
+    }
+  }
+
+  public async checkResourceGroupExistence(subscriptionId: string, resourceGroupName: string): Promise<boolean> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+
+    try {
+      const result = await rmClient.resourceGroups.checkExistence(resourceGroupName);
+      return (!!result.body);
+    } catch (error) {
+      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
+    }
+  }
+
+  public async createNewResourceGroup(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, location: string): Promise<void> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
+
+    try {
+      await rmClient.resourceGroups.createOrUpdate(resourceGroupName, { location: location });
+    } catch (error) {
+      throw new Error(`Unable to create resource group: ${resourceGroupName}. Error: ${error}`);
+    }
   }
 
 

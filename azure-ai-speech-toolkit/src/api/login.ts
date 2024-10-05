@@ -149,6 +149,11 @@ export interface AzureSpeechResourceInfo  extends AzureResourceInfo {
   sku: string;
 }
 
+export type AzureResourceGroupInfo = {
+  name: string;
+  location: string;
+};
+
 export declare type TokenRequest = {
   scopes: Array<string>;
   showDialog?: boolean;

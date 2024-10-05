@@ -26,13 +26,13 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     return;
   }
 
+  const resourceGroup = await askUserToSelectResourceGroup(subscriptionInfo);
+  if (!resourceGroup) {
+    return;
+  }
+
   vscode.window.showInformationMessage('Not implemented yet.');
   return;
-  // const resourceGroup = await askUserToSelectResourceGroup(subscriptionInfo);
-  // if (!resourceGroup) {
-  //   return;
-  // }
-
   // const region = await askUserToSelectRegion(subscriptionInfo);
   // if (!region) {
   //   return;
@@ -69,17 +69,19 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
   // return azureResourceInfo;
 }
 
-function askUserToSelectResourceGroup(subscriptionInfo: SubscriptionInfo): Thenable<string | undefined> {
-  return vscode.window.showInputBox({
-    prompt: 'Enter the name of the resource group',
-    placeHolder: 'Resource group name',
-    validateInput: (value) => {
-      if (!value) {
-        return 'Resource group name cannot be empty.';
-      }
-      return '';
+async function askUserToSelectResourceGroup(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
+  let azureAccountProvider = AzureAccountManager.getInstance();
+  try {
+    const resourceGroupName = await azureAccountProvider.getSelectedResourceGroups(subscriptionInfo);
+    return resourceGroupName;
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("UserCancelError")) {
+      console.log("User canceled selecting resource group.");
+      return;
     }
-  });
+
+    vscode.window.showErrorMessage('Fail to select resource group: ' + error);
+  }
 }
 
 export async function signInAzureHandler(...args: unknown[]) {

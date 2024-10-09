@@ -55,9 +55,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
 
+	// UI is ready to show & interact
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
+
+	activateSpeechFxRegistration(context);
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {
-		activateSpeechFxRegistration(context);
 
 		vscode.commands.executeCommand(CommandKeys.OpenReadMe);
 
@@ -74,8 +77,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
-	// UI is ready to show & interact
-	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
 }

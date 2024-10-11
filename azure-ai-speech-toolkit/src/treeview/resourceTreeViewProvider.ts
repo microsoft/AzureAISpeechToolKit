@@ -3,16 +3,11 @@
 
 import * as vscode from "vscode";
 
-import { AzureResourceInfo, TokenProvider } from "../api/login";
-// import { DynamicNode } from "./dynamicNode";
-// import envTreeProviderInstance from "../environmentTreeViewProvider";
-import { AzureAccountNode } from "./account/azureNode";
+import { AzureResourceInfo, SubscriptionInfo, TokenProvider } from "../api/login";
 import { AzureAccountManager } from "../common/azureLogin";
-// import { M365AccountNode } from "./m365Node";
-// import { AppStudioScopes } from "@microsoft/teamsfx-core";
-// import { isSPFxProject } from "../../globalVariables";
 import * as path from 'path';
-import { AzureResourceAccountType, signedIn, signedOut, signingIn } from "../common/constants";
+import { AzureResourceAccountType, signedOut } from "../common/constants";
+import { ContextKeys, VSCodeCommands } from "../constants";
 
 class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeItem> {
   private static instance: ResourceTreeViewProvider;
@@ -37,7 +32,7 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
     );
   }
 
-  public getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
+  public getTreeItem(element: ResourceTreeItem): vscode.TreeItem {
     return element;
   }
 
@@ -45,7 +40,10 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
     const azureAccountProvider = AzureAccountManager.getInstance();
 
     if (!element) {
+	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
       const accountInfo = await azureAccountProvider.getStatus();
+	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, false);
+
       // If not signed in, show original viewsWelcome page with sign-in button
       if (accountInfo.status === signedOut) {
         return [];
@@ -53,35 +51,38 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
 
       // Root level: Get Azure subscriptions
       const subs = await azureAccountProvider.listSubscriptions();
-      const subItems = subs.map(sub => new ResourceTreeItem(sub.subscriptionName!, sub.subscriptionId!, vscode.TreeItemCollapsibleState.Collapsed, ItemType.Subscription));
+      const subItems = subs.map(sub => new ResourceTreeItem(sub.name!, sub.tenantId!, sub.id!, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.Subscription, sub));
       return subItems;
     }
-    else if (element.itemType === ItemType.Subscription) {
+    else if (element.itemType === AzureResourceTreeViewItemType.Subscription) {
       // Second level: Show resource types under each subscription
       const resourceTypes: ResourceTreeItem[] = [
-        new ResourceTreeItem("Speech Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.SpeechService),
-        new ResourceTreeItem("AI Services", element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, ItemType.AIService),
+        new ResourceTreeItem("Speech Services", element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.SpeechServiceType, element.azureResourceInfo),
+        new ResourceTreeItem("AI Services", element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.AIServiceType, element.azureResourceInfo),
       ];
       return resourceTypes;
     }
     else {
       // Third level: Show certain type Services under the subscription
-      let resourceType: AzureResourceAccountType[] = [];
+      let resourceTypes: AzureResourceAccountType[] = [];
+      // let resourceTypeToDisplay: ItemType;
       switch (element.itemType) {
-        case ItemType.AIService:
+        case AzureResourceTreeViewItemType.AIServiceType:
           // AI Services include Cognitive Services and AI Service
-          resourceType = [AzureResourceAccountType.AIService, AzureResourceAccountType.CognitiveServices];
+          resourceTypes = [AzureResourceAccountType.AIService, AzureResourceAccountType.CognitiveServices];
           break;
-        case ItemType.SpeechService:
-          resourceType = [AzureResourceAccountType.SpeechServices];
+        case AzureResourceTreeViewItemType.SpeechServiceType:
+          resourceTypes = [AzureResourceAccountType.SpeechServices];
           break;
       }
-      const azureResources = await azureAccountProvider.listAzureServices(element.subscriptionId, resourceType);
+      const azureResources = await azureAccountProvider.listAzureServices((element.azureResourceInfo as SubscriptionInfo), resourceTypes);
       const azureResourceItems = azureResources.map(azureResource => new ResourceTreeItem(
         azureResource.name,
+        azureResource.tenantId,
         azureResource.id,
         vscode.TreeItemCollapsibleState.None,
-        element.itemType
+        element.itemType === AzureResourceTreeViewItemType.SpeechServiceType ? AzureResourceTreeViewItemType.SpeechService : AzureResourceTreeViewItemType.AIService,
+        azureResource
       ));
 
       return azureResourceItems;
@@ -99,28 +100,41 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
   }
 }
 
-class ResourceTreeItem extends vscode.TreeItem {
+export class ResourceTreeItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
+    public readonly tenantId: string,
     public readonly subscriptionId: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly itemType: ItemType
+    public readonly itemType: AzureResourceTreeViewItemType,
+    public readonly azureResourceInfo: AzureResourceInfo,
   ) {
     super(`${label}`, collapsibleState);
-    this.tooltip = `${this.label}`;
+
+    // Tooltip and description
+    this.tooltip = `${this.label} (${this.itemType}) - Subscription: ${this.subscriptionId}`;
     // this.description = this.subscriptionId ? `Subscription ID: ${this.subscriptionId}` : '';
+
+    // Icon path based on the item type
     this.iconPath = this.getIconPath(itemType);
+
+    if (itemType == AzureResourceTreeViewItemType.SpeechService || itemType == AzureResourceTreeViewItemType.AIService) {
+      this.contextValue = 'speechResouceItem';
+    }
+
     // this.checkboxState = vscode.TreeItemCheckboxState.Checked;
   }
 
   // Helper function to return the correct icon path
-  private getIconPath(itemType: ItemType): { light: string; dark: string } {
+  private getIconPath(itemType: AzureResourceTreeViewItemType): { light: string; dark: string } {
     let iconName = 'subscription.png';
     switch (itemType) {
-      case ItemType.SpeechService:
+      case AzureResourceTreeViewItemType.SpeechServiceType:
+      case AzureResourceTreeViewItemType.SpeechService:
         iconName = 'speech-service-icon.png';
         break;
-      case ItemType.AIService:
+      case AzureResourceTreeViewItemType.AIServiceType:
+      case AzureResourceTreeViewItemType.AIService:
         iconName = 'azure-ai-service.png';
         break;
     }
@@ -130,8 +144,10 @@ class ResourceTreeItem extends vscode.TreeItem {
   }
 }
 
-enum ItemType {
+export enum AzureResourceTreeViewItemType {
   Subscription = 'SUBSCRIPTION',
+  SpeechServiceType = 'SPEECH_SERVICE_TYPE',
+  AIServiceType = 'AI_SERVICE_TYPE',
   SpeechService = 'SPEECH_SERVICE',
   AIService = 'AI_SERVICE',
 }

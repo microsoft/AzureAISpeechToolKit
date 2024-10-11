@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 export enum CommandKey {
-  // Create = "azure-ai-speech-toolkit.create",
+  CreateAzureAIService = "azure-ai-speech-toolkit.createAzureAIService",
   // OpenWelcome = "azure-ai-speech-toolkit.openWelcome",
   // BuildIntelligentAppsWalkthrough = "azure-ai-speech-toolkit.buildIntelligentAppsWalkthrough",
   // CheckCopilotAccess = "azure-ai-speech-toolkit.checkCopilotAccess",
@@ -18,8 +18,10 @@ export enum CommandKey {
   SigninAzure = "azure-ai-speech-toolkit.signinAzure",
   // SignOutAzure = "azure-ai-speech-toolkit.signOutAzure",
   ConfigureResource = "azure-ai-speech-toolkit.configureResource",
+  SelectResource = "azure-ai-speech-toolkit.selectResource",
   BuildApp = "azure-ai-speech-toolkit.buildApp",
   RunApp = "azure-ai-speech-toolkit.runApp",
+  ViewSpeechResourceProperties = "azure-ai-speech-toolkit.viewSpeechResourceProperties",
   // Deploy = "azure-ai-speech-toolkit.deploy",
   // Publish = "azure-ai-speech-toolkit.publish",
   // Preview = "azure-ai-speech-toolkit.preview",
@@ -37,6 +39,7 @@ export enum ViewId {
 export enum ContextKeys {
   IsSpeechFx = "azure-ai-speech-toolkit.isSpeechFx",
   Initialized = "azure-ai-speech-toolkit.initialized",
+  IsLoadingAccountStatus = "azure-ai-speech-toolkit.isLoadingAccountStatus",
 }
 
 export enum VSCodeCommands {

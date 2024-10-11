@@ -2,14 +2,16 @@
 // Licensed under the MIT license.
 
 import { SubscriptionClient, TenantIdDescription } from "@azure/arm-resources-subscriptions";
+import { ResourceManagementClient } from "@azure/arm-resources";
 import { CognitiveServicesManagementClient, Account } from '@azure/arm-cognitiveservices';
 import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
 import { AzureScopes } from "../constants";
 import { Environment } from "@azure/ms-rest-azure-env";
-import { AzureResourceInfo } from "../api/login";
+import { AzureResourceGroupInfo, AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
+import { getAzureResourceAccountTypeDisplayName } from "../utils";
 
 export const Microsoft = "microsoft";
 
@@ -93,17 +95,17 @@ export class VSCodeAzureSubscriptionProvider {
     return sortSubscriptions(results);
   }
 
-  public async getSpeechServiceDetails(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
+  public async fetchSpeechResourceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
 
     try {
-      // Fetch Speech Service details, including the region
-      const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechServiceName);
+      // Fetch Speech Resource details, including the region
+      const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechResourceName);
       const region = speechService.location;
 
       // Fetch the keys for the Speech Service
-      const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechServiceName);
+      const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechResourceName);
       const primaryKey = keys.key1;
 
       return {
@@ -111,14 +113,13 @@ export class VSCodeAzureSubscriptionProvider {
         region: region
       };
     } catch (error) {
-      console.error('Error fetching speech service details:', error);
-      throw new Error(`Unable to retrieve keys and region for Speech Service: ${speechServiceName}`);
+      throw new Error(`Unable to retrieve keys and region for Speech Resource: ${speechResourceName}. Error: ${error}`);
     }
   }
 
-  public async getAzureResourceListWithType(subscriptionId: string, accountTypes: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
+  public async getAzureResourceListWithType(subscriptionInfo: SubscriptionInfo, accountTypes: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
     const accountsIterator = await cognitiveClient.accounts.list();
 
     // Collect all accounts from the iterator
@@ -129,7 +130,7 @@ export class VSCodeAzureSubscriptionProvider {
 
     const azureResourceAccounts = accounts.filter(account => accountTypes.includes(account.kind as AzureResourceAccountType));
 
-    const azureResources: AzureResourceInfo[] = [];
+    const azureResources: AzureSpeechResourceInfo[] = [];
     for (let i = 0; i < azureResourceAccounts.length; i++) {
       const item = azureResourceAccounts[i];
       if (i === 0) {
@@ -138,24 +139,59 @@ export class VSCodeAzureSubscriptionProvider {
       azureResources.push({
         id: item.id!,
         name: item.name!,
-        subscriptionId: subscriptionId,
+        subscriptionId: subscriptionInfo.id,
+        subscriptionName: subscriptionInfo.name,
+        tenantId: subscriptionInfo.tenantId,
         region: item.location!,
-        accountType: this.getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
+        accountType: getAzureResourceAccountTypeDisplayName(item.kind! as AzureResourceAccountType),
         sku: item.sku!.name!
       })
     }
     return azureResources;
   }
 
-  getAzureResourceAccountTypeDisplayName(accountType: AzureResourceAccountType): string {
-    switch (accountType) {
-      case AzureResourceAccountType.SpeechServices:
-        return 'Speech Services';
-      case AzureResourceAccountType.CognitiveServices:
-      case AzureResourceAccountType.AIService:
-        return 'AI Services';
+  public async getResourceGroupListBySubscriptionId(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceGroupInfo[]> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
+
+    try {
+      const results: AzureResourceGroupInfo[] = [];
+      const res = rmClient.resourceGroups.list();
+      let result;
+      do {
+        result = await res.next();
+        if (result.value?.name) results.push({ name: result.value.name, location: result.value.location });
+      } while (!result.done);
+      return results;
+
+    } catch (error) {
+      throw new Error(`Unable to retrieve resource groups for subscription: ${subscriptionInfo.name}. Error: ${error}`);
     }
   }
+
+  public async checkResourceGroupExistence(subscriptionId: string, resourceGroupName: string): Promise<boolean> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+
+    try {
+      const result = await rmClient.resourceGroups.checkExistence(resourceGroupName);
+      return (!!result.body);
+    } catch (error) {
+      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
+    }
+  }
+
+  public async createNewResourceGroup(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, location: string): Promise<void> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
+
+    try {
+      await rmClient.resourceGroups.createOrUpdate(resourceGroupName, { location: location });
+    } catch (error) {
+      throw new Error(`Unable to create resource group: ${resourceGroupName}. Error: ${error}`);
+    }
+  }
+
 
   /**
    * Gets the subscriptions for a given tenant.

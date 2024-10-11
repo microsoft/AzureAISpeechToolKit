@@ -6,11 +6,12 @@
 import type { TokenCredential } from "@azure/core-auth";
 import {
   AzureAccountProvider,
-  AzureResourceInfo,
+  AzureResourceGroupInfo,
+  AzureSpeechResourceInfo,
   SubscriptionInfo,
 } from "../api/login";
-import {SingleSelectConfig} from "../api/ui";
-import { OptionItem} from "../api/types";
+import { SingleSelectConfig } from "../api/ui";
+import { OptionItem } from "../api/types";
 import * as vscode from "vscode";
 import { AzureResourceAccountType, loggedIn, loggedOut, loggingIn, signedIn, signedOut, signingIn } from "./constants";
 import { login, LoginStatus } from "./login";
@@ -24,6 +25,7 @@ import {
   VSCodeAzureSubscriptionProvider,
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
+import { createAzureAIServiceHandler } from "../handlers";
 
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 
@@ -235,36 +237,36 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     const userConfirmation: boolean = await this.doesUserConfirmSignout();
     if (!userConfirmation) {
       // throw user cancel error
-        throw new Error("[UserError] user cancel to sign out");
-    //   throw new UserError(
-    //     "SignOut",
-    //     ExtensionErrors.UserCancel,
-    //     getDefaultString("teamstoolkit.common.userCancel"),
-    //     localize("teamstoolkit.common.userCancel")
-    //   );
+      throw new Error("[UserError] user cancel to sign out");
+      //   throw new UserError(
+      //     "SignOut",
+      //     ExtensionErrors.UserCancel,
+      //     getDefaultString("teamstoolkit.common.userCancel"),
+      //     localize("teamstoolkit.common.userCancel")
+      //   );
     }
     try {
       // todo
       // await vscode.commands.executeCommand("azure-account.logout");
       AzureAccountManager.tenantId = undefined;
       AzureAccountManager.subscriptionId = undefined;
-    //   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.SignOut, {
-    //     [TelemetryProperty.AccountType]: AccountType.Azure,
-    //     [TelemetryProperty.Success]: TelemetrySuccess.Yes,
-    //   });
+      //   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.SignOut, {
+      //     [TelemetryProperty.AccountType]: AccountType.Azure,
+      //     [TelemetryProperty.Success]: TelemetrySuccess.Yes,
+      //   });
       return new Promise((resolve) => {
         resolve(true);
       });
     } catch (e) {
       VsCodeLogInstance.error("[Logout Azure] " + ((e as Error).message as string));
-    //   ExtTelemetry.sendTelemetryErrorEvent(TelemetryEvent.SignOut, e, {
-    //     [TelemetryProperty.AccountType]: AccountType.Azure,
-    //     [TelemetryProperty.Success]: TelemetrySuccess.No,
-    //     [TelemetryProperty.ErrorType]:
-    //       e instanceof UserError ? TelemetryErrorType.UserError : TelemetryErrorType.SystemError,
-    //     [TelemetryProperty.ErrorCode]: `${e.source as string}.${e.name as string}`,
-    //     [TelemetryProperty.ErrorMessage]: `${e.message as string}`,
-    //   });
+      //   ExtTelemetry.sendTelemetryErrorEvent(TelemetryEvent.SignOut, e, {
+      //     [TelemetryProperty.AccountType]: AccountType.Azure,
+      //     [TelemetryProperty.Success]: TelemetrySuccess.No,
+      //     [TelemetryProperty.ErrorType]:
+      //       e instanceof UserError ? TelemetryErrorType.UserError : TelemetryErrorType.SystemError,
+      //     [TelemetryProperty.ErrorCode]: `${e.source as string}.${e.name as string}`,
+      //     [TelemetryProperty.ErrorMessage]: `${e.message as string}`,
+      //   });
       return Promise.resolve(false);
     }
   }
@@ -272,16 +274,16 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   /**
    * list all subscriptions
    */
-  async listSubscriptions(): Promise<SubscriptionInfo[]> {
+  public async listSubscriptions(): Promise<SubscriptionInfo[]> {
     const arr: SubscriptionInfo[] = [];
     if (await this.isUserLogin()) {
       const subs = await this.vscodeAzureSubscriptionProvider.getSubscriptions();
       for (let i = 0; i < subs.length; ++i) {
         const item = subs[i];
         arr.push({
-          subscriptionId: item.subscriptionId,
+          id: item.subscriptionId,
           tenantId: item.tenantId,
-          subscriptionName: item.name,
+          name: item.name,
         });
       }
     }
@@ -289,10 +291,10 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return arr;
   }
 
-  async listAzureServices(subscriptionId: string, types: AzureResourceAccountType[]): Promise<AzureResourceInfo[]> {
-    let speechServices: AzureResourceInfo[] = [];
+  public async listAzureServices(subscriptionInfo: SubscriptionInfo, types: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
+    let speechServices: AzureSpeechResourceInfo[] = [];
     if (await this.isUserLogin()) {
-      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionId, types);
+      speechServices = await this.vscodeAzureSubscriptionProvider.getAzureResourceListWithType(subscriptionInfo, types);
     }
 
     return speechServices;
@@ -321,18 +323,18 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       }
     }
     return Promise.reject(
-        new Error("[UserError] Login unknown subscription.")
+      new Error("[UserError] Login unknown subscription.")
 
-    //   new UserError(
-    //     "Login",
-    //     ExtensionErrors.UnknownSubscription,
-    //     getDefaultString("teamstoolkit.azureLogin.unknownSubscription"),
-    //     localize("teamstoolkit.azureLogin.unknownSubscription")
-    //   )
+      //   new UserError(
+      //     "Login",
+      //     ExtensionErrors.UnknownSubscription,
+      //     getDefaultString("teamstoolkit.azureLogin.unknownSubscription"),
+      //     localize("teamstoolkit.azureLogin.unknownSubscription")
+      //   )
     );
   }
 
-  async getStatus(): Promise<LoginStatus> {
+  public async getStatus(): Promise<LoginStatus> {
     try {
       if (AzureAccountManager.currentStatus === loggingIn) {
         return Promise.resolve({ status: signingIn, token: undefined, accountInfo: undefined });
@@ -356,7 +358,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async addStatusChangeEvent() {
+  private async addStatusChangeEvent() {
     if (await this.isUserLogin()) {
       AzureAccountManager.currentStatus = loggedIn;
     }
@@ -386,64 +388,64 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async fetchSpeechServiceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechServiceName: string): Promise<{ key: string|undefined, region: string|undefined }> {
+  async fetchSpeechResourceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only fetch speech service details when logged in.");
     }
-    const {key, region} = await this.vscodeAzureSubscriptionProvider.getSpeechServiceDetails(subscriptionId, resourceGroupName, speechServiceName);
-    return {key, region};
+    const { key, region } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(subscriptionId, resourceGroupName, speechResourceName);
+    return { key, region };
   }
 
   async getSelectedSubscription(triggerUI = false): Promise<SubscriptionInfo | undefined> {
     if (triggerUI) {
       if (AzureAccountManager.currentStatus !== loggedIn && !(await this.isUserLogin())) {
-        console.log("[getSelectedSubscription] not logged in, trigger login");
+        console.log("User is not logged in when trying to get selected subscription. Logging in...");
         await this.login(true);
       }
-      // if (AzureAccountManager.currentStatus === loggedIn && !AzureAccountManager.subscriptionId) {
-      //   await this.selectSubscription();
-      // }
     }
-    //  else {
-      if (AzureAccountManager.currentStatus === loggedIn /*&& !AzureAccountManager.subscriptionId*/) {
-        await this.selectSubscription();
-        const subscriptionList = await this.listSubscriptions();
-        if (subscriptionList && subscriptionList.length == 1) {
-          await this.setSubscription(subscriptionList[0].subscriptionId);
-        }
-      }
-    // }
-    if (AzureAccountManager.currentStatus === loggedIn && AzureAccountManager.subscriptionId) {
+    if (AzureAccountManager.currentStatus === loggedIn) {
+      await this.selectSubscription();
+
       const selectedSub: SubscriptionInfo = {
-        subscriptionId: AzureAccountManager.subscriptionId,
+        id: AzureAccountManager.subscriptionId!,
         tenantId: AzureAccountManager.tenantId!,
-        subscriptionName: AzureAccountManager.subscriptionName ?? "",
+        name: AzureAccountManager.subscriptionName ?? "",
       };
       return selectedSub;
     } else {
       return undefined;
     }
   }
-  
-  async getSelectedSpeechService(subscriptionId: string): Promise<AzureResourceInfo | undefined> {
+
+  async getSelectedSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
-      throw new Error("can only select speech service when logged in.");
+      throw new Error("can only select speech resource when logged in.");
     }
 
     const azureResourceAccountTypesToSelect = [AzureResourceAccountType.SpeechServices, AzureResourceAccountType.CognitiveServices, AzureResourceAccountType.AIService];
-    const speechResourcesList = await this.listAzureServices(subscriptionId, azureResourceAccountTypesToSelect);
-    if (!speechResourcesList || speechResourcesList.length == 0) {
-      vscode.window.showInformationMessage("Subscription " + subscriptionId + " does not contain any speech resource! Retry command " + CommandKey.ConfigureResource+"and select a different subscription.");
-      return;
-    }
 
-    const options: OptionItem[] = speechResourcesList.map((speechService) => {
-      return {
-        id: speechService.id,
-        label: `${speechService.name} (${speechService.accountType}, ${speechService.region}, ${speechService.sku})`,
-        // data: sub.tenantId,
-      } as OptionItem;
+    const speechResourcesList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching Azure Speech Resources...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.listAzureServices(subscriptionInfo, azureResourceAccountTypesToSelect);
     });
+
+    const createNewServiceOption: OptionItem = {
+      id: "create-new-service",  // Unique ID for the new service option
+      label: `$(plus) Create a new Azure AI Service`,
+    };
+
+    const options: OptionItem[] = [
+      createNewServiceOption,
+      ...speechResourcesList.map((speechService) => {
+        return {
+          id: speechService.id,
+          label: `${speechService.name} (${speechService.accountType}, ${speechService.region}, ${speechService.sku})`,
+        } as OptionItem;
+      })];
+
     const config: SingleSelectConfig = {
       name: "Azure Speech Resource",
       title: "Select a Speech Resource",
@@ -455,22 +457,120 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     } else {
       const selectedSpeechServiceId = result.value.result as string;
 
+      if (selectedSpeechServiceId === createNewServiceOption.id) {
+        const newService = await createAzureAIServiceHandler(subscriptionInfo);
+        return newService;
+      }
+
       return speechResourcesList.find(service => service.id == selectedSpeechServiceId);
     }
   }
 
-  async selectSubscription(): Promise<void> {
-    const subscriptionList = await this.listSubscriptions();
-    if (!subscriptionList || subscriptionList.length == 0) {
-        throw new Error("[UserError] failToFindSubscription");
+  async getSelectedResourceGroups(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
+    if (AzureAccountManager.currentStatus !== loggedIn) {
+      throw new Error("can only select resource group when logged in.");
     }
+
+    const resourceGroupsList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching resource group...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionInfo);
+      // return await this.listResourceGroup(subscriptionInfo);
+    });
+
+    const createNewResourceGroupOption: OptionItem = {
+      id: "create-new-resource-group",  // Unique ID for the new resource group option
+      label: `$(plus) Create a new Resource Group`,
+    };
+
+    const options: OptionItem[] = [
+      createNewResourceGroupOption,
+      ...resourceGroupsList.map((rg) => {
+        return {
+          id: rg.name,
+          label: `${rg.name}`,
+        } as OptionItem;
+      })];
+
+    const config: SingleSelectConfig = {
+      name: "Resource Group",
+      title: "Select a resource group",
+      options: options,
+    };
+    const result = await VS_CODE_UI.selectOption(config);
+    if (result.isErr()) {
+      throw result.error;
+    } else {
+      const selectedResourceGroupId = result.value.result as string;
+
+      if (selectedResourceGroupId === createNewResourceGroupOption.id) {
+        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionInfo.id);
+        return newResourceGroupName;
+      }
+
+      const resourceGroupInfo = resourceGroupsList.find(rg => rg.name == selectedResourceGroupId);
+      return resourceGroupInfo?.name;
+    }
+  }
+
+  async getResourceGroupNameFromUser(subscriptionId: string): Promise<string> {
+    // Generate a default resource group name
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
+    const accountInfo = await this.getAccountInfo();
+    console.log(accountInfo);
+    let username = ((accountInfo?.email as string) || (accountInfo?.upn as string))?.split('@')[0];
+    if (!username) {
+      username = "dummy";
+    }
+    const defaultResourceGroupName = `${username}_speechaiproj_rg_${timestamp}`;
+
+    // Define dropdown options
+    const options: vscode.InputBoxOptions = {
+      prompt: "Enter a resource group name or use the default one",
+      placeHolder: defaultResourceGroupName,
+      value: defaultResourceGroupName, // Set the default value
+      validateInput: async (input) => {
+        // Validate if the resource group name is unique
+        const doesResourceGroupExsit = await this.vscodeAzureSubscriptionProvider.checkResourceGroupExistence(subscriptionId, input.trim());
+        if (doesResourceGroupExsit) {
+          return 'Resource group name already exists, please choose another name.';
+        }
+        return null; // Input is valid
+      }
+    };
+
+    // Show input box to user with default and custom input option
+    const resourceGroupName = await vscode.window.showInputBox(options);
+    if (!resourceGroupName) {
+      // Handle case where user cancels the input
+      throw new Error("[UserError] user cancel to input resource group name");
+    }
+
+    return resourceGroupName.trim(); // Return the valid resource group name
+  }
+
+  async selectSubscription(): Promise<void> {
+    const subscriptionList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching Azure subscriptions...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.listSubscriptions();
+    });
+
+    if (!subscriptionList || subscriptionList.length == 0) {
+      throw new Error("[UserError] failToFindSubscription");
+    }
+
     if (subscriptionList && subscriptionList.length == 1) {
-      await this.setSubscription(subscriptionList[0].subscriptionId);
+      await this.setSubscription(subscriptionList[0].id);
     } else if (subscriptionList.length > 1) {
       const options: OptionItem[] = subscriptionList.map((sub) => {
         return {
-          id: sub.subscriptionId,
-          label: sub.subscriptionName,
+          id: sub.id,
+          label: sub.name,
           data: sub.tenantId,
         } as OptionItem;
       });
@@ -479,6 +579,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
         title: "Select Subscription",
         options: options,
       };
+
       const result = await VS_CODE_UI.selectOption(config);
       if (result.isErr()) {
         throw result.error;

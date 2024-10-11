@@ -9,7 +9,6 @@ import accountTreeViewProviderInstance from "./treeview/account/accountTreeViewP
 import { AzureAccountManager } from './common/azureLogin';
 import TreeViewManagerInstance from "./treeview/treeViewManager";
 import { isSpeechResourceSeleted } from './utils';
-import { TreeViewCommand } from './treeview/treeViewCommand';
 import resourceTreeViewProvider from './treeview/resourceTreeViewProvider';
 
 export let VS_CODE_UI: VSCodeUI;
@@ -22,52 +21,68 @@ export async function activate(context: vscode.ExtensionContext) {
 	VS_CODE_UI = new VSCodeUI(TerminalName);
 	initializeGlobalVariables(context);
 
-	const openSamples = vscode.commands.registerCommand(CommandKeys.OpenSamples, handlers.openSamplesHandler);
-	context.subscriptions.push(openSamples);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.OpenSamples, handlers.openSamplesHandler));
 
-	const configureResource = vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.ConfigureResourcehandler);
-	context.subscriptions.push(configureResource);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.ConfigureResource, handlers.configureResourcehandler));
 
-	const buildApp = vscode.commands.registerCommand(CommandKeys.BuildApp, handlers.buildAppHandler);
-	context.subscriptions.push(buildApp);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.SelectResource, handlers.configureResourcehandler));
 
-	const runApp = vscode.commands.registerCommand(CommandKeys.RunApp, handlers.runAppHandler);
-	context.subscriptions.push(runApp);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.BuildApp, handlers.buildAppHandler));
 
-	const openDocument = vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler);
-	context.subscriptions.push(openDocument);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.RunApp, handlers.runAppHandler));
 
-	const openAzureAccountHelp = vscode.commands.registerCommand(CommandKeys.OpenAzureAccountHelp, handlers.openAzureAccountHelpHandler);
-	context.subscriptions.push(openAzureAccountHelp);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.OpenAzureAccountHelp, handlers.openAzureAccountHelpHandler));
 
 	// README
-	const openReadMe = vscode.commands.registerCommand(CommandKeys.OpenReadMe, handlers.openReadMeHandler);
-	context.subscriptions.push(openReadMe);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.OpenReadMe, handlers.openReadMeHandler));
 
-	const signInAzure = vscode.commands.registerCommand(CommandKeys.SigninAzure, handlers.signInAzureHandler);
-	context.subscriptions.push(signInAzure);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.SigninAzure, handlers.signInAzureHandler));
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.ViewSpeechResourceProperties, handlers.viewSpeechResourcePropertiesHandler));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
+
+	// set loading status as true for extension initialization to load account status
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
+
+	// UI is ready to show & interact
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
+
+	activateSpeechFxRegistration(context);
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {
-		activateSpeechFxRegistration(context);
 
-		vscode.commands.executeCommand(CommandKeys.OpenReadMe);
+		await vscode.commands.executeCommand(CommandKeys.OpenReadMe);
 
 		if (!isSpeechResourceSeleted()) {
+			const ConfigureSpeechResourceOption = 'Configure Speech Resource';
 			vscode.window.showInformationMessage(
 				'Environment file not found. Would you like to configure a Speech Service?',
-				'Configure a Speech Resource',
+				ConfigureSpeechResourceOption,
 			).then(selection => {
-				if (selection === 'Configure a Speech Resource') {
+				if (selection === ConfigureSpeechResourceOption) {
 					vscode.commands.executeCommand(CommandKeys.ConfigureResource);
 				}
 			});
 		}
 	}
-	// UI is ready to show & interact
-	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
+
 
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
+
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
@@ -80,6 +95,7 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	console.log("activateSpeechFxRegistration");
 
 	TreeViewManagerInstance.registerTreeViews(context);
+
 	accountTreeViewProviderInstance.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),
 	});
@@ -87,6 +103,7 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	resourceTreeViewProvider.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),
 	});
+
 	// // Set region for M365 account every
 	// void M365TokenInstance.setStatusChangeMap(
 	//   "set-region",

@@ -2,9 +2,10 @@
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
   "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "Rivendell-test",
   "author": "Rivendell team",
+  "preview": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/AzureAISpeechToolKit"
@@ -60,7 +61,7 @@
       {
         "view": "azure-ai-speech-toolkit-resources",
         "contents": "Sign in using your Azure Account to view resources, or create a free Azure Account.\n[Sign in to Azure](command:azure-ai-speech-toolkit.signinAzure?%5B%22SideBar%22%5D)\n[Create an Azure Account](command:azure-ai-speech-toolkit.openAzureAccountHelp?%5B%22SideBar%22%5D)",
-        "enablement": "azure-ai-speech-toolkit.initialized"
+        "enablement": "!azure-ai-speech-toolkit.isLoadingAccountStatus &&azure-ai-speech-toolkit.initialized"
       }
     ],
     "commands": [
@@ -96,12 +97,43 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
+        "command": "azure-ai-speech-toolkit.selectResource",
+        "title": "Select",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
+      },
+      {
         "command": "azure-ai-speech-toolkit.openReadMe",
         "title": "Open README file",
         "category": "Azure AI Speech Toolkit",
         "enablement": "never"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
+        "title": "View Speech Resource Properties",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.createAzureAIService",
+        "title": "Create an Azure AI Service",
+        "category": "Azure AI Speech Toolkit"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
+          "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem && azure-ai-speech-toolkit.isSpeechFx",
+          "group": "navigation"
+        },
+        {
+          "command": "azure-ai-speech-toolkit.selectResource",
+          "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem && azure-ai-speech-toolkit.isSpeechFx",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "rimraf out && webpack --mode production --config ./webpack.config.js",
@@ -114,6 +146,7 @@
   },
   "devDependencies": {
     "@azure/arm-cognitiveservices": "^7.5.0",
+    "@azure/arm-resources": "^5.2.0",
     "@azure/arm-resources-subscriptions": "^2.1.0",
     "@azure/ms-rest-azure-env": "^2.0.0",
     "@feathersjs/hooks": "^0.9.0",

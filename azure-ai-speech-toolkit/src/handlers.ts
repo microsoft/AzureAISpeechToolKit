@@ -1,19 +1,88 @@
-import { PanelType } from "./controls/PanelType";
-import { WebviewPanel } from "./controls/webviewPanel";
-import { sendRequestWithRetry } from "./common/requestUtils";
-import axios from "axios";
-import { SampleInfo } from "./controls/sampleGallery/ISamples";
-import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
-const path = require('node:path');
 import * as os from "os";
 import * as fs from "fs-extra";
 import * as vscode from "vscode";
+import axios from "axios";
+const path = require('node:path');
+import { PanelType } from "./controls/PanelType";
+import { WebviewPanel } from "./controls/webviewPanel";
+import { sendRequestWithRetry } from "./common/requestUtils";
+import { SampleInfo } from "./controls/sampleGallery/ISamples";
+import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
 import { CommandKey, ConstantString, EnvKeys, TaskName, VSCodeCommands } from "./constants";
-import { AzureResourceInfo, SubscriptionInfo } from "./api/login";
+import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
-import { isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
+import { extractEnvValue, fetchSpeechServiceKeyAndRegion, getAzureResourceAccountTypeDisplayName, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
+import { AzureResourceTreeViewItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { AzureResourceAccountType } from "./common/constants";
+
+export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
+  let subscriptionInfo: SubscriptionInfo;
+  if (args.length > 0) {
+    subscriptionInfo = args[0] as SubscriptionInfo;
+  } else {
+    console.log("No subscription info passed in. Ask user to select subscription.");
+    return;
+  }
+
+  const resourceGroup = await askUserToSelectResourceGroup(subscriptionInfo);
+  if (!resourceGroup) {
+    return;
+  }
+
+  vscode.window.showInformationMessage('Not implemented yet.');
+  return;
+  // const region = await askUserToSelectRegion(subscriptionInfo);
+  // if (!region) {
+  //   return;
+  // }
+
+  // const name = await askUserToInputResourceName();
+  // if (!name) {
+  //   return;
+  // }
+
+  // const sku = await askUserToSelectSku();
+  // if (!sku) {
+  //   return;
+  // }
+
+  // try {
+  //   await createSpeechResource(subscriptionInfo, resourceGroup, region, name, sku);
+  // } catch (error) {
+  //   vscode.window.showErrorMessage('Fail to create speech resource: ' + error);
+  //   return;
+  // }
+
+  // const azureResourceInfo: AzureSpeechResourceInfo = {
+  //   name: name,
+  //   id: "",
+  //   tenantId: subscriptionInfo.tenantId,
+  //   subscriptionId: subscriptionInfo.id,
+  //   subscriptionName: subscriptionInfo.name,
+  //   region: region,
+  //   accountType: getAzureResourceAccountTypeDisplayName(AzureResourceAccountType.AIService),
+  //   sku: sku
+  // };
+
+  // return azureResourceInfo;
+}
+
+async function askUserToSelectResourceGroup(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
+  let azureAccountProvider = AzureAccountManager.getInstance();
+  try {
+    const resourceGroupName = await azureAccountProvider.getSelectedResourceGroups(subscriptionInfo);
+    return resourceGroupName;
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("UserCancelError")) {
+      console.log("User canceled selecting resource group.");
+      return;
+    }
+
+    vscode.window.showErrorMessage('Fail to select resource group: ' + error);
+  }
+}
 
 export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
@@ -23,6 +92,48 @@ export async function signInAzureHandler(...args: unknown[]) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
   return;
+}
+
+export async function viewSpeechResourcePropertiesHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {
+  let properties = "";
+  try {
+    properties = await getSpeechResourcePropertiesByResourceItem(resourceItem);
+  } catch (error) {
+    vscode.window.showErrorMessage("Fail to get speech resource properties: " + error);
+    return;
+  }
+
+  // Create an untitled file and show it in the editor
+  if (properties) {
+    const document = await vscode.workspace.openTextDocument({ content: properties, language: 'shellscript' });
+    await vscode.window.showTextDocument(document);
+  }
+}
+
+async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceTreeItem): Promise<string> {
+  if (resourceItem.itemType !== AzureResourceTreeViewItemType.SpeechService && resourceItem.itemType !== AzureResourceTreeViewItemType.AIService) {
+    throw new Error("Invalid resource type: " + resourceItem.itemType);
+  }
+
+  const azureSpeechResourceInfo = resourceItem.azureResourceInfo as AzureSpeechResourceInfo;
+  if (!azureSpeechResourceInfo) {
+    throw new Error("Missing azure speech resource info.");
+  }
+
+  return await getSpeechResourceProperties(azureSpeechResourceInfo);
+}
+
+async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechResourceInfo): Promise<string> {
+  const { key, region } = await fetchSpeechServiceKeyAndRegion(azureSpeechResourceInfo);
+  const properties = [
+    `SPEECH_RESOURCE_KEY=${key}`,
+    `SERVICE_REGION=${region}`,
+    `AZURE_SUBSCRIPTION_ID=${azureSpeechResourceInfo.subscriptionId}`,
+    `TENANT_ID=${azureSpeechResourceInfo.tenantId}`,
+    `SPEECH_RESOURCE_NAME=${azureSpeechResourceInfo.name}`,
+    `SPEECH_RESOURCE_SKU=${azureSpeechResourceInfo.sku}`
+  ].join('\n');
+  return properties;
 }
 
 export async function buildAppHandler(...args: unknown[]) {
@@ -134,10 +245,11 @@ export async function openAzureAccountHelpHandler(...args: unknown[]) {
   return;
 }
 
-export async function ConfigureResourcehandler(...args: unknown[]) {
+export async function configureResourcehandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {
   if (isSpeechResourceSeleted()) {
-    vscode.window.showInformationMessage('Speech service configuration already exists.');
-    return;
+    if (!(await doesUserConfirmReConfigureSpeechResource())) {
+      return;
+    }
   }
 
   const workspaceFolder = globalVariables.workspaceUri?.fsPath;
@@ -146,45 +258,47 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
     return;
   }
 
-  // Speech resource is not selected, enable user to select or create one.
-  const envFolderPath = path.join(workspaceFolder, ConstantString.EnvFolderName);
-  if (!fs.existsSync(envFolderPath)) {
-    fs.mkdirSync(envFolderPath);
-  }
+  let envFilePath = "";
+  let properties = "";
 
-  const envFilePath = path.join(envFolderPath, ConstantString.EnvFileName);
-  let envContent = '';
-  if (fs.existsSync(envFilePath)) {
-    envContent = fs.readFileSync(envFilePath, 'utf8');
+  if (resourceItem) {
+    // configure speech resource from selected resource item
+    properties = await getSpeechResourcePropertiesByResourceItem(resourceItem);
+
+    envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);
+
+  } else {
+    // configure speech resource from dropdown menu selection
+    try {
+      const subscriptionInfo = await askUserForSubscription();
+      const speechServiceInfo = await askUserForSpeechResource(subscriptionInfo);
+      if (!speechServiceInfo) {
+        // Fail to find a speech service.
+        vscode.window.showErrorMessage('No speech service is selected.');
+        return;
+      }
+      properties = await getSpeechResourceProperties(speechServiceInfo);
+
+      envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);
+
+    } catch (error) {
+      vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
+      return;
+    }
   }
 
   try {
-    const subscriptionInfo = await askUserForSubscription();
-    const speechServiceInfo = await askUserForSpeechService(subscriptionInfo);
-    if (!speechServiceInfo) {
-      // Fail to find a speech service.
-      vscode.window.showErrorMessage('No speech service is selected.');
+    // Update the config.json file with the new values.
+    const key = extractEnvValue(properties, EnvKeys.SpeechResourceKey);
+    const region = extractEnvValue(properties, EnvKeys.ServiceRegion);
+    if (!key || !region) {
+      vscode.window.showErrorMessage('Fail to configure speech resource. Missing key or region.');
       return;
     }
-
-    // Fetch the Speech Service Key and Region.
-    const { key, region } = await fetchSpeechServiceKeyAndRegion(speechServiceInfo);
-
-    // Step 4: Update the .env/.env.dev file with new values or replace existing ones.
-    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceKey, key);
-    envContent = updateEnvContent(envContent, EnvKeys.ServiceRegion, region);
-    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceName, speechServiceInfo.name);
-    envContent = updateEnvContent(envContent, EnvKeys.SpeechResourceSKU, speechServiceInfo.sku);
-    envContent = updateEnvContent(envContent, EnvKeys.AzureSubscriptionId, subscriptionInfo.subscriptionId);
-    envContent = updateEnvContent(envContent, EnvKeys.TenantId, subscriptionInfo.tenantId);
-
-    fs.writeFileSync(envFilePath, envContent);
-    await openDocumentInNewColumn(envFilePath);
-
-    // Update the config.json file with the new values.
     updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region);
   } catch (error) {
-    vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
+    vscode.window.showErrorMessage('Fail to update config.json file: ' + error);
+    return;
   }
 
   // Step 5: Build the app if build tasks exist.
@@ -211,6 +325,34 @@ export async function ConfigureResourcehandler(...args: unknown[]) {
   }
 }
 
+async function doesUserConfirmReConfigureSpeechResource(): Promise<boolean> {
+  const message = "Speech service configuration already exists. Are you sure you want to reconfigure it?";
+  const yes = "Yes";
+  let userSelected: string | undefined;
+  // do {
+  userSelected = await vscode.window.showInformationMessage(
+    message,
+    { modal: true },
+    yes
+  );
+  return Promise.resolve(userSelected === yes);
+}
+
+async function updateEnvfileAndOpen(workspaceFolder: string, content: string): Promise<string> {
+  // ensure env folder exists
+  const envFolderPath = path.join(workspaceFolder, ConstantString.EnvFolderName);
+  if (!fs.existsSync(envFolderPath)) {
+    fs.mkdirSync(envFolderPath);
+  }
+
+  const envFilePath = path.join(envFolderPath, ConstantString.EnvFileName);
+
+  fs.writeFileSync(envFilePath, content);
+  await openDocumentInNewColumn(envFilePath);
+
+  return envFilePath;
+}
+
 function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, region: string) {
   const configFilePath = path.join(workspaceFolder, 'config.json');
   if (fs.existsSync(configFilePath)) {
@@ -230,6 +372,7 @@ function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, 
   }
 
 }
+
 export async function openReadMeHandler(...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("not speech project. Skip open readme file.");
@@ -249,22 +392,6 @@ export async function openReadMeHandler(...args: unknown[]) {
   }
 }
 
-// Helper function to update or add a key-value pair in the .env content
-function updateEnvContent(content: string, key: string, value: string): string {
-  const regex = new RegExp(`^${key}=.*$`, 'm');
-  const newLine = `${key}=${value}`;
-
-  if (regex.test(content)) {
-    // If the key exists, replace the line
-    return content.replace(regex, newLine);
-  } else {
-    // If the key doesn't exist, append a new line
-    return content + `\n${newLine}`;
-  }
-}
-
-
-// Ask user for Azure subscription.
 async function askUserForSubscription(): Promise<SubscriptionInfo> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const subscriptionInAccount = await azureAccountProvider.getSelectedSubscription(true);
@@ -278,37 +405,15 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
   }
 }
 
-// Ask user for Azure Speech Service.
-async function askUserForSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceInfo | undefined> {
+async function askUserForSpeechResource(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
   let azureAccountProvider = AzureAccountManager.getInstance();
-  const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo.subscriptionId);
+  const speechServiceInfo = await azureAccountProvider.getSelectedSpeechService(subscriptionInfo);
   if (!speechServiceInfo) {
     return;
   }
   console.log("successfully select speech service: " + JSON.stringify(speechServiceInfo));
 
   return speechServiceInfo;
-}
-
-// Fetch the Speech Service key and region from Azure.
-async function fetchSpeechServiceKeyAndRegion(speechServiceInfo: AzureResourceInfo): Promise<{ key: string, region: string }> {
-  let azureAccountProvider = AzureAccountManager.getInstance();
-  const resourceGroupName = getResourceGroupNameFromId(speechServiceInfo.id);
-  const { key, region } = await azureAccountProvider.fetchSpeechServiceKeyAndRegion(speechServiceInfo.subscriptionId, resourceGroupName, speechServiceInfo.name);
-  if (!key || !region) {
-    throw new Error("Fail to fetch key and region");
-  }
-
-  return {
-    key: key,
-    region: region
-  };
-}
-
-function getResourceGroupNameFromId(speechServiceId: string): string {
-  const segments = speechServiceId.split('/');
-  const resourceGroupIndex = segments.indexOf('resourceGroups') + 1;
-  return segments[resourceGroupIndex];
 }
 
 export async function downloadSampleApp(...args: unknown[]) {

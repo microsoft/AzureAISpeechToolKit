@@ -5,6 +5,7 @@
   "version": "0.0.3",
   "publisher": "Rivendell-test",
   "author": "Rivendell team",
+  "preview": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/AzureAISpeechToolKit"
@@ -60,7 +61,7 @@
       {
         "view": "azure-ai-speech-toolkit-resources",
         "contents": "Sign in using your Azure Account to view resources, or create a free Azure Account.\n[Sign in to Azure](command:azure-ai-speech-toolkit.signinAzure?%5B%22SideBar%22%5D)\n[Create an Azure Account](command:azure-ai-speech-toolkit.openAzureAccountHelp?%5B%22SideBar%22%5D)",
-        "enablement": "azure-ai-speech-toolkit.initialized"
+        "enablement": "!azure-ai-speech-toolkit.isLoadingAccountStatus &&azure-ai-speech-toolkit.initialized"
       }
     ],
     "commands": [

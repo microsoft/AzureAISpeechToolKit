@@ -7,6 +7,7 @@ import { AzureResourceInfo, SubscriptionInfo, TokenProvider } from "../api/login
 import { AzureAccountManager } from "../common/azureLogin";
 import * as path from 'path';
 import { AzureResourceAccountType, signedOut } from "../common/constants";
+import { ContextKeys, VSCodeCommands } from "../constants";
 
 class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeItem> {
   private static instance: ResourceTreeViewProvider;
@@ -39,7 +40,10 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
     const azureAccountProvider = AzureAccountManager.getInstance();
 
     if (!element) {
+	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
       const accountInfo = await azureAccountProvider.getStatus();
+	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, false);
+
       // If not signed in, show original viewsWelcome page with sign-in button
       if (accountInfo.status === signedOut) {
         return [];

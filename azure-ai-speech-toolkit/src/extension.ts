@@ -55,6 +55,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
 
+	// set loading status as true for extension initialization to load account status
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
+
 	// UI is ready to show & interact
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
@@ -62,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log("isSpeechFxProject", isSpeechFxProject);
 	if (isSpeechFxProject) {
 
-		vscode.commands.executeCommand(CommandKeys.OpenReadMe);
+		await vscode.commands.executeCommand(CommandKeys.OpenReadMe);
 
 		if (!isSpeechResourceSeleted()) {
 			const ConfigureSpeechResourceOption = 'Configure Speech Resource';
@@ -79,6 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
+
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {

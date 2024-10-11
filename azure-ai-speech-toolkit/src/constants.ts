@@ -39,6 +39,7 @@ export enum ViewId {
 export enum ContextKeys {
   IsSpeechFx = "azure-ai-speech-toolkit.isSpeechFx",
   Initialized = "azure-ai-speech-toolkit.initialized",
+  IsLoadingAccountStatus = "azure-ai-speech-toolkit.isLoadingAccountStatus",
 }
 
 export enum VSCodeCommands {

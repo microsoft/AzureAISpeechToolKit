@@ -1,6 +1,22 @@
-# azure-ai-speech-toolkit README
+# Azure AI Speech Toolkit for Visual Studio Code
 
-This extension is aimed to showcase Azure AI Speech Service capabilities. Try the "View Sample" command.
+The Azure AI Speech Toolkit helps developers explore *[Azure AI Speech Service](https://azure.microsoft.com/products/ai-services/ai-speech/) and run quick-starts and scenario use cases with "simple clicks".
+
+\!\[feature X\]\(images/feature-x.png\)
+
+The Speech service provides speech to text and text to speech capabilities with a Speech resource. You can transcribe speech to text with high accuracy, produce natural-sounding text to speech voices, translate spoken audio, and use speaker recognition during conversations.
+
+- **Real-time speech to text**: With real-time speech to text, the audio is transcribed as speech is recognized from a microphone or file. Use real-time speech to text for applications that need to transcribe audio in real-time.
+
+- **Fast transcription**: Fast transcription is used to transcribe audio files with returning results synchronously and much faster than real-time audio. Use fast transcription in the scenarios that you need the transcript of an audio recording as quickly as possible with predictable latency.
+
+- **Batch transcription**: Batch transcription is used to transcribe a large amount of audio in storage. You can point to audio files with a shared access signature (SAS) URI and asynchronously receive transcription results. Use batch transcription for applications that need to transcribe audio in bulk.
+
+- **Text to speech**: With text to speech, you can convert input text into human like synthesized speech. Use neural voices, which are human like voices powered by deep neural networks. Use the Speech Synthesis Markup Language (SSML) to fine-tune the pitch, pronunciation, speaking rate, volume, and more.
+
+- **Speech translation**: Speech translation enables real-time, multilingual translation of speech to your applications, tools, and devices. Use this feature for speech to speech and speech to text translation.
+
+- **Language identification**: Language identification is used to identify languages spoken in audio when compared against a list of supported languages. Use language identification by itself, with speech to text recognition, or with speech translation.
 
 ## Features
 
@@ -14,58 +30,31 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+> - An Azure subscription. You can [create one for free](https://azure.microsoft.com/free/cognitive-services).
+> - [Create a Speech resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices) in the Azure portal.
 
-## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
+Initial release of Azure AI Speech Toolkit
 
-### 1.0.1
 
-Fixed issue #.
+## Code of Conduct
+This project has adopted the [Microsoft Open Source Code of Conduct]. For more information see the [Code of Conduct FAQ].
 
-### 1.1.0
+## Privacy Statement
+The [Microsoft Enterprise and Developer Privacy Statement] describes the privacy statement of this software.
 
-Added features X, Y, and Z.
+## License
+This extension is subject to the terms of the [End User License Agreement].
 
----
+[Microsoft Enterprise and Developer Privacy Statement]:https://go.microsoft.com/fwlink/?LinkId=786907&lang=en7
+[Microsoft Open Source Code of Conduct]:https://opensource.microsoft.com/codeofconduct/
+[Code of Conduct FAQ]:https://opensource.microsoft.com/codeofconduct/faq/
+[opencode@microsoft.com]:mailto:opencode@microsoft.com
+[End User License Agreement]:https://www.visualstudio.com/license-terms/mlt552233/
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

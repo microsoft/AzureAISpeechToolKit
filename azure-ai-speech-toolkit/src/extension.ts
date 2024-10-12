@@ -62,9 +62,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
 	activateSpeechFxRegistration(context);
-	console.log("isSpeechFxProject", isSpeechFxProject);
-	if (isSpeechFxProject) {
 
+	if (isSpeechFxProject) {
 		await vscode.commands.executeCommand(CommandKeys.OpenReadMe);
 
 		if (!isSpeechResourceSeleted()) {

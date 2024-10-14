@@ -16,6 +16,7 @@ The Speech service provides speech to text and text to speech capabilities with 
 ## Available Actions
 - Config Azure Speech resources
 - View samples
+- Build sample app
 - Run sample app
 - View documentations
 

@@ -2,7 +2,7 @@
 
 The Azure AI Speech Toolkit helps developers explore [Azure AI Speech Service](https://azure.microsoft.com/products/ai-services/ai-speech/) and run quick-starts and scenario use cases with "simple clicks".
 
-\!\[feature X\]\(images/feature-x.png\)
+<img src="https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/azure-ai-speech-toolkit/img/overall-azureaispeech-extension-dev-flow.gif" alt="Overall extension dev flow" width="500px">
 
 The Speech service provides speech to text and text to speech capabilities with a Speech resource. You can transcribe speech to text with high accuracy, produce natural-sounding text to speech voices, translate spoken audio, etc.
 

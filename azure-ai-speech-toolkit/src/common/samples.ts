@@ -202,7 +202,7 @@ class SampleProvider {
 
   private async fetchRawFileContent(branchOrTag: string): Promise<unknown> {
     // const url = `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${branchOrTag}/${SampleConfigFile}`;
-    const url = "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/common/sample_configs/configs/sample_config.json"
+    const url = "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/configs/sample_config.json"
     try {
       const fileResponse = await sendRequestWithTimeout(
         async () => {

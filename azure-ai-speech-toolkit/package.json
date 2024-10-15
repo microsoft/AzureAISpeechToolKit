@@ -4,7 +4,7 @@
   "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
   "version": "0.0.1",
   "publisher": "ms-azureaispeech",
-  "author": "Microsoft",
+  "author": "Microsoft Corporation",
   "preview": true,
   "repository": {
     "type": "git",
@@ -13,8 +13,10 @@
   "engines": {
     "vscode": "^1.92.0"
   },
+  "license": "MIT",
   "categories": [
-    "Other"
+    "Azure",
+    "Snippets"
   ],
   "icon": "media/azure-ai-speech-toolkit-icon.png",
   "activationEvents": [

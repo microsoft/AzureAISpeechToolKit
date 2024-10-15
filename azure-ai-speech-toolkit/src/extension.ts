@@ -85,14 +85,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
-	// registerTreeViewCommandsInDevelopment(context);
-	// registerTreeViewCommandsInLifecycle(context);
-	// registerTreeViewCommandsInHelper(context);
-	// registerTeamsFxCommands(context);
-	// registerMenuCommands(context);
-	// registerAccountMenuCommands(context);
-	console.log("activateSpeechFxRegistration");
-
 	TreeViewManagerInstance.registerTreeViews(context);
 
 	accountTreeViewProviderInstance.subscribeToStatusChanges({
@@ -102,67 +94,7 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	resourceTreeViewProvider.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),
 	});
-
-	// // Set region for M365 account every
-	// void M365TokenInstance.setStatusChangeMap(
-	//   "set-region",
-	//   { scopes: AuthSvcScopes },
-	//   async (status, token, accountInfo) => {
-	// 	if (status === "SignedIn") {
-	// 	  const tokenRes = await M365TokenInstance.getAccessToken({ scopes: AuthSvcScopes });
-	// 	  if (tokenRes.isOk()) {
-	// 		await setRegion(tokenRes.value);
-	// 	  }
-	// 	}
-	//   }
-	// );
-
-	// if (vscode.workspace.isTrusted) {
-	//   registerCodelensAndHoverProviders(context);
-	// }
-
-	// registerDebugConfigProviders(context);
-
-	// // Register task and debug event handlers, as well as sending telemetries
-	// registerTeamsfxTaskAndDebugEvents();
-
-	// registerRunIcon().catch(() => {
-	//   // do nothing
-	// });
-
-	// Register teamsfx task provider
-	// const taskProvider: TeamsfxTaskProvider = new TeamsfxTaskProvider();
-	// context.subscriptions.push(
-	//   vscode.tasks.registerTaskProvider(TeamsfxTaskProvider.type, taskProvider)
-	// );
-
-	// context.subscriptions.push(
-	//   vscode.workspace.onWillSaveTextDocument(handlers.saveTextDocumentHandler)
-	// );
 }
 
-// async function registerAccountMenuCommands(context: vscode.ExtensionContext) {
-// 	// Register SignOut tree view command
-// 	context.subscriptions.push(
-// 		vscode.commands.registerCommand(CommandKeys.SignOutAzure, async (node: TreeViewCommand) => {
-// 			try {
-// 				switch (node.contextValue) {
-// 					// case "signedinM365": {
-// 					//   await Correlator.run(async () => {
-// 					// 	await signOutM365(true);
-// 					//   });
-// 					//   break;
-// 					// }
-// 					case "signedinAzure": {
-// 						vscode.window.showInformationMessage("Azure account Sign Out is moved to the Accounts section on the bottom left panel. To sign out of Azure, hover on your Azure account email and click Sign Out.");
-// 						break;
-// 					}
-// 				}
-// 			} catch (e) {
-// 				console.error(e);
-// 			}
-// 		})
-// 	);
-// }
 // This method is called when your extension is deactivated
 export function deactivate() { }

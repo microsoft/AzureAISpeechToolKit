@@ -9,13 +9,7 @@ import { ConstantString } from "./constants";
 export let context: vscode.ExtensionContext;
 export let workspaceUri: vscode.Uri | undefined;
 export let isSpeechFxProject = false;
-// export let isOfficeAddInProject = false;
-// export let isOfficeManifestOnlyProject = false;
-// export let isSPFxProject = false;
-// export let isExistingUser = "no";
-// export let uriEventHandler: UriHandler;
 export let defaultExtensionLogPath: string;
-// export let commandIsRunning = false;
 
 if (vscode.workspace && vscode.workspace.workspaceFolders) {
   if (vscode.workspace.workspaceFolders.length > 0) {

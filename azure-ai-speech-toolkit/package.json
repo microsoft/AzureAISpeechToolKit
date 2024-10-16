@@ -15,8 +15,7 @@
   },
   "license": "MIT",
   "categories": [
-    "Azure",
-    "Snippets"
+    "Azure"
   ],
   "icon": "media/azure-ai-speech-toolkit-icon.png",
   "activationEvents": [

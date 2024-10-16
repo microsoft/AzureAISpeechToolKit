@@ -193,6 +193,37 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/csharp/dotnetcore/translate-speech-to-text/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/csharp/dotnetcore/translate-speech-to-text",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
+            }
+        },
+        {
+            "id": "fake-scenario-app",
+            "onboardDate": "2024-09-18",
+            "title": "fake: scenario app",
+            "shortId": "fake-scenario-app",
+            "shortDescription": "",
+            "fullDescription": "",
+            "types": [
+                "Speech Translation"
+            ],
+            "tags": [
+                "Speech Translation",
+                "C#",
+                "Windows",
+                "Linux",
+                ".NET Core"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/speech-translation.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/csharp/dotnetcore/translate-speech-to-text/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/csharp/dotnetcore/translate-speech-to-text",
             "scenario": true,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",

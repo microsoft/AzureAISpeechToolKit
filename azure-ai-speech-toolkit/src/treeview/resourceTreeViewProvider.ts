@@ -40,12 +40,12 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
     const azureAccountProvider = AzureAccountManager.getInstance();
 
     if (!element) {
-	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
+      await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
       const accountInfo = await azureAccountProvider.getStatus();
-	    await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, false);
 
       // If not signed in, show original viewsWelcome page with sign-in button
       if (accountInfo.status === signedOut) {
+        await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, false);
         return [];
       }
 

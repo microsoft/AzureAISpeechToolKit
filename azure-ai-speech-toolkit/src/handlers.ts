@@ -388,7 +388,9 @@ export async function openReadMeHandler(...args: unknown[]) {
   const rootReadmePath = `${workspaceFolder}/README.md`;
   // TODO: if README.md preview already open, focus on it.
   if (fs.existsSync(rootReadmePath)) {
-    return await vscode.commands.executeCommand(VSCodeCommands.MarkdownPreview, vscode.Uri.file(rootReadmePath));
+    const readmeUri = vscode.Uri.file(rootReadmePath);
+    const readmeDocument = await vscode.workspace.openTextDocument(readmeUri); // preload readme file
+    await vscode.commands.executeCommand(VSCodeCommands.MarkdownPreview, readmeUri);
   }
 }
 

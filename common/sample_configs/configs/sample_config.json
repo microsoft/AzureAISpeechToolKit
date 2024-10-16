@@ -41,7 +41,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/python/from-microphone/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/python/from-microphone",
-            "suggested": true,
+            "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
@@ -72,7 +72,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/cpp/linux/from-microphone/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/cpp/linux/from-microphone",
-            "suggested": true,
+            "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
@@ -103,7 +103,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/javascript/browser/from-microphone/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/javascript/browser/from-microphone/from-microphone",
-            "suggested": false,
+            "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
@@ -134,7 +134,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/javascript/browser/from-file/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/javascript/browser/from-file/from-microphone",
-            "suggested": false,
+            "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
@@ -162,7 +162,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/python/text-to-speech/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/python/text-to-speech",
-            "suggested": true,
+            "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
@@ -193,7 +193,7 @@
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/csharp/dotnetcore/translate-speech-to-text/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/csharp/dotnetcore/translate-speech-to-text",
-            "suggested": false,
+            "scenario": true,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",

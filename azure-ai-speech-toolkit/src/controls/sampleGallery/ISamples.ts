@@ -29,7 +29,7 @@ export interface SampleInfo {
   tags: string[];
   time: string;
   configuration: string;
-  suggested: boolean;
+  scenario: boolean;
   downloadUrlInfo: {
     owner:string,
     repository: string,

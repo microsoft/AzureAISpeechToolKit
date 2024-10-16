@@ -24,11 +24,20 @@
       color: var(--vscode-debugConsole-sourceForeground);
     }
 
-    h4 {
-      color: var(--vscode-debugConsole-sourceForeground);
-      font-size: 16px;
-      font-weight: 700;
-    }
+  }
+
+  h4 {
+    color: var(--vscode-debugConsole-sourceForeground);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  hr {
+    border: none;          /* Remove default border */
+    height: 1px;           /* Thickness of the line */
+    background-color: var(--vscode-editor-foreground); /* Color of the line */
+    width: 100%;            /* Length of the line (percentage of the container) */
+    margin: 10px auto;     /* Center the line */
   }
 
   .featured-sample-section {

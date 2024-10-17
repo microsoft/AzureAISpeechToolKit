@@ -143,7 +143,12 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package",
+    "package-linux-x64": "vsce package --target linux-x64",
+    "package-darwin-arm64": "vsce package --target darwin-arm64",
+    "package-win32-x64": "vsce package --target win32-x64",
+    "package-win32-arm64": "vsce package --target win32-arm64"
   },
   "devDependencies": {
     "@azure/arm-cognitiveservices": "^7.5.0",
@@ -188,6 +193,7 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
+    "vsce": "^2.15.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {

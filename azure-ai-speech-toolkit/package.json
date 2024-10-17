@@ -144,6 +144,7 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
+    "vsce-manifest": "vsce generate-manifest",
     "package": "vsce package",
     "package-linux-x64": "vsce package --target linux-x64",
     "package-darwin-arm64": "vsce package --target darwin-arm64",

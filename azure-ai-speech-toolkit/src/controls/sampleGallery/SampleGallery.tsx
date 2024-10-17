@@ -101,10 +101,12 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
 
       );
     } else {
-      const featuredSamples = (this.state.filteredSamples ?? this.samples).filter(
-        (sample) => sample.suggested
+      const ScenarioSamples = (this.state.filteredSamples ?? this.samples).filter(
+        (sample) => sample.scenario
       );
-      const filteredSamples = this.state.filteredSamples ?? this.samples;
+      const filteredSamples = (this.state.filteredSamples ?? this.samples).filter(
+        (sample) => !sample.scenario
+      );
       return (
         <div className="sample-gallery">
           {titleSection}
@@ -121,14 +123,44 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
                 onLayoutChanged={this.onLayoutChanged}
                 onFilterConditionChanged={this.onFilterConditionChanged}
               ></SampleFilter>
-              {featuredSamples.length > 0 && (
-                <div className={`featured-sample-section ${this.state.layout}`}>
-                  <div id="featured-sample-title">
-                    <span className="codicon codicon-star-full"></span>
-                    <h4>Featured samples</h4>
+              {ScenarioSamples.length > 0 && (
+                <div className="sample-section-with-title">
+                  <h4>Scenarios and use cases</h4>
+                  <div className={`sample-section ${this.state.layout}`}>
+                    {this.state.layout === "grid"
+                      ? ScenarioSamples.map((sample: SampleInfo) => {
+                          return (
+                            <SampleCard
+                              key={sample.id}
+                              sample={sample}
+                              selectSample={this.onSampleSelected}
+                              createSample={this.onCreateSample}
+                              viewGitHub={this.onViewGithub}
+                              upgradeToolkit={this.onUpgradeToolkit}
+                            />
+                          );
+                        })
+                      : ScenarioSamples.map((sample: SampleInfo) => {
+                          return (
+                            <SampleListItem
+                              key={sample.id}
+                              sample={sample}
+                              selectSample={this.onSampleSelected}
+                              createSample={this.onCreateSample}
+                              viewGitHub={this.onViewGithub}
+                              upgradeToolkit={this.onUpgradeToolkit}
+                            />
+                          );
+                        })}
                   </div>
+                  <hr/>
+                </div>
+              )}
+              <div className="sample-section-with-title">
+                <h4>Speech features and capabilities</h4>
+                <div className={`sample-section ${this.state.layout}`}>
                   {this.state.layout === "grid"
-                    ? featuredSamples.map((sample: SampleInfo) => {
+                    ? filteredSamples.map((sample: SampleInfo) => {
                         return (
                           <SampleCard
                             key={sample.id}
@@ -140,7 +172,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
                           />
                         );
                       })
-                    : featuredSamples.map((sample: SampleInfo) => {
+                    : filteredSamples.map((sample: SampleInfo) => {
                         return (
                           <SampleListItem
                             key={sample.id}
@@ -153,33 +185,6 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
                         );
                       })}
                 </div>
-              )}
-              <div className={`sample-section ${this.state.layout}`}>
-                {this.state.layout === "grid"
-                  ? filteredSamples.map((sample: SampleInfo) => {
-                      return (
-                        <SampleCard
-                          key={sample.id}
-                          sample={sample}
-                          selectSample={this.onSampleSelected}
-                          createSample={this.onCreateSample}
-                          viewGitHub={this.onViewGithub}
-                          upgradeToolkit={this.onUpgradeToolkit}
-                        />
-                      );
-                    })
-                  : filteredSamples.map((sample: SampleInfo) => {
-                      return (
-                        <SampleListItem
-                          key={sample.id}
-                          sample={sample}
-                          selectSample={this.onSampleSelected}
-                          createSample={this.onCreateSample}
-                          viewGitHub={this.onViewGithub}
-                          upgradeToolkit={this.onUpgradeToolkit}
-                        />
-                      );
-                    })}
               </div>
             </>
           )}

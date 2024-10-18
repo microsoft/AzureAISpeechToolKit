@@ -69,3 +69,9 @@ export enum TaskName {
   BuildApp = "Build the App",
   RunApp = "Run the App",
 }
+
+export enum ExternalUrls {
+  CreateAzureAccount = "https://go.microsoft.com/fwlink/?linkid=2293436", // https://azure.microsoft.com/free/cognitive-services
+  OpenSpeechDocument = "https://go.microsoft.com/fwlink/?linkid=2292021", // https://learn.microsoft.com/en-us/azure/ai-services/speech-service/
+  CreateAzureSubscription = "https://go.microsoft.com/fwlink/?linkid=2293519" // https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/create-subscription
+}

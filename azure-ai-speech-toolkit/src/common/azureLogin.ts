@@ -18,7 +18,7 @@ import { login, LoginStatus } from "./login";
 import * as util from "util";
 import VsCodeLogInstance from "./log";
 import { VS_CODE_UI } from "../extension";
-import { AzureScopes, CommandKey } from "../constants";
+import { AzureScopes, CommandKey, ExternalUrls } from "../constants";
 import { globalStateGet, globalStateUpdate } from "./globalState";
 import {
   Microsoft,
@@ -181,23 +181,23 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   private async doesUserConfirmLogin(): Promise<boolean> {
     const message = "The Azure AI Speech Toolkit will use Microsoft authentication to sign in Azure account and subscription to fetch Speech Resource Key and information for your project. You won't be charged until you confirm.";
     const signin = "Sign in";
-    const readMore = "Read more";
+    const learnMore = "Learn more";
     let userSelected: string | undefined;
     do {
       userSelected = await vscode.window.showInformationMessage(
         message,
         { modal: true },
         signin,
-        readMore
+        learnMore
       );
-      if (userSelected === readMore) {
+      if (userSelected === learnMore) {
         void vscode.env.openExternal(
           vscode.Uri.parse(
-            "https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/create-subscription"
+            ExternalUrls.CreateAzureSubscription
           )
         );
       }
-    } while (userSelected === readMore);
+    } while (userSelected === learnMore);
 
     return Promise.resolve(userSelected === signin);
   }

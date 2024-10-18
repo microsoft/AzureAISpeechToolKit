@@ -42,7 +42,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.OpenAzureAccountHelp, handlers.openAzureAccountHelpHandler));
 
-	// README
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.OpenReadMe, handlers.openReadMeHandler));
 
@@ -79,9 +78,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
-
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
-
 }
 
 function activateSpeechFxRegistration(context: vscode.ExtensionContext) {

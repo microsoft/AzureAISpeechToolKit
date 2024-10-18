@@ -32,11 +32,6 @@ export function initializeGlobalVariables(ctx: vscode.ExtensionContext): void {
   if (!fs.pathExistsSync(defaultExtensionLogPath)) {
     fs.mkdirSync(defaultExtensionLogPath);
   }
-  // if (isTeamsFxProject && workspaceUri?.fsPath) {
-  //   isSPFxProject = checkIsSPFx(workspaceUri?.fsPath);
-  // } else {
-  //   isSPFxProject = fs.existsSync(path.join(workspaceUri?.fsPath ?? "./", "SPFx"));
-  // }
 }
 
 function isValidProject(workspacePath?: string): boolean {

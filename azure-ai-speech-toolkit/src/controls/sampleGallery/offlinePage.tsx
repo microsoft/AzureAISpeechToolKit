@@ -5,8 +5,7 @@ import "./offlinePage.scss";
 
 import * as React from "react";
 
-// import OfflineImage from "../../../img/webview/sample/offline.svg?react";
-import { ReactComponent as OfflineImage } from '../../../img/webview/sample/offline.svg';
+import OfflineImage from "../../../img/webview/sample/offline.svg";
 
 export default class OfflinePage extends React.Component<unknown, unknown> {
   constructor(props: unknown) {

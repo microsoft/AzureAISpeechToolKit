@@ -18,7 +18,7 @@ const config = {
         // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
         path: path.resolve(__dirname, "out/src"),
         libraryTarget: "umd",
-        devtoolModuleFilenameTemplate: "../[resource-path]",
+        devtoolModuleFilenameTemplate: (info) => `file:///${path.resolve(__dirname, info.resourcePath)}`,
         umdNamedDefine: true,
         globalObject: `(typeof self !== 'undefined' ? self : this)`,
     },

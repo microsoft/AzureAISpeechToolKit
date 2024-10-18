@@ -10,7 +10,7 @@ import { SampleInfo } from "./controls/sampleGallery/ISamples";
 import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
-import { CommandKey, ConstantString, EnvKeys, TaskName, VSCodeCommands } from "./constants";
+import { CommandKey, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCommands } from "./constants";
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, getAzureResourceAccountTypeDisplayName, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
@@ -236,12 +236,12 @@ export async function openSamplesHandler(...args: unknown[]) {
 }
 
 export async function openDocumentHandler(...args: unknown[]) {
-  vscode.env.openExternal(vscode.Uri.parse("https://learn.microsoft.com/en-us/azure/ai-services/speech-service/"));
+  vscode.env.openExternal(vscode.Uri.parse(ExternalUrls.OpenSpeechDocument));
   return;
 }
 
 export async function openAzureAccountHelpHandler(...args: unknown[]) {
-  vscode.env.openExternal(vscode.Uri.parse("https://azure.microsoft.com/en-us/free/"));
+  vscode.env.openExternal(vscode.Uri.parse(ExternalUrls.CreateAzureAccount));
   return;
 }
 

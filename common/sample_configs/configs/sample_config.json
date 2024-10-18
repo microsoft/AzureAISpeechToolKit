@@ -223,9 +223,9 @@
             "githubPath": "scenarios/python/console/captioning",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "Azure-Samples",
+                "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "extension",
                 "dir": "scenarios/python/console/captioning"
             }
         }

@@ -52,6 +52,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.ViewSpeechResourceProperties, handlers.viewSpeechResourcePropertiesHandler));
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.OpenSpeechResourceInAzurePortalUrl, handlers.OpenSpeechResourceInAzurePortalUrlHandler));
+
+	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
 
 	// set loading status as true for extension initialization to load account status

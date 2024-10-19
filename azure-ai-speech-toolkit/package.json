@@ -116,6 +116,12 @@
         "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
       },
       {
+        "command": "azure-ai-speech-toolkit.openInAzurePortal",
+        "title": "Open Speech Resource in Azure Portal",
+        "category": "Azure AI Speech Toolkit",
+        "enablement": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem"
+      },
+      {
         "command": "azure-ai-speech-toolkit.createAzureAIService",
         "title": "Create an Azure AI Service",
         "category": "Azure AI Speech Toolkit"
@@ -123,6 +129,11 @@
     ],
     "menus": {
       "view/item/context": [
+        {
+          "command": "azure-ai-speech-toolkit.openInAzurePortal",
+          "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem && azure-ai-speech-toolkit.isSpeechFx",
+          "group": "navigation"
+        },
         {
           "command": "azure-ai-speech-toolkit.viewSpeechResourceProperties",
           "when": "view == azure-ai-speech-toolkit-resources && viewItem == speechResouceItem && azure-ai-speech-toolkit.isSpeechFx",

@@ -13,9 +13,8 @@ import { AzureAccountManager } from "./common/azureLogin";
 import { CommandKey, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCommands } from "./constants";
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
-import { extractEnvValue, fetchSpeechServiceKeyAndRegion, getAzureResourceAccountTypeDisplayName, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
+import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { AzureResourceTreeViewItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
-import { AzureResourceAccountType } from "./common/constants";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -72,6 +71,11 @@ export async function signInAzureHandler(...args: unknown[]) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
   return;
+}
+
+export async function OpenSpeechResourceInAzurePortalUrlHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {
+  const azurePortalUrl = `https://portal.azure.com/#@${resourceItem.tenantId}/resource${resourceItem.azureResourceInfo.id}`;
+  vscode.env.openExternal(vscode.Uri.parse(azurePortalUrl));
 }
 
 export async function viewSpeechResourcePropertiesHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {

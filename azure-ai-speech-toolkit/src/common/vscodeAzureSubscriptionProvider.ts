@@ -2,8 +2,8 @@
 // Licensed under the MIT license.
 
 import { SubscriptionClient, TenantIdDescription } from "@azure/arm-resources-subscriptions";
-import { ResourceManagementClient } from "@azure/arm-resources";
-import { CognitiveServicesManagementClient, Account } from '@azure/arm-cognitiveservices';
+import { ResourceManagementClient, Sku } from "@azure/arm-resources";
+import { CognitiveServicesManagementClient, Account, ResourceSku } from '@azure/arm-cognitiveservices';
 import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
 import * as azureEnv from "@azure/ms-rest-azure-env";
@@ -11,7 +11,7 @@ import { AzureScopes } from "../constants";
 import { Environment } from "@azure/ms-rest-azure-env";
 import { AzureResourceGroupInfo, AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
-import { getAzureResourceAccountTypeDisplayName } from "../utils";
+import { delay, getAzureResourceAccountTypeDisplayName } from "../utils";
 
 export const Microsoft = "microsoft";
 
@@ -133,9 +133,7 @@ export class VSCodeAzureSubscriptionProvider {
     const azureResources: AzureSpeechResourceInfo[] = [];
     for (let i = 0; i < azureResourceAccounts.length; i++) {
       const item = azureResourceAccounts[i];
-      if (i === 0) {
-        console.log(item);
-      }
+
       azureResources.push({
         id: item.id!,
         name: item.name!,
@@ -147,6 +145,7 @@ export class VSCodeAzureSubscriptionProvider {
         sku: item.sku!.name!
       })
     }
+
     return azureResources;
   }
 
@@ -169,7 +168,121 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async checkResourceGroupExistence(subscriptionId: string, resourceGroupName: string): Promise<boolean> {
+  public async getAISpeechAvailablePricingTiers(subscriptionId: string, location: string): Promise<string[]> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const client = new CognitiveServicesManagementClient(credential, subscriptionId);
+
+    try {
+      const availableSkus = await client.resourceSkus.list();
+      // Fileter SKUs by the specified location
+      const skusArray: ResourceSku[] = [];
+      for await (const sku of availableSkus) {
+        skusArray.push(sku);
+      }
+
+      location = location.replace(/\s+/g, '').toUpperCase();
+      const skusInLocation = skusArray.filter(sku => sku.locations?.includes(location) && sku.kind === AzureResourceAccountType.AIService);
+
+      return Array.from(new Set(skusInLocation.map(sku => `${sku.tier} ${sku.name}`)));
+    } catch (error) {
+      throw new Error(`Unable to retrieve available pricing tiers for Azure AI Service. Error: ${error}`);
+    }
+  }
+
+  public async getAISpeechAvailableRegions(subscriptionId: string): Promise<string[]> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+
+    // Get available regions for Cognitive Services (Azure AI Service)
+    const resourceProvider = await rmClient.providers.get("Microsoft.CognitiveServices");
+
+    // Find the resource type for `accounts`
+    const resourceType = resourceProvider.resourceTypes?.find(rt => rt.resourceType === 'accounts');
+    if (resourceType && resourceType.locations) {
+      return resourceType.locations;
+    } else {
+      throw new Error('Unable to retrieve available regions for Azure AI Service');
+    }
+  }
+
+  public async isValidResourceGroupName(subscriptionId: string, resourceGroupName: string): Promise<string | null> {
+    const lengthValid = resourceGroupName.length >= 1 && resourceGroupName.length <= 90;
+    if (!lengthValid) {
+      return "Resource group name must be between 1 and 90 characters long.";
+    }
+
+    const regexValid = /^[a-zA-Z0-9\._\-\(\)]+$/.test(resourceGroupName);
+    if (!regexValid) {
+      return "Resource group name can contain only alphanumeric characters, periods (.), underscores (_), hyphens (-), and parentheses (()).";
+    }
+
+    const notEndWithPeriod = !resourceGroupName.endsWith('.');
+    if (!notEndWithPeriod) {
+      return "Resource group name cannot end with a period.";
+    }
+
+    const hasExisted = await this.checkResourceGroupExistence(subscriptionId, resourceGroupName);
+    if (hasExisted) {
+      return "Resource group name already exists, please choose another name.";
+    }
+
+    return null;  // Name is valid
+  }
+
+  public async isValidAzureAIServiceResourceName(subscriptionId: string, serviceName: string): Promise<string | null> {
+    const lengthValid = serviceName.length >= 1 && serviceName.length <= 63;
+    const regexValid = /^[a-z0-9-]+$/.test(serviceName);
+    const notStartOrEndWithHyphen = !serviceName.startsWith('-') && !serviceName.endsWith('-');
+    const noConsecutiveHyphens = !serviceName.includes('--');
+
+    if (!lengthValid) {
+      return "AI Service instance name must be between 1 and 63 characters.";
+    }
+    if (!regexValid) {
+      return "AI Service instance name can contain only lowercase letters, digits, and hyphens.";
+    }
+    if (!notStartOrEndWithHyphen) {
+      return "AI Service instance name cannot start or end with a hyphen.";
+    }
+    if (!noConsecutiveHyphens) {
+      return "AI Service instance name cannot contain consecutive hyphens.";
+    }
+
+    const hasExisted = await this.checkAIServiceExistence(subscriptionId, serviceName);
+    if (hasExisted) {
+      return "Resource group name already exists, please choose another name.";
+    }
+
+    return null;  // Name is valid
+  }
+
+  async checkAIServiceExistence(subscriptionId: string, serviceName: string): Promise<boolean> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+
+    try {
+      // List all Cognitive Services accounts in the subscription
+      const accountsIterator = await cognitiveServicesClient.accounts.list();
+
+      // Collect all accounts from the iterator
+      const accounts: Account[] = [];
+      for await (const account of accountsIterator) {
+        accounts.push(account);
+      }
+
+      const AIServiceWithSameName = accounts.filter(account => account.kind === AzureResourceAccountType.AIService && account.name === serviceName);
+
+      if (AIServiceWithSameName.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      throw new Error(`Unable to check resource existence: ${serviceName}. Error: ${error}`);
+    }
+  }
+
+  async checkResourceGroupExistence(subscriptionId: string, resourceGroupName: string): Promise<boolean> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
     const rmClient = new ResourceManagementClient(credential, subscriptionId);
 
@@ -181,17 +294,98 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async createNewResourceGroup(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, location: string): Promise<void> {
+  public async ensureNewResourceGroup(subscriptionId: string, resourceGroupName: string, location: string): Promise<void> {
     const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
+    const rmClient = new ResourceManagementClient(credential, subscriptionId);
 
     try {
-      await rmClient.resourceGroups.createOrUpdate(resourceGroupName, { location: location });
+      // Check if the resource group exists
+      const resourceGroup = await rmClient.resourceGroups.get(resourceGroupName);
+      if (resourceGroup) {
+        console.log(`Resource group '${resourceGroupName}' already exists.`);
+        return;
+      }
     } catch (error) {
-      throw new Error(`Unable to create resource group: ${resourceGroupName}. Error: ${error}`);
+      if ((error as any).statusCode === 404) {
+        console.log(`Creating resource group: ${resourceGroupName} in location: ${location}`);
+        await rmClient.resourceGroups.createOrUpdate(resourceGroupName, { location: location });
+        console.log(`Successfully created resource group: ${resourceGroupName}`);
+      }
+
+      // Adding a delay or retry mechanism to ensure the resource group is fully available
+      const maxRetries = 5;  // Max number of retries
+      let retries = 0;
+
+      while (retries < maxRetries) {
+        try {
+          // Wait for a short period before checking again
+          await delay(3000);  // Wait for 3 seconds
+
+          // Check if the resource group is now available
+          const resourceGroupCheck = await rmClient.resourceGroups.get(resourceGroupName);
+          if (resourceGroupCheck) {
+            console.log(`Resource group '${resourceGroupName}' is now available.`);
+            return;
+          }
+        } catch (retryError) {
+          retries++;
+          if (retries >= maxRetries) {
+            throw new Error(`Unable to find resource group '${resourceGroupName}' after creation.`);
+          }
+        }
+      }
+
+      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
     }
   }
 
+  public async createNewAIServiceResource(subscriptionId: string, resourceGroupName: string, region: string, serviceName: string, sku: string): Promise<AzureSpeechResourceInfo> {
+    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+
+    const [skuTier, skuName] = sku.split(' ');
+    // Prepare the parameters for the Speech resource
+    const parameters = {
+      location: region,
+      sku: {
+        name: skuName,
+        tier: skuTier,
+      },
+      kind: AzureResourceAccountType.AIService, // Kind for Speech resource
+      properties: {} // Any additional properties can be set here
+    };
+
+    try {
+      await this.ensureNewResourceGroup(subscriptionId, resourceGroupName, region);
+
+      const account = await cognitiveServicesClient.accounts.beginCreateAndWait(resourceGroupName, serviceName, parameters);
+      const tenantId = (await this.getTenants())[0].tenantId;
+
+      const azurePortalUrl = `https://portal.azure.com/#@${tenantId}/resource${account.id}`;
+
+      const openInAzurePortal = "Open in Azure Portal";
+      await vscode.window.showInformationMessage(`Successfully created new AI Service resource: ${serviceName}.`, "Open in Azure Portal")
+        .then(async (action) => {
+          if (action === openInAzurePortal) {
+            vscode.env.openExternal(vscode.Uri.parse(azurePortalUrl));
+          }
+        });
+
+      console.log("Successfully created new AI Service account: ", account);
+      return {
+        id: account.id!,
+        name: account.name!,
+        subscriptionId: subscriptionId,
+        subscriptionName: account.name!,
+        tenantId: tenantId!,
+        region: account.location!,
+        accountType: getAzureResourceAccountTypeDisplayName(account.kind! as AzureResourceAccountType),
+        sku: account.sku!.name!
+      };
+    } catch (error) {
+      throw new Error(`Unable to create AI Service resource: ${serviceName}. Error: ${error}`);
+    }
+  }
 
   /**
    * Gets the subscriptions for a given tenant.

@@ -26,61 +26,41 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     return;
   }
 
-  const resourceGroup = await askUserToSelectResourceGroup(subscriptionInfo);
-  if (!resourceGroup) {
-    return;
-  }
-
-  vscode.window.showInformationMessage('Not implemented yet.');
-  return;
-  // const region = await askUserToSelectRegion(subscriptionInfo);
-  // if (!region) {
-  //   return;
-  // }
-
-  // const name = await askUserToInputResourceName();
-  // if (!name) {
-  //   return;
-  // }
-
-  // const sku = await askUserToSelectSku();
-  // if (!sku) {
-  //   return;
-  // }
-
-  // try {
-  //   await createSpeechResource(subscriptionInfo, resourceGroup, region, name, sku);
-  // } catch (error) {
-  //   vscode.window.showErrorMessage('Fail to create speech resource: ' + error);
-  //   return;
-  // }
-
-  // const azureResourceInfo: AzureSpeechResourceInfo = {
-  //   name: name,
-  //   id: "",
-  //   tenantId: subscriptionInfo.tenantId,
-  //   subscriptionId: subscriptionInfo.id,
-  //   subscriptionName: subscriptionInfo.name,
-  //   region: region,
-  //   accountType: getAzureResourceAccountTypeDisplayName(AzureResourceAccountType.AIService),
-  //   sku: sku
-  // };
-
-  // return azureResourceInfo;
-}
-
-async function askUserToSelectResourceGroup(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
-  let azureAccountProvider = AzureAccountManager.getInstance();
   try {
+    const azureAccountProvider = AzureAccountManager.getInstance();
+
     const resourceGroupName = await azureAccountProvider.getSelectedResourceGroups(subscriptionInfo);
-    return resourceGroupName;
-  } catch (error) {
-    if (error instanceof Error && error.message.startsWith("UserCancelError")) {
-      console.log("User canceled selecting resource group.");
+    if (!resourceGroupName) {
       return;
     }
 
-    vscode.window.showErrorMessage('Fail to select resource group: ' + error);
+    const region = await azureAccountProvider.getSelectedRegion(subscriptionInfo.id);
+    if (!region) {
+      return;
+    }
+
+    const name = await azureAccountProvider.getNewAzureAIServiceNameFromUser(subscriptionInfo.id);
+    if (!name) {
+      return;
+    }
+
+    const sku = await azureAccountProvider.getSelectedPricingTier(subscriptionInfo, region);
+    if (!sku) {
+      return;
+    }
+
+    console.log("Creating Azure AI Service with subscription: " + subscriptionInfo.id + ", resource group: " + resourceGroupName + ", region: " + region + ", name: " + name + ", sku: " + sku);
+    const azureResourceInfo = await azureAccountProvider.createAzureAIService(subscriptionInfo, resourceGroupName, region, name, sku);
+    console.log("Azure AI Service created: ", azureResourceInfo);
+
+    return azureResourceInfo;
+  } catch (error) {
+    console.error("Fail to create Azure AI Service: ", error);
+    if (error instanceof Error && error.message.startsWith("[UserError]")) {
+      return;
+    }
+
+    vscode.window.showErrorMessage('Fail to create Azure AI Service: ' + error);
   }
 }
 
@@ -274,7 +254,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       const speechServiceInfo = await askUserForSpeechResource(subscriptionInfo);
       if (!speechServiceInfo) {
         // Fail to find a speech service.
-        vscode.window.showErrorMessage('No speech service is selected.');
+        // vscode.window.showErrorMessage('No speech service is selected.');
         return;
       }
       properties = await getSpeechResourceProperties(speechServiceInfo);
@@ -400,11 +380,8 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
   if (!subscriptionInAccount) {
     throw new Error("SelectSubscriptionError");
 
-  } else {
-    console.log("successfully select subscription: " + JSON.stringify(subscriptionInAccount));
-
-    return subscriptionInAccount;
   }
+  return subscriptionInAccount;
 }
 
 async function askUserForSpeechResource(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
@@ -413,8 +390,6 @@ async function askUserForSpeechResource(subscriptionInfo: SubscriptionInfo): Pro
   if (!speechServiceInfo) {
     return;
   }
-  console.log("successfully select speech service: " + JSON.stringify(speechServiceInfo));
-
   return speechServiceInfo;
 }
 
@@ -473,7 +448,6 @@ export async function downloadSampleApp(...args: unknown[]) {
       sampleDefaultRetryLimits,
       sampleConcurrencyLimits
     );
-    console.log("Successfully download sample files to project path:" + projectPath);
 
     // generate azureAiSpeechApp.yml file
     const ymlPath = path.join(projectPath, ConstantString.AzureAISpeechAppYmlFileName);

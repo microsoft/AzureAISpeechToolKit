@@ -258,7 +258,6 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       const speechServiceInfo = await askUserForSpeechResource(subscriptionInfo);
       if (!speechServiceInfo) {
         // Fail to find a speech service.
-        // vscode.window.showErrorMessage('No speech service is selected.');
         return;
       }
       properties = await getSpeechResourceProperties(speechServiceInfo);

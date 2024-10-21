@@ -84,3 +84,7 @@ export function getAzureResourceAccountTypeDisplayName(accountType: AzureResourc
       return 'AI Services';
   }
 }
+// Utility function to wait for a certain time (in ms)
+export function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

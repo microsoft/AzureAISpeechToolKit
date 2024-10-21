@@ -18,7 +18,7 @@ import { login, LoginStatus } from "./login";
 import * as util from "util";
 import VsCodeLogInstance from "./log";
 import { VS_CODE_UI } from "../extension";
-import { AzureScopes, CommandKey, ExternalUrls } from "../constants";
+import { AzureScopes, ExternalUrls } from "../constants";
 import { globalStateGet, globalStateUpdate } from "./globalState";
 import {
   Microsoft,
@@ -26,6 +26,7 @@ import {
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
 import { createAzureAIServiceHandler } from "../handlers";
+import { getAzureResourceAccountTypeDisplayName } from "../utils";
 
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 
@@ -466,7 +467,79 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async getSelectedResourceGroups(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
+  async createAzureAIService(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, region: string, serviceName: string, sku: string): Promise<AzureSpeechResourceInfo> {
+    const azureResourceInfo = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Creating Azure AI Service...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.vscodeAzureSubscriptionProvider.createNewAIServiceResource(subscriptionInfo.id, resourceGroupName, region, serviceName, sku);
+    });
+
+    return azureResourceInfo;
+  }
+
+  async getSelectedRegion(subscriptionInfoId: string): Promise<string | undefined> {
+    const availableRegionList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching available regions...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailableRegions(subscriptionInfoId);
+    });
+
+    const config: SingleSelectConfig = {
+      name: "Region",
+      title: "Select a region",
+      options: availableRegionList.map((region) => {
+        return {
+          id: region,
+          label: `${region}`,
+        } as OptionItem;
+      }),
+    };
+
+    const result = await VS_CODE_UI.selectOption(config);
+    if (result.isErr()) {
+      throw result.error;
+    } else {
+      return result.value.result as string;
+    }
+  }
+
+  async getSelectedPricingTier(subscriptionInfo: SubscriptionInfo, location: string): Promise<string | undefined> {
+    const pricingTierList = await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Fetching available pricing tiers...',
+      cancellable: false
+    }, async (progress) => {
+      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailablePricingTiers(subscriptionInfo.id, location);
+    });
+
+    if (pricingTierList.length == 0) {
+      throw new Error("No pricing tier available for the selected region " + location);
+    }
+
+    const config: SingleSelectConfig = {
+      name: "Pricing Tier",
+      title: "Select a pricing tier",
+      options: pricingTierList.map((pricingTier) => {
+        return {
+          id: pricingTier,
+          label: `${pricingTier}`,
+        } as OptionItem;
+      }),
+    };
+
+    const result = await VS_CODE_UI.selectOption(config);
+    if (result.isErr()) {
+      throw result.error;
+    } else {
+      return result.value.result as string;
+    }
+  }
+
+  async getSelectedResourceGroups(subscriptionId: SubscriptionInfo): Promise<string | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only select resource group when logged in.");
     }
@@ -476,8 +549,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       title: 'Fetching resource group...',
       cancellable: false
     }, async (progress) => {
-      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionInfo);
-      // return await this.listResourceGroup(subscriptionInfo);
+      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionId);
     });
 
     const createNewResourceGroupOption: OptionItem = {
@@ -506,7 +578,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       const selectedResourceGroupId = result.value.result as string;
 
       if (selectedResourceGroupId === createNewResourceGroupOption.id) {
-        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionInfo.id);
+        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionId.id);
         return newResourceGroupName;
       }
 
@@ -517,9 +589,8 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async getResourceGroupNameFromUser(subscriptionId: string): Promise<string> {
     // Generate a default resource group name
-    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
+    const timestamp = new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
     const accountInfo = await this.getAccountInfo();
-    console.log(accountInfo);
     let username = ((accountInfo?.email as string) || (accountInfo?.upn as string))?.split('@')[0];
     if (!username) {
       username = "dummy";
@@ -532,12 +603,47 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       placeHolder: defaultResourceGroupName,
       value: defaultResourceGroupName, // Set the default value
       validateInput: async (input) => {
-        // Validate if the resource group name is unique
-        const doesResourceGroupExsit = await this.vscodeAzureSubscriptionProvider.checkResourceGroupExistence(subscriptionId, input.trim());
-        if (doesResourceGroupExsit) {
-          return 'Resource group name already exists, please choose another name.';
+        // Validate the resource group name
+        try {
+          const validationError = await this.vscodeAzureSubscriptionProvider.isValidResourceGroupName(subscriptionId, input.trim());
+          return validationError ? validationError : null;
+        } catch (error) {
+          console.log("Failed to validate resource group name: ", error);
+          vscode.window.showErrorMessage("Failed to validate resource group name: " + error);
+          throw error;
         }
-        return null; // Input is valid
+      }
+    };
+
+    // Show input box to user with default and custom input option
+    const resourceGroupName = await vscode.window.showInputBox(options);
+    if (!resourceGroupName) {
+      // Handle case where user cancels the input
+      throw new Error("[UserError] user cancel to input resource group name");
+    }
+
+    return resourceGroupName.trim(); // Return the valid resource group name
+  }
+
+  async getNewAzureAIServiceNameFromUser(subscriptionId: string): Promise<string> {
+    // Generate a default azure ai service name
+    const timestamp = new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
+    const accountInfo = await this.getAccountInfo();
+    let username = ((accountInfo?.email as string) || (accountInfo?.upn as string))?.split('@')[0];
+    if (!username) {
+      username = "dummy";
+    }
+    const defaultAIServiceName = `${username}-speechaiproj-ais-${timestamp}`;
+
+    // Define dropdown options
+    const options: vscode.InputBoxOptions = {
+      prompt: "Enter a name for the Azure AI Service instance or use the default one",
+      placeHolder: defaultAIServiceName,
+      value: defaultAIServiceName, // Set the default value
+      validateInput: async (input) => {
+        // Validate the resource name
+        const validationError = await this.vscodeAzureSubscriptionProvider.isValidAzureAIServiceResourceName(subscriptionId, input.trim());
+        return validationError ? validationError : null;
       }
     };
 

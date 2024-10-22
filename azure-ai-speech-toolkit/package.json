@@ -2,7 +2,7 @@
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
   "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,

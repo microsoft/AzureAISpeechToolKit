@@ -13,3 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.2
 
 - Support Creating New Azure AI Service.
+
+## 0.0.3
+
+- Hot fix.

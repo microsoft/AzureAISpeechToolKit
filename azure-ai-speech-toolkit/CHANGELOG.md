@@ -9,3 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Initial release in preview.
 - Support Sample Gallery to download Azure AI Speech related samples.
 - Support Configure speech resource to sample app and build / run the app.
+
+## 0.0.2
+
+- Support Creating New Azure AI Service.

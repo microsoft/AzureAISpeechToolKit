@@ -230,12 +230,12 @@
             }
         },
         {
-            "id": "scenarios-call-center-transcription-and-analytics-python",
+            "id": "scenarios-post-call-transcription-and-analytics-python",
             "onboardDate": "2024-10-24",
-            "title": "Scenarios: Call center transcription and analytics with python on Windows or Linux",
-            "shortId": "call-center-python",
-            "shortDescription": "Call center transcription and analytics with python on Windows or Linux",
-            "fullDescription": "This sample demonstrates how to use call center transcription and analytics with python on Windows or Linux",
+            "title": "Scenarios: Post-call transcription and analytics with python on Windows or Linux",
+            "shortId": "Post-call-transcription-and-analytics-python",
+            "shortDescription": "Post-call transcription and analytics with python on Windows or Linux",
+            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with python on Windows or Linux",
             "types": [
                 "Speech To Text"
             ],

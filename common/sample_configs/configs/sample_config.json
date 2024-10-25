@@ -230,12 +230,12 @@
             }
         },
         {
-            "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
+            "id": "scenarios-post-call-transcription-and-analytics-csharp-dotnetcore",
             "onboardDate": "2024-10-24",
-            "title": "Scenarios: Call center transcription and analytics with csharp dotnetcore on Windows",
-            "shortId": "call-center-csharp-dotnetcore",
-            "shortDescription": "Call center transcription and analytics with with csharp dotnetcore on Windows",
-            "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore on Windows",
+            "title": "Scenarios: Post-call transcription and analytics with csharp dotnetcore on Windows",
+            "shortId": "post-call-csharp-dotnetcore",
+            "shortDescription": "Post-call transcription and analytics with with csharp dotnetcore on Windows",
+            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with csharp dotnetcore on Windows.",
             "types": [
                 "Speech To Text"
             ],

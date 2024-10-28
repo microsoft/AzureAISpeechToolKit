@@ -2,12 +2,21 @@
 // Licensed under the MIT license.
 
 export enum TelemetryEvent {
-  AzureLogin = "AzureLogin"
+  AzureLogin = "azure-login",
+  BuildSample = "build-sample",
+  RunSample = "run-sample"
 }
 
 export enum AzureLoginTelemetryProperty {
   IdType = "idtyp",
-  IpAddress = "ipaddr",
   Name = "name",
-  UniqueName = "unique_name"
+  AzureSubscriptionId = "oid",
+  AzureTenantId = "tid",
+  Email = "upn"
+}
+
+export enum BuildAndRunSampleTelemetryProperty {
+  Success = "success",
+  AzureSubscriptionId = "azure-subscription-id",
+  SpeechResourceName = "speech-resource-name"
 }

@@ -21,7 +21,7 @@ export let telemetryReporter: TelemetryReporter;
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "azure-ai-speech-toolkit" is now active!');
 
-	telemetryReporter = new TelemetryReporter(extensionPackage.aiKey, extensionPackage.version, extensionPackage.name);
+	telemetryReporter = new TelemetryReporter(extensionPackage.name, extensionPackage.version, extensionPackage.aiKey);
 	context.subscriptions.push(telemetryReporter);
 
 	VS_CODE_UI = new VSCodeUI(TerminalName);

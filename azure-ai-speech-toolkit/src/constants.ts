@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-export enum CommandKey {
+export enum CommandKeys {
   CreateAzureAIService = "azure-ai-speech-toolkit.createAzureAIService",
   OpenDocument = "azure-ai-speech-toolkit.openDocument",
   OpenAzureAccountHelp = "azure-ai-speech-toolkit.openAzureAccountHelp",
@@ -11,6 +11,7 @@ export enum CommandKey {
   SigninAzure = "azure-ai-speech-toolkit.signinAzure",
   ConfigureResource = "azure-ai-speech-toolkit.configureResource",
   SelectResource = "azure-ai-speech-toolkit.selectResource",
+  ConfigureAndSetupApp = "azure-ai-speech-toolkit.ConfigureAndSetupApp",
   BuildApp = "azure-ai-speech-toolkit.buildApp",
   RunApp = "azure-ai-speech-toolkit.runApp",
   ViewSpeechResourceProperties = "azure-ai-speech-toolkit.viewSpeechResourceProperties",
@@ -67,6 +68,7 @@ export class ConstantString {
 }
 
 export enum TaskName {
+  ConfigureAndSetupApp = "Configuration and Setup",
   BuildApp = "Build the App",
   RunApp = "Run the App",
 }

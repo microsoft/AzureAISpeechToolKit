@@ -166,7 +166,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "v-shaota/FixTranslateSpeechNetCoreAndSynthesizeSpeechPython",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -197,7 +197,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "v-shaota/FixTranslateSpeechNetCoreAndSynthesizeSpeechPython",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },

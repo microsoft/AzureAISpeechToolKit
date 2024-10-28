@@ -45,7 +45,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "dilin/test-sample",
                 "dir": "quickstart/python/from-microphone"
             }
         },

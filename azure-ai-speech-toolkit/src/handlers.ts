@@ -126,12 +126,11 @@ export async function buildAppHandler(...args: unknown[]) {
     return;
   }
 
-  const tasks = await vscode.tasks.fetchTasks();
-  const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
+  const buildTask = await findTaskWithName(TaskName.BuildApp);
 
   if (!buildTask) {
-    const hasRunTasks = await runTasksExists();
-    if (hasRunTasks) {
+    const runTask = await findTaskWithName(TaskName.RunApp);
+    if (runTask) {
       vscode.window.showInformationMessage('No build task found. Would you like to run the app directly?', 'Yes', 'No')
         .then(selection => {
           if (selection === 'Yes') {
@@ -152,7 +151,7 @@ export async function buildAppHandler(...args: unknown[]) {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
-        const hasRunTasks = await runTasksExists();
+        const hasRunTasks = await findTaskWithName(TaskName.RunApp);
         if (!hasRunTasks) {
           vscode.window.showInformationMessage('Build completed successfully.');
         } else {
@@ -170,16 +169,10 @@ export async function buildAppHandler(...args: unknown[]) {
   });
 }
 
-async function buildTasksExists(): Promise<boolean> {
+async function findTaskWithName(taskName: TaskName): Promise<vscode.Task|undefined> {
   const tasks = await vscode.tasks.fetchTasks();
-  const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
-  return !!buildTask;
-}
-
-async function runTasksExists(): Promise<boolean> {
-  const tasks = await vscode.tasks.fetchTasks();
-  const runTask = tasks.find(task => task.name === TaskName.RunApp);
-  return !!runTask;
+  const taskFound = tasks.find(task => task.name === taskName);
+  return taskFound;
 }
 
 export async function runAppHandler(...args: unknown[]) {
@@ -188,8 +181,7 @@ export async function runAppHandler(...args: unknown[]) {
     return;
   }
 
-  const tasks = await vscode.tasks.fetchTasks();
-  const runTask = tasks.find(task => task.name === TaskName.RunApp);
+  const runTask = await findTaskWithName(TaskName.RunApp);
   if (!runTask) {
     vscode.window.showErrorMessage('No task with name "' + TaskName.RunApp + '" found in the workspace. Check .vscode/tasks.json file.');
     return;
@@ -285,8 +277,8 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
   }
 
   // Step 5: Build the app if build tasks exist.
-  const hasBuildTasks = await buildTasksExists();
-  if (hasBuildTasks) {
+  const buildTask = await findTaskWithName(TaskName.BuildApp);
+  if (buildTask) {
     vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
       .then(selection => {
         if (selection === 'Yes') {
@@ -294,8 +286,8 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
         }
       });
   } else {
-    const hasRunTasks = await runTasksExists();
-    if (hasRunTasks) {
+    const runTask = await findTaskWithName(TaskName.RunApp);
+    if (runTask) {
       vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Run the app?', 'Yes')
         .then(selection => {
           if (selection === 'Yes') {
@@ -342,11 +334,11 @@ function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, 
     let configContent = fs.readFileSync(configFilePath, 'utf8');
     const configJson = JSON.parse(configContent);
 
-    if (configJson.YourSubscriptionKey) {
-      configJson.YourSubscriptionKey = key;
+    if (configJson.SubscriptionKey) {
+      configJson.SubscriptionKey = key;
     }
-    if (configJson.YourServiceRegion) {
-      configJson.YourServiceRegion = region;
+    if (configJson.ServiceRegion) {
+      configJson.ServiceRegion = region;
     }
 
     configContent = JSON.stringify(configJson, null, 2);

@@ -10,13 +10,19 @@ import { AzureAccountManager } from './common/azureLogin';
 import TreeViewManagerInstance from "./treeview/treeViewManager";
 import { isSpeechResourceSeleted } from './utils';
 import resourceTreeViewProvider from './treeview/resourceTreeViewProvider';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import * as extensionPackage from "../package.json";
 
 export let VS_CODE_UI: VSCodeUI;
+export let telemetryReporter: TelemetryReporter;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "azure-ai-speech-toolkit" is now active!');
+
+	telemetryReporter = new TelemetryReporter(extensionPackage.aiKey, extensionPackage.version, extensionPackage.name);
+	context.subscriptions.push(telemetryReporter);
 
 	VS_CODE_UI = new VSCodeUI(TerminalName);
 	initializeGlobalVariables(context);
@@ -97,4 +103,6 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export async function deactivate() {
+	await telemetryReporter.dispose();
+ }

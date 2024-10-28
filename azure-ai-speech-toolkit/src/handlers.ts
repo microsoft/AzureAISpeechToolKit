@@ -15,6 +15,7 @@ import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { AzureResourceTreeViewItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { telemetryReporter } from './extension';
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -67,6 +68,7 @@ export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
+    telemetryReporter.sendTelemetryEvent("azure-signin");
   } catch (error) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
@@ -438,7 +440,7 @@ export async function downloadSampleApp(...args: unknown[]) {
       console.log("Created parent folder: " + selectedFolder);
     }
 
-    console.log("projectPath: " + projectPath);
+    telemetryReporter.sendTelemetryEvent("test-2-1752");
 
     const sampleDefaultRetryLimits = 2;
     const sampleConcurrencyLimits = 20;
@@ -486,7 +488,7 @@ export async function downloadSampleFiles(
   retryLimits: number,
   concurrencyLimits: number
 ): Promise<void> {
-  const relativePath = sampleInfo.dir
+  const relativePath = sampleInfo.dir;
   const downloadCallback = async (samplePath: string) => {
     const lfsRegex = /^.*oid sha256:[0-9a-f]+\nsize \d+/gm;
     const file = (await sendRequestWithRetry(async () => {

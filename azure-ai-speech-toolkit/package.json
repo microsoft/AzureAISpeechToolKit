@@ -6,6 +6,7 @@
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,
+  "aiKey": "3df3e5d4-c860-4f04-8073-421aa045c3f9",
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/AzureAISpeechToolKit"
@@ -210,6 +211,7 @@
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36",
+    "@vscode/extension-telemetry": "^0.6.2",
     "dompurify": "^3.1.6",
     "mermaid": "^11.1.0"
   }

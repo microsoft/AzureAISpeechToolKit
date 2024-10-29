@@ -18,5 +18,6 @@ export enum AzureLoginTelemetryProperty {
 export enum BuildAndRunSampleTelemetryProperty {
   SUCCESS = "success",
   AZURE_SUBSCRIPTION_ID = "azure-subscription-id",
-  SPEECH_RESOURCE_NAME = "speech-resource-name"
+  SPEECH_RESOURCE_NAME = "speech-resource-name",
+  SAMPLE_ID = "sample-id"
 }

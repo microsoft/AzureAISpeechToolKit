@@ -234,8 +234,8 @@
             "onboardDate": "2024-10-24",
             "title": "Scenarios: Call Center Transcription and Analytics with csharp dotnetcore",
             "shortId": "call-center-csharp-dotnetcore",
-            "shortDescription": "Post-call transcription and analytics with with csharp dotnetcore",
-            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with csharp dotnetcore.",
+            "shortDescription": "Call Center transcription and analytics with with csharp dotnetcore",
+            "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore.",
             "types": [
                 "Speech To Text"
             ],
@@ -261,10 +261,10 @@
         {
             "id": "scenarios-call-center-transcription-and-analytics-python",
             "onboardDate": "2024-10-24",
-            "title": "Scenarios: Post-call transcription and analytics with python",
+            "title": "Scenarios:Call Center transcription and analytics with python",
             "shortId": "call-center-python",
-            "shortDescription": "Post-call transcription and analytics with python",
-            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with python",
+            "shortDescription": "Call Center transcription and analytics with python",
+            "fullDescription": "This sample demonstrates how to use call center transcription and analytics with python",
             "types": [
                 "Speech To Text"
             ],

@@ -125,7 +125,7 @@ async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechR
   return properties;
 }
 
-export async function buildAppHandler(buildSampleTelemetryProperties: { [p: string]: string }) {
+export async function buildAppHandler(envFilePath: string) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("Not a speech project. Skip building the sample app.");
     return;
@@ -140,7 +140,7 @@ export async function buildAppHandler(buildSampleTelemetryProperties: { [p: stri
       vscode.window.showInformationMessage('No build task found. Would you like to run the app directly?', 'Yes', 'No')
         .then(selection => {
           if (selection === 'Yes') {
-            vscode.commands.executeCommand(CommandKey.RunApp, buildSampleTelemetryProperties);
+            vscode.commands.executeCommand(CommandKey.RunApp, envFilePath);
           }
         });
       return;
@@ -153,25 +153,27 @@ export async function buildAppHandler(buildSampleTelemetryProperties: { [p: stri
   vscode.window.showInformationMessage('Building the sample app... Check terminal for task output.');
   const execution = await vscode.tasks.executeTask(buildTask);
 
+  const buildSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
         const hasRunTasks = await runTasksExists();
         if (!hasRunTasks) {
-          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.Success] = "true";
+          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
           vscode.window.showInformationMessage('Build completed successfully.');
         } else {
-          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.Success] = "true";
+          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
           vscode.window.showInformationMessage('Build completed successfully. Would you like to run the app?', 'Yes', 'No')
             .then(selection => {
               if (selection === 'Yes') {
-                vscode.commands.executeCommand(CommandKey.RunApp, buildSampleTelemetryProperties);
+                vscode.commands.executeCommand(CommandKey.RunApp, envFilePath);
               }
             });
         }
       } else {
-        buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.Success] = "false";
+        buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage('Build failed. Please check the terminal output for errors.');
       }
 
@@ -192,7 +194,7 @@ async function runTasksExists(): Promise<boolean> {
   return !!runTask;
 }
 
-export async function runAppHandler(runSampleTelemetryProperties: { [p: string]: string }) {
+export async function runAppHandler(envFilePath: string) {
   if (!globalVariables.isSpeechFxProject) {
     console.log("Not a speech project. Skip running the sample app.");
     return;
@@ -207,19 +209,21 @@ export async function runAppHandler(runSampleTelemetryProperties: { [p: string]:
   vscode.window.showInformationMessage('Running the sample app... Check terminal for task output.');
   const execution = await vscode.tasks.executeTask(runTask);
 
+  const runSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
-        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.Success] = "true";
+        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
         vscode.window.showInformationMessage('Sample run successfully. To rerun the sample app, click the button or trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.', 'Run Sample App')
           .then(selection => {
             if (selection === 'Run Sample App') {
-              vscode.commands.executeCommand(CommandKey.RunApp);
+              vscode.commands.executeCommand(CommandKey.RunApp, envFilePath);
             }
           });
       } else {
-        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.Success] = "false";
+        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage('Run failed. Please check the terminal output for errors. To rerun the sample app, trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.');
       }
 
@@ -302,16 +306,11 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
   const hasBuildTasks = await buildTasksExists();
   const azureSubscriptionId = extractEnvValue(properties, EnvKeys.AzureSubscriptionId);
   const speechResourceName =  extractEnvValue(properties, EnvKeys.SpeechResourceName);
-  const buildAndRunTelemetryProperties = { 
-    [BuildAndRunSampleTelemetryProperty.AzureSubscriptionId]: azureSubscriptionId,
-    [BuildAndRunSampleTelemetryProperty.SpeechResourceName]: speechResourceName
-  };
-  
   if (hasBuildTasks) {
     vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
       .then(selection => {
         if (selection === 'Yes') {
-          vscode.commands.executeCommand(CommandKey.BuildApp, buildAndRunTelemetryProperties);
+          vscode.commands.executeCommand(CommandKey.BuildApp, envFilePath);
         }
       });
   } else {
@@ -320,7 +319,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Run the app?', 'Yes')
         .then(selection => {
           if (selection === 'Yes') {
-            vscode.commands.executeCommand(CommandKey.RunApp, buildAndRunTelemetryProperties);
+            vscode.commands.executeCommand(CommandKey.RunApp, envFilePath);
           }
         });
     } else {

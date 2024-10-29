@@ -76,7 +76,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "dilin/test-sample",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },
@@ -166,7 +166,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/FixTranslateSpeechNetCoreAndSynthesizeSpeechPython",
+                "ref": "dilin/test-sample",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -197,7 +197,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/FixTranslateSpeechNetCoreAndSynthesizeSpeechPython",
+                "ref": "dilin/test-sample",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },
@@ -225,7 +225,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-bingyang/scenarios_python_console_captioning",
+                "ref": "dilin/test-sample",
                 "dir": "scenarios/python/console/captioning"
             }
         },
@@ -253,7 +253,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-bingyang/scenarios_csharp_dotnetcore_captioning",
+                "ref": "dilin/test-sample",
                 "dir": "scenarios/python/console/captioning"
             }
         },
@@ -282,7 +282,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/ScenariosDotnetCoreCallCenterSample",
+                "ref": "dilin/test-sample",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         },
@@ -310,7 +310,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/ScenariosPythonCallCenterSample",
+                "ref": "dilin/test-sample",
                 "dir": "scenarios/python/console/call-center"
             }
         }

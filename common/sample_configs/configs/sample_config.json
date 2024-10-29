@@ -230,19 +230,18 @@
             }
         },
         {
-            "id": "scenarios-post-call-transcription-and-analytics-csharp-dotnetcore",
+            "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
             "onboardDate": "2024-10-24",
-            "title": "Scenarios: Post-call transcription and analytics with csharp dotnetcore on Windows",
-            "shortId": "post-call-csharp-dotnetcore",
-            "shortDescription": "Post-call transcription and analytics with with csharp dotnetcore on Windows",
-            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with csharp dotnetcore on Windows.",
+            "title": "Scenarios: Call Center Transcription and Analytics with csharp dotnetcore",
+            "shortId": "call-center-csharp-dotnetcore",
+            "shortDescription": "Post-call transcription and analytics with with csharp dotnetcore",
+            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with csharp dotnetcore.",
             "types": [
                 "Speech To Text"
             ],
             "tags": [
                 "Speech To Text",
                 "C#",
-                "Windows",
                 ".NET Core"
             ],
             "time": "5min to run",
@@ -260,12 +259,12 @@
             }
         },
         {
-            "id": "scenarios-post-call-transcription-and-analytics-python",
+            "id": "scenarios-call-center-transcription-and-analytics-python",
             "onboardDate": "2024-10-24",
-            "title": "Scenarios: Post-call transcription and analytics with python on Windows or Linux",
-            "shortId": "Post-call-transcription-and-analytics-python",
-            "shortDescription": "Post-call transcription and analytics with python on Windows or Linux",
-            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with python on Windows or Linux",
+            "title": "Scenarios: Post-call transcription and analytics with python",
+            "shortId": "call-center-python",
+            "shortDescription": "Post-call transcription and analytics with python",
+            "fullDescription": "This sample demonstrates how to use post-call transcription and analytics with python",
             "types": [
                 "Speech To Text"
             ],

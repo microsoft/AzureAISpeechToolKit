@@ -6,7 +6,7 @@ import { ConstantString, EnvKeys, VSCodeCommands } from "./constants";
 import * as globalVariables from "./globalVariables";
 import { AzureSpeechResourceInfo } from "./api/login";
 import { AzureAccountManager } from "./common/azureLogin";
-import { AzureResourceAccountType } from "./common/constants";
+import { AzureResourceAccountType, AzureResourceDisplayName } from "./common/constants";
 
 export function isSpeechResourceSeleted(): boolean {
   const workspaceFolder = globalVariables.workspaceUri?.fsPath;
@@ -78,10 +78,11 @@ export async function fetchSpeechServiceKeyAndRegion(speechResourceInfo: AzureSp
 export function getAzureResourceAccountTypeDisplayName(accountType: AzureResourceAccountType): string {
   switch (accountType) {
     case AzureResourceAccountType.SpeechServices:
-      return 'Speech Services';
+      return AzureResourceDisplayName.SpeechService;
     case AzureResourceAccountType.CognitiveServices:
+      return AzureResourceDisplayName.CognitiveServices;
     case AzureResourceAccountType.AIService:
-      return 'AI Services';
+      return AzureResourceDisplayName.AIService;
   }
 }
 // Utility function to wait for a certain time (in ms)

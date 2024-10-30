@@ -26,7 +26,6 @@ import {
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
 import { createAzureAIServiceHandler } from "../handlers";
-import { getAzureResourceAccountTypeDisplayName } from "../utils";
 
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 

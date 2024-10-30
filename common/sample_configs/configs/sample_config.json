@@ -229,6 +229,6 @@
                 "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/captioning"
             }
-        },
+        }
     ]
 }

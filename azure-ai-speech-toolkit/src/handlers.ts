@@ -14,7 +14,7 @@ import { CommandKey, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeComm
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
-import { AzureResourceTreeViewItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -95,7 +95,7 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
 }
 
 async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceTreeItem): Promise<string> {
-  if (resourceItem.itemType !== AzureResourceTreeViewItemType.SpeechService && resourceItem.itemType !== AzureResourceTreeViewItemType.AIService) {
+  if (!isAzureResourceInstanceItemType(resourceItem.itemType)) {
     throw new Error("Invalid resource type: " + resourceItem.itemType);
   }
 

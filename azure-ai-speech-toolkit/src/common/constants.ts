@@ -34,3 +34,9 @@ export enum AzureResourceAccountType {
   AIService = "AIServices",
   CognitiveServices = "CognitiveServices"
 }
+
+export enum AzureResourceDisplayName {
+  SpeechService = "Speech Service",
+  AIService = "Azure AI service",
+  CognitiveServices = "Azure AI services multi-service account"
+}

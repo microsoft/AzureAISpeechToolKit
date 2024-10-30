@@ -202,18 +202,19 @@
             }
         },
         {
-            "id": "captioning-python",
+            "id": "captioning-csharp-dotnetcore",
             "onboardDate": "2024-10-16",
-            "title": "Create captions with speech to text with python",
-            "shortId": "captioning-python",
-            "shortDescription": "Create captions with speech to text with python",
-            "fullDescription": "Create captions with speech to text with python",
+            "title": "Create captions with speech to text with csharp dotnetcore",
+            "shortId": "captioning-csharp-dotnetcore",
+            "shortDescription": "Create captions with speech to text with csharp dotnetcore",
+            "fullDescription": "Create captions with speech to text with csharp dotnetcore",
             "types": [
                 "Speech To Text"
             ],
             "tags": [
                 "Speech To Text",
-                "Python"
+                "C#",
+                ".NET Core"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
@@ -226,8 +227,8 @@
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "extension",
-                "dir": "scenarios/python/console/captioning"
+                "dir": "scenarios/csharp/dotnetcore/captioning"
             }
-        }
+        },
     ]
 }

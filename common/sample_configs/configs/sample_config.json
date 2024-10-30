@@ -45,7 +45,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/python/from-microphone"
             }
         },
@@ -76,7 +76,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },
@@ -107,7 +107,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/javascript/browser/from-microphone"
             }
         },
@@ -138,7 +138,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/javascript/browser/from-file"
             }
         },
@@ -166,7 +166,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -197,7 +197,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },
@@ -225,7 +225,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/test-sample",
+                "ref": "extension",
                 "dir": "scenarios/python/console/captioning"
             }
         }

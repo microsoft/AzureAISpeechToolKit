@@ -73,6 +73,11 @@
         "category": "Azure AI Speech Toolkit"
       },
       {
+        "command": "azure-ai-speech-toolkit.ConfigureAndSetupApp",
+        "title": "Configure and Setup the Sample App",
+        "category": "Azure AI Speech Toolkit"
+      },
+      {
         "command": "azure-ai-speech-toolkit.buildApp",
         "title": "Build the Sample App",
         "category": "Azure AI Speech Toolkit"

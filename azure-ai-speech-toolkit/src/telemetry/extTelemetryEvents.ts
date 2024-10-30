@@ -3,6 +3,7 @@
 
 export enum TelemetryEvent {
   AzureLogin = "azure-login",
+  DownloadSample = "download-sample",
   BuildSample = "build-sample",
   RunSample = "run-sample"
 }
@@ -13,6 +14,10 @@ export enum AzureLoginTelemetryProperty {
   AzureSubscriptionId = "oid",
   AzureTenantId = "tid",
   Email = "upn"
+}
+
+export enum DownloadSampleTelemetryProperty {
+  SAMPLE_ID = "sample-id"
 }
 
 export enum BuildAndRunSampleTelemetryProperty {

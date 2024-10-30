@@ -3,7 +3,7 @@
 
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { AzureLoginTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "../telemetry/extTelemetryEvents";
+import { DownloadSampleTelemetryProperty, AzureLoginTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "../telemetry/extTelemetryEvents";
 import { AzureAccountManager } from "../common/azureLogin";
 
 export async function getAzureUserTelemetryProperties(): Promise<{ [p: string]: string }> {
@@ -42,8 +42,8 @@ export function getSampleId(ymlFilePath: string) {
     return data.name;
 }
 
-// export async function getDownloadSampleTelemetryProperties(sampleId: string): Promise<{ [p: string]: string }> {
-//     const properties = await getAzureUserTelemetryProperties();
-//     properties[TelemetryDownloadSampleProperty.SampleId] = sampleId;
-//     return properties;
-// }
+export async function getDownloadSampleTelemetryProperties(sampleId: string): Promise<{ [p: string]: string }> {
+    const properties = await getAzureUserTelemetryProperties();
+    properties[DownloadSampleTelemetryProperty.SAMPLE_ID] = sampleId;
+    return properties;
+}

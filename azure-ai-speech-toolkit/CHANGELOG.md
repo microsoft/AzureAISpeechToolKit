@@ -21,3 +21,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.4
 
 - Fix README.
+
+## 0.0.5
+
+- Prepare scenario samples.

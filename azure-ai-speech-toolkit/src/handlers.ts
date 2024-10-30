@@ -14,7 +14,10 @@ import { CommandKeys, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCom
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
-import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { telemetryReporter } from './extension';
+import { TelemetryEvent, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
+import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -67,6 +70,7 @@ export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
+    telemetryReporter.sendTelemetryEvent(TelemetryEvent.AzureLogin, await TelemetryUtils.getAzureUserTelemetryProperties());
   } catch (error) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
@@ -127,6 +131,10 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   }
 
   const task = await findTaskWithName(taskName);
+  const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
+  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName);
+  // const tasks = await vscode.tasks.fetchTasks();
+  // const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
 
   // Check if the requested task exists
   if (!task) {
@@ -148,11 +156,15 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   const execution = await vscode.tasks.executeTask(task);
 
   // Task completion handler to determine the next task intelligently
+  const sampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+  sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
 
       if (e.exitCode === 0) {
+        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
         const nextTaskName = await getNextAvailableTask(taskName);
 
         if (nextTaskName) {
@@ -165,8 +177,12 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
           vscode.window.showInformationMessage(`${taskName} completed successfully.`);
         }
       } else {
+        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
+
+      let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.ConfigureAndSetupSample : (taskName == TaskName.BuildApp ? TelemetryEvent.BuildSample : TelemetryEvent.RunSample));
+      telemetryReporter.sendTelemetryEvent(telemetryEvent, sampleTelemetryProperties);
     }
   });
 }
@@ -433,7 +449,7 @@ export async function downloadSampleApp(...args: unknown[]) {
       console.log("Created parent folder: " + selectedFolder);
     }
 
-    console.log("projectPath: " + projectPath);
+    telemetryReporter.sendTelemetryEvent("test-2-1752");
 
     const sampleDefaultRetryLimits = 2;
     const sampleConcurrencyLimits = 20;
@@ -481,7 +497,7 @@ export async function downloadSampleFiles(
   retryLimits: number,
   concurrencyLimits: number
 ): Promise<void> {
-  const relativePath = sampleInfo.dir
+  const relativePath = sampleInfo.dir;
   const downloadCallback = async (samplePath: string) => {
     const lfsRegex = /^.*oid sha256:[0-9a-f]+\nsize \d+/gm;
     const file = (await sendRequestWithRetry(async () => {

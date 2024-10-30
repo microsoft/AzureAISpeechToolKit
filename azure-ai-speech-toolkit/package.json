@@ -6,6 +6,7 @@
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,
+  "aiKey": "3df3e5d4-c860-4f04-8073-421aa045c3f9",
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/AzureAISpeechToolKit"
@@ -176,6 +177,7 @@
     "@fluentui/react": "^8.120.7",
     "@svgr/webpack": "^8.1.0",
     "@types/fs-extra": "^11.0.4",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
@@ -215,7 +217,9 @@
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36",
+    "@vscode/extension-telemetry": "^0.6.2",
     "dompurify": "^3.1.6",
+    "js-yaml": "^4.1.0",
     "mermaid": "^11.1.0"
   }
 }

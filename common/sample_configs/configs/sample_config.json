@@ -202,12 +202,12 @@
             }
         },
         {
-            "id": "captioning",
+            "id": "captioning-python",
             "onboardDate": "2024-10-16",
-            "title": "Create captions with speech to text",
-            "shortId": "captioning",
-            "shortDescription": "Create captions with speech to text",
-            "fullDescription": "Create captions with speech to text",
+            "title": "Create captions with speech to text with python",
+            "shortId": "captioning-python",
+            "shortDescription": "Create captions with speech to text with python",
+            "fullDescription": "Create captions with speech to text with python",
             "types": [
                 "Speech To Text"
             ],
@@ -223,9 +223,9 @@
             "githubPath": "scenarios/python/console/captioning",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "Azure-Samples",
+                "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "extension",
                 "dir": "scenarios/python/console/captioning"
             }
         }

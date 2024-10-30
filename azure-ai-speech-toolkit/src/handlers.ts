@@ -10,7 +10,7 @@ import { SampleInfo } from "./controls/sampleGallery/ISamples";
 import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
-import { CommandKey, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCommands } from "./constants";
+import { CommandKeys, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCommands } from "./constants";
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
@@ -124,117 +124,101 @@ async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechR
   return properties;
 }
 
-export async function buildAppHandler(...args: unknown[]) {
+export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   if (!globalVariables.isSpeechFxProject) {
-    console.log("Not a speech project. Skip building the sample app.");
+    console.log(`Not a speech project. Skip executing task ${taskName}.`);
     return;
   }
 
+  const task = await findTaskWithName(taskName);
   const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
-  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName); 
-  const tasks = await vscode.tasks.fetchTasks();
-  const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
+  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName);
+  // const tasks = await vscode.tasks.fetchTasks();
+  // const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
 
-  if (!buildTask) {
-    const hasRunTasks = await runTasksExists();
-    if (hasRunTasks) {
-      vscode.window.showInformationMessage('No build task found. Would you like to run the app directly?', 'Yes', 'No')
-        .then(selection => {
-          if (selection === 'Yes') {
-            vscode.commands.executeCommand(CommandKey.RunApp);
-          }
-        });
-      return;
+  // Check if the requested task exists
+  if (!task) {
+    const nextAvailableTaskName = await getNextAvailableTask(taskName);
+
+    if (nextAvailableTaskName) {
+      const message = `No "${taskName}" task found. Would you like to ${nextAvailableTaskName === TaskName.BuildApp ? 'build' : 'run'} the app directly?`;
+      const selection = await vscode.window.showInformationMessage(message, 'Yes', 'No');
+      if (selection === 'Yes') {
+        await taskHandler(nextAvailableTaskName);
+      }
     } else {
-      vscode.window.showErrorMessage('No build task found. Check .vscode/tasks.json file.');
-      return;
+      vscode.window.showErrorMessage(`No "${taskName}" task found. Check your .vscode/tasks.json file.`);
     }
+    return;
   }
 
-  vscode.window.showInformationMessage('Building the sample app... Check terminal for task output.');
-  const execution = await vscode.tasks.executeTask(buildTask);
+  vscode.window.showInformationMessage(`Executing task: ${taskName}. Check terminal for output.`);
+  const execution = await vscode.tasks.executeTask(task);
 
-  const buildSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
-  buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+  // Task completion handler to determine the next task intelligently
+  const sampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+  sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
 
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
+
       if (e.exitCode === 0) {
-        const hasRunTasks = await runTasksExists();
-        if (!hasRunTasks) {
-          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
-          vscode.window.showInformationMessage('Build completed successfully.');
+        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
+        const nextTaskName = await getNextAvailableTask(taskName);
+
+        if (nextTaskName) {
+          const nextTaskMessage = `${taskName} completed successfully. Would you like to ${nextTaskName === TaskName.BuildApp ? 'build' : 'run'} the app?`;
+          const selection = await vscode.window.showInformationMessage(nextTaskMessage, 'Yes', 'No');
+          if (selection === 'Yes') {
+            await taskHandler(nextTaskName);
+          }
         } else {
-          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
-          vscode.window.showInformationMessage('Build completed successfully. Would you like to run the app?', 'Yes', 'No')
-            .then(selection => {
-              if (selection === 'Yes') {
-                vscode.commands.executeCommand(CommandKey.RunApp);
-              }
-            });
+          vscode.window.showInformationMessage(`${taskName} completed successfully.`);
         }
       } else {
-        buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
-        vscode.window.showErrorMessage('Build failed. Please check the terminal output for errors.');
+        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
+        vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
-
-      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.BuildSample, buildSampleTelemetryProperties);
+      let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.ConfigureAndSetupSample : (taskName == TaskName.BuildApp ? TelemetryEvent.BuildSample : TelemetryEvent.RunSample));
+      ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTelemetryProperties);
     }
   });
 }
 
-async function buildTasksExists(): Promise<boolean> {
+async function findTaskWithName(taskName: TaskName): Promise<vscode.Task | undefined> {
   const tasks = await vscode.tasks.fetchTasks();
-  const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
-  return !!buildTask;
+  const taskFound = tasks.find(task => task.name === taskName);
+  return taskFound;
 }
 
-async function runTasksExists(): Promise<boolean> {
-  const tasks = await vscode.tasks.fetchTasks();
-  const runTask = tasks.find(task => task.name === TaskName.RunApp);
-  return !!runTask;
-}
+// Helper function to find the next available task. Task sequence: ConfigureAndSetupApp -> BuildApp -> RunApp
+async function getNextAvailableTask(currentTaskName: TaskName | null): Promise<TaskName | null> {
+  if (!currentTaskName) {
+    const configureAndSetupAppTask = await findTaskWithName(TaskName.ConfigureAndSetupApp);
+    if (configureAndSetupAppTask) return TaskName.ConfigureAndSetupApp;
 
-export async function runAppHandler(...args: unknown[]) {
-  if (!globalVariables.isSpeechFxProject) {
-    console.log("Not a speech project. Skip running the sample app.");
-    return;
+    const buildTask = await findTaskWithName(TaskName.BuildApp);
+    if (buildTask) return TaskName.BuildApp;
+
+    const runTask = await findTaskWithName(TaskName.RunApp);
+    if (runTask) return TaskName.RunApp;
   }
 
-  const tasks = await vscode.tasks.fetchTasks();
-  const runTask = tasks.find(task => task.name === TaskName.RunApp);
-  if (!runTask) {
-    vscode.window.showErrorMessage('No task with name "' + TaskName.RunApp + '" found in the workspace. Check .vscode/tasks.json file.');
-    return;
+  if (currentTaskName === TaskName.ConfigureAndSetupApp) {
+    const buildTask = await findTaskWithName(TaskName.BuildApp);
+    if (buildTask) return TaskName.BuildApp;
+
+    const runTask = await findTaskWithName(TaskName.RunApp);
+    if (runTask) return TaskName.RunApp;
+  } else if (currentTaskName === TaskName.BuildApp) {
+    const runTask = await findTaskWithName(TaskName.RunApp);
+    if (runTask) return TaskName.RunApp;
+  } else if (currentTaskName === TaskName.RunApp) {
+    return null;
   }
-  vscode.window.showInformationMessage('Running the sample app... Check terminal for task output.');
-  const execution = await vscode.tasks.executeTask(runTask);
 
-  const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
-  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName); 
-  const runSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
-  runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
-
-  const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
-    if (e.execution === execution) {
-      disposable.dispose();
-      if (e.exitCode === 0) {
-        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
-        vscode.window.showInformationMessage('Sample run successfully. To rerun the sample app, click the button or trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.', 'Run Sample App')
-          .then(selection => {
-            if (selection === 'Run Sample App') {
-              vscode.commands.executeCommand(CommandKey.RunApp);
-            }
-          });
-      } else {
-        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
-        vscode.window.showErrorMessage('Run failed. Please check the terminal output for errors. To rerun the sample app, trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.');
-      }
-
-      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.RunSample, runSampleTelemetryProperties);
-    }
-  });
+  return null;
 }
 
 export async function openSamplesHandler(...args: unknown[]) {
@@ -307,27 +291,30 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     return;
   }
 
-  // Step 5: Build the app if build tasks exist.
-  const hasBuildTasks = await buildTasksExists();
-  if (hasBuildTasks) {
-    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Build the app?', 'Yes')
+  // Step 5: execute available tasks if any exists.
+  const nextAvailableTaskName = await getNextAvailableTask(null);
+  if (nextAvailableTaskName) {
+    let nextAction = 'Configure and Setup';
+    let nextCommand = CommandKeys.ConfigureAndSetupApp;
+    switch (nextAvailableTaskName) {
+      case TaskName.BuildApp:
+        nextAction = 'build';
+        nextCommand = CommandKeys.BuildApp;
+        break;
+      case TaskName.RunApp:
+        nextAction = 'run';
+        nextCommand = CommandKeys.RunApp;
+        break;
+    }
+    const nextTaskMessage = `Successfully updated environment file ${envFilePath}. Would you like to ${nextAction} the app?`;
+    vscode.window.showInformationMessage(nextTaskMessage, 'Yes')
       .then(selection => {
         if (selection === 'Yes') {
-          vscode.commands.executeCommand(CommandKey.BuildApp);
+          vscode.commands.executeCommand(nextCommand);
         }
       });
   } else {
-    const hasRunTasks = await runTasksExists();
-    if (hasRunTasks) {
-      vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '. Would you like to Run the app?', 'Yes')
-        .then(selection => {
-          if (selection === 'Yes') {
-            vscode.commands.executeCommand(CommandKey.RunApp);
-          }
-        });
-    } else {
-      vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
-    }
+    vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
   }
 }
 
@@ -365,11 +352,11 @@ function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, 
     let configContent = fs.readFileSync(configFilePath, 'utf8');
     const configJson = JSON.parse(configContent);
 
-    if (configJson.YourSubscriptionKey) {
-      configJson.YourSubscriptionKey = key;
+    if (configJson.SubscriptionKey) {
+      configJson.SubscriptionKey = key;
     }
-    if (configJson.YourServiceRegion) {
-      configJson.YourServiceRegion = region;
+    if (configJson.ServiceRegion) {
+      configJson.ServiceRegion = region;
     }
 
     configContent = JSON.stringify(configJson, null, 2);

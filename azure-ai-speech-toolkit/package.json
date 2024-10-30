@@ -2,7 +2,7 @@
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
   "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,
@@ -70,6 +70,11 @@
       {
         "command": "azure-ai-speech-toolkit.openSamples",
         "title": "View Samples",
+        "category": "Azure AI Speech Toolkit"
+      },
+      {
+        "command": "azure-ai-speech-toolkit.ConfigureAndSetupApp",
+        "title": "Configure and Setup the Sample App",
         "category": "Azure AI Speech Toolkit"
       },
       {

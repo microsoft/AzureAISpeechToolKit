@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { CommandKey as CommandKeys, ContextKeys, TerminalName, VSCodeCommands } from "./constants";
+import { CommandKeys, ContextKeys, TaskName, TerminalName, VSCodeCommands } from "./constants";
 import * as handlers from "./handlers";
 import { initializeGlobalVariables, isSpeechFxProject } from './globalVariables';
 import { VSCodeUI } from './ui/ui';
@@ -35,10 +35,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.SelectResource, handlers.configureResourcehandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.BuildApp, handlers.buildAppHandler));
+		vscode.commands.registerCommand(CommandKeys.ConfigureAndSetupApp,  () => handlers.taskHandler(TaskName.ConfigureAndSetupApp)));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.RunApp, handlers.runAppHandler));
+		vscode.commands.registerCommand(CommandKeys.BuildApp,() => handlers.taskHandler(TaskName.BuildApp)));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(CommandKeys.RunApp, () => handlers.taskHandler(TaskName.RunApp)));
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.OpenDocument, handlers.openDocumentHandler));

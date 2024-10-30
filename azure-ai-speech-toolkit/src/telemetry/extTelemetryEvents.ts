@@ -4,6 +4,7 @@
 export enum TelemetryEvent {
   AzureLogin = "azure-login",
   DownloadSample = "download-sample",
+  ConfigureAndSetupSample = "configure-and-setup-sample",
   BuildSample = "build-sample",
   RunSample = "run-sample"
 }

@@ -14,7 +14,7 @@ import { CommandKeys, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCom
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
-import { ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 import { telemetryReporter } from './extension';
 import { TelemetryEvent, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";

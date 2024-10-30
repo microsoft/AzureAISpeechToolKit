@@ -14,7 +14,10 @@ import { CommandKey, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeComm
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
-import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { AzureResourceTreeViewItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
+import { telemetryReporter } from './extension';
+import { TelemetryEvent, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
+import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -67,6 +70,7 @@ export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
+    telemetryReporter.sendTelemetryEvent(TelemetryEvent.AzureLogin, await TelemetryUtils.getAzureUserTelemetryProperties());
   } catch (error) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
@@ -126,6 +130,8 @@ export async function buildAppHandler(...args: unknown[]) {
     return;
   }
 
+  const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
+  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName); 
   const tasks = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
 
@@ -148,14 +154,19 @@ export async function buildAppHandler(...args: unknown[]) {
   vscode.window.showInformationMessage('Building the sample app... Check terminal for task output.');
   const execution = await vscode.tasks.executeTask(buildTask);
 
+  const buildSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+  buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
         const hasRunTasks = await runTasksExists();
         if (!hasRunTasks) {
+          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
           vscode.window.showInformationMessage('Build completed successfully.');
         } else {
+          buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
           vscode.window.showInformationMessage('Build completed successfully. Would you like to run the app?', 'Yes', 'No')
             .then(selection => {
               if (selection === 'Yes') {
@@ -164,8 +175,11 @@ export async function buildAppHandler(...args: unknown[]) {
             });
         }
       } else {
+        buildSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage('Build failed. Please check the terminal output for errors.');
       }
+
+      telemetryReporter.sendTelemetryEvent(TelemetryEvent.BuildSample, buildSampleTelemetryProperties);
     }
   });
 }
@@ -197,10 +211,16 @@ export async function runAppHandler(...args: unknown[]) {
   vscode.window.showInformationMessage('Running the sample app... Check terminal for task output.');
   const execution = await vscode.tasks.executeTask(runTask);
 
+  const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
+  const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName); 
+  const runSampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
+  runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
       if (e.exitCode === 0) {
+        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
         vscode.window.showInformationMessage('Sample run successfully. To rerun the sample app, click the button or trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.', 'Run Sample App')
           .then(selection => {
             if (selection === 'Run Sample App') {
@@ -208,8 +228,11 @@ export async function runAppHandler(...args: unknown[]) {
             }
           });
       } else {
+        runSampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage('Run failed. Please check the terminal output for errors. To rerun the sample app, trigger "Azure AI Speech Toolkit: Run the Sample App" command from command palette.');
       }
+
+      telemetryReporter.sendTelemetryEvent(TelemetryEvent.RunSample, runSampleTelemetryProperties);
     }
   });
 }
@@ -438,7 +461,7 @@ export async function downloadSampleApp(...args: unknown[]) {
       console.log("Created parent folder: " + selectedFolder);
     }
 
-    console.log("projectPath: " + projectPath);
+    telemetryReporter.sendTelemetryEvent("test-2-1752");
 
     const sampleDefaultRetryLimits = 2;
     const sampleConcurrencyLimits = 20;
@@ -486,7 +509,7 @@ export async function downloadSampleFiles(
   retryLimits: number,
   concurrencyLimits: number
 ): Promise<void> {
-  const relativePath = sampleInfo.dir
+  const relativePath = sampleInfo.dir;
   const downloadCallback = async (samplePath: string) => {
     const lfsRegex = /^.*oid sha256:[0-9a-f]+\nsize \d+/gm;
     const file = (await sendRequestWithRetry(async () => {

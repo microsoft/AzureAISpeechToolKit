@@ -221,7 +221,7 @@
             "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/captioning.png",
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
-            "githubPath": "scenarios/python/console/captioning",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/captioning",
             "scenario": true,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",

@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { AzureResourceInfo, SubscriptionInfo, TokenProvider } from "../api/login";
 import { AzureAccountManager } from "../common/azureLogin";
 import * as path from 'path';
-import { AzureResourceAccountType, signedOut } from "../common/constants";
+import { AzureResourceAccountType, AzureResourceDisplayName, signedOut } from "../common/constants";
 import { ContextKeys, VSCodeCommands } from "../constants";
 
 class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeItem> {
@@ -51,41 +51,32 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
 
       // Root level: Get Azure subscriptions
       const subs = await azureAccountProvider.listSubscriptions();
-      const subItems = subs.map(sub => new ResourceTreeItem(sub.name!, sub.tenantId!, sub.id!, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.Subscription, sub));
+      const subItems = subs.map(sub => new ResourceTreeItem(sub.name!, sub.tenantId!, sub.id!, vscode.TreeItemCollapsibleState.Collapsed, SubscriptionItemType.Subscription, sub));
       return subItems;
     }
-    else if (element.itemType === AzureResourceTreeViewItemType.Subscription) {
+    else if (element.itemType === SubscriptionItemType.Subscription) {
       // Second level: Show resource types under each subscription
       const resourceTypes: ResourceTreeItem[] = [
-        new ResourceTreeItem("Speech Services", element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.SpeechServiceType, element.azureResourceInfo),
-        new ResourceTreeItem("AI Services", element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTreeViewItemType.AIServiceType, element.azureResourceInfo),
+        new ResourceTreeItem(AzureResourceDisplayName.AIService, element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTypeItemType.AIServiceType, element.azureResourceInfo),
+        new ResourceTreeItem(AzureResourceDisplayName.CognitiveServices, element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTypeItemType.CognitiveServicesType, element.azureResourceInfo),
+        new ResourceTreeItem(AzureResourceDisplayName.SpeechService, element.tenantId, element.subscriptionId, vscode.TreeItemCollapsibleState.Collapsed, AzureResourceTypeItemType.SpeechServiceType, element.azureResourceInfo),
       ];
       return resourceTypes;
     }
-    else {
-      // Third level: Show certain type Services under the subscription
-      let resourceTypes: AzureResourceAccountType[] = [];
-      // let resourceTypeToDisplay: ItemType;
-      switch (element.itemType) {
-        case AzureResourceTreeViewItemType.AIServiceType:
-          // AI Services include Cognitive Services and AI Service
-          resourceTypes = [AzureResourceAccountType.AIService, AzureResourceAccountType.CognitiveServices];
-          break;
-        case AzureResourceTreeViewItemType.SpeechServiceType:
-          resourceTypes = [AzureResourceAccountType.SpeechServices];
-          break;
-      }
-      const azureResources = await azureAccountProvider.listAzureServices((element.azureResourceInfo as SubscriptionInfo), resourceTypes);
+    else if (isAzureResourceTypeItemType(element.itemType)) {
+      const azureResources = await azureAccountProvider.listAzureServices((element.azureResourceInfo as SubscriptionInfo), [getAzureResourceAccountType(element.itemType)]);
       const azureResourceItems = azureResources.map(azureResource => new ResourceTreeItem(
         azureResource.name,
         azureResource.tenantId,
         azureResource.id,
         vscode.TreeItemCollapsibleState.None,
-        element.itemType === AzureResourceTreeViewItemType.SpeechServiceType ? AzureResourceTreeViewItemType.SpeechService : AzureResourceTreeViewItemType.AIService,
+        getAzureResourceInstanceItemType(element.itemType),
         azureResource
-      ));
+      )).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically by name;
 
       return azureResourceItems;
+    } else {
+      return [];
     }
   }
 
@@ -118,7 +109,8 @@ export class ResourceTreeItem extends vscode.TreeItem {
     // Icon path based on the item type
     this.iconPath = this.getIconPath(itemType);
 
-    if (itemType == AzureResourceTreeViewItemType.SpeechService || itemType == AzureResourceTreeViewItemType.AIService) {
+    // if (itemType == AzureResourceInstanceItemType.SpeechService || itemType == AzureResourceTreeViewItemType.AIService || itemType == AzureResourceTreeViewItemType.CognitiveServices) {
+    if (isAzureResourceInstanceItemType(itemType)) {
       this.contextValue = 'speechResouceItem';
     }
 
@@ -129,13 +121,18 @@ export class ResourceTreeItem extends vscode.TreeItem {
   private getIconPath(itemType: AzureResourceTreeViewItemType): { light: string; dark: string } {
     let iconName = 'subscription.png';
     switch (itemType) {
-      case AzureResourceTreeViewItemType.SpeechServiceType:
-      case AzureResourceTreeViewItemType.SpeechService:
+      case AzureResourceTypeItemType.SpeechServiceType:
+      case AzureResourceInstanceItemType.SpeechService:
         iconName = 'speech-service-icon.png';
         break;
-      case AzureResourceTreeViewItemType.AIServiceType:
-      case AzureResourceTreeViewItemType.AIService:
+      case AzureResourceTypeItemType.AIServiceType:
+      case AzureResourceInstanceItemType.AIService:
         iconName = 'azure-ai-service.png';
+        break;
+
+      case AzureResourceTypeItemType.CognitiveServicesType:
+      case AzureResourceInstanceItemType.CognitiveServices:
+        iconName = 'cognitive-service-icon.png';
         break;
     }
     const iconPathLight = path.join(__filename, '..', '..', '..', 'media', iconName); // For light theme
@@ -144,13 +141,62 @@ export class ResourceTreeItem extends vscode.TreeItem {
   }
 }
 
-export enum AzureResourceTreeViewItemType {
+export enum SubscriptionItemType {
   Subscription = 'SUBSCRIPTION',
+}
+
+export enum AzureResourceTypeItemType {
   SpeechServiceType = 'SPEECH_SERVICE_TYPE',
   AIServiceType = 'AI_SERVICE_TYPE',
+  CognitiveServicesType = 'COGNITIVE_SERVICES_TYPE',
+}
+
+export enum AzureResourceInstanceItemType {
+  CognitiveServices = 'COGNITIVE_SERVICES',
   SpeechService = 'SPEECH_SERVICE',
   AIService = 'AI_SERVICE',
 }
 
+export type AzureResourceTreeViewItemType =
+  | SubscriptionItemType
+  | AzureResourceTypeItemType
+  | AzureResourceInstanceItemType;
+
+function isAzureResourceTypeItemType(itemType: AzureResourceTreeViewItemType): boolean {
+  return Object.values(AzureResourceTypeItemType).includes(itemType as AzureResourceTypeItemType);
+}
+export function isAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemType): boolean {
+  return Object.values(AzureResourceInstanceItemType).includes(itemType as AzureResourceInstanceItemType);
+}
+function getAzureResourceAccountType(itemType: AzureResourceTreeViewItemType): AzureResourceAccountType {
+  if (!isAzureResourceTypeItemType(itemType)) {
+    throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
+  }
+  switch (itemType) {
+    case AzureResourceTypeItemType.AIServiceType:
+      return AzureResourceAccountType.AIService;
+    case AzureResourceTypeItemType.CognitiveServicesType:
+      return AzureResourceAccountType.CognitiveServices;
+    case AzureResourceTypeItemType.SpeechServiceType:
+      return AzureResourceAccountType.SpeechServices;
+    default:
+      throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
+  }
+}
+function getAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemType): AzureResourceInstanceItemType {
+  if (!isAzureResourceTypeItemType(itemType)) {
+    throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
+  }
+  switch (itemType) {
+    case AzureResourceTypeItemType.AIServiceType:
+      return AzureResourceInstanceItemType.AIService;
+    case AzureResourceTypeItemType.CognitiveServicesType:
+      return AzureResourceInstanceItemType.CognitiveServices;
+    case AzureResourceTypeItemType.SpeechServiceType:
+      return AzureResourceInstanceItemType.SpeechService;
+    default:
+      throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
+  }
+}
 
 export default ResourceTreeViewProvider.getInstance();

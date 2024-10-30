@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { SubscriptionClient, TenantIdDescription } from "@azure/arm-resources-subscriptions";
-import { ResourceManagementClient, Sku } from "@azure/arm-resources";
+import { ResourceManagementClient } from "@azure/arm-resources";
 import { CognitiveServicesManagementClient, Account, ResourceSku } from '@azure/arm-cognitiveservices';
 import { TokenCredential } from "@azure/core-auth";
 import * as vscode from "vscode";
@@ -145,6 +145,9 @@ export class VSCodeAzureSubscriptionProvider {
         sku: item.sku!.name!
       })
     }
+
+    // Sort azureResources by name
+    azureResources.sort((a, b) => a.name.localeCompare(b.name));
 
     return azureResources;
   }

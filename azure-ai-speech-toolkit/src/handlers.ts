@@ -99,7 +99,7 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
 }
 
 async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceTreeItem): Promise<string> {
-  if (resourceItem.itemType !== AzureResourceTreeViewItemType.SpeechService && resourceItem.itemType !== AzureResourceTreeViewItemType.AIService) {
+  if (!isAzureResourceInstanceItemType(resourceItem.itemType)) {
     throw new Error("Invalid resource type: " + resourceItem.itemType);
   }
 

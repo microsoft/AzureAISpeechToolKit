@@ -64,7 +64,7 @@ export function getResourceGroupNameFromId(speechServiceId: string): string {
 export async function fetchSpeechServiceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo): Promise<{ key: string, region: string }> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const resourceGroupName = getResourceGroupNameFromId(speechResourceInfo.id);
-  const { key, region } = await azureAccountProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo.subscriptionId, resourceGroupName, speechResourceInfo.name);
+  const { key, region } = await azureAccountProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceInfo.name);
   if (!key || !region) {
     throw new Error("Fail to fetch key and region");
   }

@@ -36,12 +36,12 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
       return;
     }
 
-    const region = await azureAccountProvider.getSelectedRegion(subscriptionInfo.id);
+    const region = await azureAccountProvider.getSelectedRegion(subscriptionInfo);
     if (!region) {
       return;
     }
 
-    const name = await azureAccountProvider.getNewAzureAIServiceNameFromUser(subscriptionInfo.id);
+    const name = await azureAccountProvider.getNewAzureAIServiceNameFromUser(subscriptionInfo);
     if (!name) {
       return;
     }
@@ -267,6 +267,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
         // Fail to find a speech service.
         return;
       }
+      console.log("Selected speech service: ", speechServiceInfo);
       properties = await getSpeechResourceProperties(speechServiceInfo);
 
       envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);

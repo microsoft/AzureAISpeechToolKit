@@ -12,6 +12,11 @@ The Speech service provides speech to text and text to speech capabilities with 
 
 - [**Speech translation**](https://learn.microsoft.com/azure/ai-services/speech-service/speech-translation): Speech translation enables real-time, multilingual translation of speech to your applications, tools, and devices. Use this feature for speech to speech and speech to text translation.
 
+## Get Started
+
+Go to extension page and try it out by clicking "View Samples" button.
+
+![start_page](https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/azure-ai-speech-toolkit/img/start-page.png)
 
 ## Available Actions
 - Configure Azure Speech resources

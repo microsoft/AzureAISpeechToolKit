@@ -388,11 +388,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async fetchSpeechResourceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
+  async fetchSpeechResourceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only fetch speech service details when logged in.");
     }
-    const { key, region } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(subscriptionId, resourceGroupName, speechResourceName);
+    const { key, region } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceName);
     return { key, region };
   }
 
@@ -469,22 +469,22 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   async createAzureAIService(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, region: string, serviceName: string, sku: string): Promise<AzureSpeechResourceInfo> {
     const azureResourceInfo = await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
-      title: 'Creating Azure AI Service...',
+      title: 'Creating Azure AI Service... This can take a while...',
       cancellable: false
     }, async (progress) => {
-      return await this.vscodeAzureSubscriptionProvider.createNewAIServiceResource(subscriptionInfo.id, resourceGroupName, region, serviceName, sku);
+      return await this.vscodeAzureSubscriptionProvider.createNewAIServiceResource(subscriptionInfo, resourceGroupName, region, serviceName, sku);
     });
 
     return azureResourceInfo;
   }
 
-  async getSelectedRegion(subscriptionInfoId: string): Promise<string | undefined> {
+  async getSelectedRegion(subscriptionInfoInfo: SubscriptionInfo): Promise<string | undefined> {
     const availableRegionList = await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
       title: 'Fetching available regions...',
       cancellable: false
     }, async (progress) => {
-      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailableRegions(subscriptionInfoId);
+      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailableRegions(subscriptionInfoInfo);
     });
 
     const config: SingleSelectConfig = {
@@ -512,7 +512,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       title: 'Fetching available pricing tiers...',
       cancellable: false
     }, async (progress) => {
-      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailablePricingTiers(subscriptionInfo.id, location);
+      return await this.vscodeAzureSubscriptionProvider.getAISpeechAvailablePricingTiers(subscriptionInfo, location);
     });
 
     if (pricingTierList.length == 0) {
@@ -538,7 +538,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async getSelectedResourceGroups(subscriptionId: SubscriptionInfo): Promise<string | undefined> {
+  async getSelectedResourceGroups(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only select resource group when logged in.");
     }
@@ -548,7 +548,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       title: 'Fetching resource group...',
       cancellable: false
     }, async (progress) => {
-      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionId);
+      return await this.vscodeAzureSubscriptionProvider.getResourceGroupListBySubscriptionId(subscriptionInfo);
     });
 
     const createNewResourceGroupOption: OptionItem = {
@@ -577,7 +577,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       const selectedResourceGroupId = result.value.result as string;
 
       if (selectedResourceGroupId === createNewResourceGroupOption.id) {
-        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionId.id);
+        const newResourceGroupName = await this.getResourceGroupNameFromUser(subscriptionInfo);
         return newResourceGroupName;
       }
 
@@ -586,7 +586,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async getResourceGroupNameFromUser(subscriptionId: string): Promise<string> {
+  async getResourceGroupNameFromUser(subscriptionInfo: SubscriptionInfo): Promise<string> {
     // Generate a default resource group name
     const timestamp = new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
     const accountInfo = await this.getAccountInfo();
@@ -604,7 +604,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       validateInput: async (input) => {
         // Validate the resource group name
         try {
-          const validationError = await this.vscodeAzureSubscriptionProvider.isValidResourceGroupName(subscriptionId, input.trim());
+          const validationError = await this.vscodeAzureSubscriptionProvider.isValidResourceGroupName(subscriptionInfo, input.trim());
           return validationError ? validationError : null;
         } catch (error) {
           console.log("Failed to validate resource group name: ", error);
@@ -624,7 +624,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     return resourceGroupName.trim(); // Return the valid resource group name
   }
 
-  async getNewAzureAIServiceNameFromUser(subscriptionId: string): Promise<string> {
+  async getNewAzureAIServiceNameFromUser(subscriptionInfo: SubscriptionInfo): Promise<string> {
     // Generate a default azure ai service name
     const timestamp = new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14); // Format: YYYYMMDDHHmmss
     const accountInfo = await this.getAccountInfo();
@@ -641,7 +641,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       value: defaultAIServiceName, // Set the default value
       validateInput: async (input) => {
         // Validate the resource name
-        const validationError = await this.vscodeAzureSubscriptionProvider.isValidAzureAIServiceResourceName(subscriptionId, input.trim());
+        const validationError = await this.vscodeAzureSubscriptionProvider.isValidAzureAIServiceResourceName(subscriptionInfo, input.trim());
         return validationError ? validationError : null;
       }
     };

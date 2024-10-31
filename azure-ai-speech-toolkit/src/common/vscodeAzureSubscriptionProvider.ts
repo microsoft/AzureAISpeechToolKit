@@ -90,14 +90,18 @@ export class VSCodeAzureSubscriptionProvider {
         results.push(...(await this.getSubscriptionsForTenant(tenantId)));
       } catch (e) { }
     }
+    if (results.length === 0) {
+      console.log("No subscriptions found.");
+    }
     const sortSubscriptions = (subscriptions: AzureSubscription[]): AzureSubscription[] =>
       subscriptions.sort((a, b) => a.name.localeCompare(b.name));
     return sortSubscriptions(results);
   }
 
-  public async fetchSpeechResourceKeyAndRegion(subscriptionId: string, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+  public async fetchSpeechResourceKeyAndRegion(azureSpeechResourceInfo:AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
+    console.log("[fetchSpeechResourceKeyAndRegion] azureSpeechResourceInfo: ", azureSpeechResourceInfo);
+    const credential = await getCredentialFromVSCodeSession(azureSpeechResourceInfo.tenantId, AzureScopes);
+    const cognitiveClient = new CognitiveServicesManagementClient(credential, azureSpeechResourceInfo.subscriptionId);
 
     try {
       // Fetch Speech Resource details, including the region
@@ -118,7 +122,8 @@ export class VSCodeAzureSubscriptionProvider {
   }
 
   public async getAzureResourceListWithType(subscriptionInfo: SubscriptionInfo, accountTypes: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    console.log("credential: ", credential);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
     const accountsIterator = await cognitiveClient.accounts.list();
 
@@ -153,7 +158,7 @@ export class VSCodeAzureSubscriptionProvider {
   }
 
   public async getResourceGroupListBySubscriptionId(subscriptionInfo: SubscriptionInfo): Promise<AzureResourceGroupInfo[]> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
     const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
 
     try {
@@ -171,9 +176,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async getAISpeechAvailablePricingTiers(subscriptionId: string, location: string): Promise<string[]> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const client = new CognitiveServicesManagementClient(credential, subscriptionId);
+  public async getAISpeechAvailablePricingTiers(subscriptionInfo: SubscriptionInfo, location: string): Promise<string[]> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const client = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
 
     try {
       const availableSkus = await client.resourceSkus.list();
@@ -192,9 +197,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async getAISpeechAvailableRegions(subscriptionId: string): Promise<string[]> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+  public async getAISpeechAvailableRegions(subscriptionInfo: SubscriptionInfo): Promise<string[]> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
 
     // Get available regions for Cognitive Services (Azure AI Service)
     const resourceProvider = await rmClient.providers.get("Microsoft.CognitiveServices");
@@ -208,7 +213,7 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async isValidResourceGroupName(subscriptionId: string, resourceGroupName: string): Promise<string | null> {
+  public async isValidResourceGroupName(subscriptionInfo: SubscriptionInfo, resourceGroupName: string): Promise<string | null> {
     const lengthValid = resourceGroupName.length >= 1 && resourceGroupName.length <= 90;
     if (!lengthValid) {
       return "Resource group name must be between 1 and 90 characters long.";
@@ -224,7 +229,7 @@ export class VSCodeAzureSubscriptionProvider {
       return "Resource group name cannot end with a period.";
     }
 
-    const hasExisted = await this.checkResourceGroupExistence(subscriptionId, resourceGroupName);
+    const hasExisted = await this.checkResourceGroupExistence(subscriptionInfo, resourceGroupName);
     if (hasExisted) {
       return "Resource group name already exists, please choose another name.";
     }
@@ -232,7 +237,7 @@ export class VSCodeAzureSubscriptionProvider {
     return null;  // Name is valid
   }
 
-  public async isValidAzureAIServiceResourceName(subscriptionId: string, serviceName: string): Promise<string | null> {
+  public async isValidAzureAIServiceResourceName(subscriptionInfo: SubscriptionInfo, serviceName: string): Promise<string | null> {
     const lengthValid = serviceName.length >= 1 && serviceName.length <= 63;
     const regexValid = /^[a-z0-9-]+$/.test(serviceName);
     const notStartOrEndWithHyphen = !serviceName.startsWith('-') && !serviceName.endsWith('-');
@@ -251,7 +256,7 @@ export class VSCodeAzureSubscriptionProvider {
       return "AI Service instance name cannot contain consecutive hyphens.";
     }
 
-    const hasExisted = await this.checkAIServiceExistence(subscriptionId, serviceName);
+    const hasExisted = await this.checkAIServiceExistence(subscriptionInfo, serviceName);
     if (hasExisted) {
       return "Resource group name already exists, please choose another name.";
     }
@@ -259,9 +264,9 @@ export class VSCodeAzureSubscriptionProvider {
     return null;  // Name is valid
   }
 
-  async checkAIServiceExistence(subscriptionId: string, serviceName: string): Promise<boolean> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+  async checkAIServiceExistence(subscriptionInfo: SubscriptionInfo, serviceName: string): Promise<boolean> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
 
     try {
       // List all Cognitive Services accounts in the subscription
@@ -285,9 +290,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  async checkResourceGroupExistence(subscriptionId: string, resourceGroupName: string): Promise<boolean> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+  async checkResourceGroupExistence(subscriptionInfo: SubscriptionInfo, resourceGroupName: string): Promise<boolean> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
 
     try {
       const result = await rmClient.resourceGroups.checkExistence(resourceGroupName);
@@ -297,9 +302,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async ensureNewResourceGroup(subscriptionId: string, resourceGroupName: string, location: string): Promise<void> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const rmClient = new ResourceManagementClient(credential, subscriptionId);
+  public async ensureNewResourceGroup(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, location: string): Promise<void> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const rmClient = new ResourceManagementClient(credential, subscriptionInfo.id);
 
     try {
       // Check if the resource group exists
@@ -342,9 +347,9 @@ export class VSCodeAzureSubscriptionProvider {
     }
   }
 
-  public async createNewAIServiceResource(subscriptionId: string, resourceGroupName: string, region: string, serviceName: string, sku: string): Promise<AzureSpeechResourceInfo> {
-    const credential = await getCredentialFromVSCodeSession(undefined, AzureScopes);
-    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionId);
+  public async createNewAIServiceResource(subscriptionInfo: SubscriptionInfo, resourceGroupName: string, region: string, serviceName: string, sku: string): Promise<AzureSpeechResourceInfo> {
+    const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
+    const cognitiveServicesClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
 
     const [skuTier, skuName] = sku.split(' ');
     // Prepare the parameters for the Speech resource
@@ -359,10 +364,10 @@ export class VSCodeAzureSubscriptionProvider {
     };
 
     try {
-      await this.ensureNewResourceGroup(subscriptionId, resourceGroupName, region);
+      await this.ensureNewResourceGroup(subscriptionInfo, resourceGroupName, region);
 
       const account = await cognitiveServicesClient.accounts.beginCreateAndWait(resourceGroupName, serviceName, parameters);
-      const tenantId = (await this.getTenants())[0].tenantId;
+      const tenantId = subscriptionInfo.tenantId;
 
       const azurePortalUrl = `https://portal.azure.com/#@${tenantId}/resource${account.id}`;
 
@@ -378,9 +383,9 @@ export class VSCodeAzureSubscriptionProvider {
       return {
         id: account.id!,
         name: account.name!,
-        subscriptionId: subscriptionId,
+        subscriptionId: subscriptionInfo.id,
         subscriptionName: account.name!,
-        tenantId: tenantId!,
+        tenantId: tenantId,
         region: account.location!,
         accountType: getAzureResourceAccountTypeDisplayName(account.kind! as AzureResourceAccountType),
         sku: account.sku!.name!
@@ -407,6 +412,7 @@ export class VSCodeAzureSubscriptionProvider {
     const subscriptions: AzureSubscription[] = [];
 
     for await (const subscription of client.subscriptions.list()) {
+
       subscriptions.push({
         authentication: authentication,
         environment: environment,

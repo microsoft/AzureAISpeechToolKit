@@ -25,3 +25,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.5
 
 - Prepare scenario samples.
+
+## 0.0.6
+
+- Bug fixes.
+- Add new scenario samples.

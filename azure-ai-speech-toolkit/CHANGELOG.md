@@ -30,3 +30,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Bug fixes.
 - Add new scenario samples.
+
+## 0.0.7
+
+- Infra updates.

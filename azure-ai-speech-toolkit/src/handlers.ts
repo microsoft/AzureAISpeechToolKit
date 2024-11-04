@@ -18,7 +18,6 @@ import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/re
 import { ExtTelemetry } from './telemetry/extTelemetry';
 import { TelemetryEvent, DownloadSampleTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
-import { sample } from "lodash";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;

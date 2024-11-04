@@ -202,31 +202,61 @@
             }
         },
         {
-            "id": "captioning-python",
+            "id": "scenario-captioning-csharp-dotnetcore",
             "onboardDate": "2024-10-16",
-            "title": "Create captions with speech to text with python",
-            "shortId": "captioning-python",
-            "shortDescription": "Create captions with speech to text with python",
-            "fullDescription": "Create captions with speech to text with python",
+            "title": "Create captions with speech to text with csharp dotnetcore",
+            "shortId": "captioning-csharp-dotnetcore",
+            "shortDescription": "Create captions with speech to text with csharp dotnetcore",
+            "fullDescription": "Create captions with speech to text with csharp dotnetcore",
             "types": [
                 "Speech To Text"
             ],
             "tags": [
                 "Speech To Text",
-                "Python"
+                "C#",
+                ".NET Core"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
             "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/captioning.png",
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
-            "githubPath": "scenarios/python/console/captioning",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/captioning",
             "scenario": true,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "extension",
-                "dir": "scenarios/python/console/captioning"
+                "dir": "scenarios/csharp/dotnetcore/captioning"
+            }
+        },
+        {
+            "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
+            "onboardDate": "2024-11-01",
+            "title": "Scenarios: Call Center Transcription and Analytics with csharp dotnetcore",
+            "shortId": "call-center-csharp-dotnetcore",
+            "shortDescription": "Call Center transcription and analytics with with csharp dotnetcore",
+            "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore.",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text",
+                "C#",
+                ".NET Core"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/call-center.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/call-center",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "Azure-Samples",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "master",
+                "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         }
     ]

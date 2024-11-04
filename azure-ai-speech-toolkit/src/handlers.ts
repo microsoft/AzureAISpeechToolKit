@@ -16,8 +16,9 @@ import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 import { ExtTelemetry } from './telemetry/extTelemetry';
-import { TelemetryEvent, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
+import { TelemetryEvent, DownloadSampleTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
+import { sample } from "lodash";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -70,7 +71,6 @@ export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
-    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.AzureLogin, await TelemetryUtils.getAzureUserTelemetryProperties());
   } catch (error) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
   }
@@ -180,7 +180,7 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
         sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
-      let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.ConfigureAndSetupSample : (taskName == TaskName.BuildApp ? TelemetryEvent.BuildSample : TelemetryEvent.RunSample));
+      let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE : (taskName == TaskName.BuildApp ? TelemetryEvent.BUILD_SAMPLE : TelemetryEvent.RUN_SAMPLE));
       ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTelemetryProperties);
     }
   });
@@ -460,7 +460,7 @@ export async function downloadSampleApp(...args: unknown[]) {
       sampleConcurrencyLimits
     );
 
-    await ExtTelemetry.cacheTelemetryEventAsync(TelemetryEvent.DownloadSample, await TelemetryUtils.getDownloadSampleTelemetryProperties(sampleId));
+    await ExtTelemetry.cacheTelemetryEventAsync(TelemetryEvent.DOWNLOAD_SAMPLE, { [DownloadSampleTelemetryProperty.SAMPLE_ID]: sampleId });
 
     // generate azureAiSpeechApp.yml file
     const ymlPath = path.join(projectPath, ConstantString.AzureAISpeechAppYmlFileName);

@@ -2,19 +2,10 @@
 // Licensed under the MIT license.
 
 export enum TelemetryEvent {
-  AzureLogin = "azure-login",
-  DownloadSample = "download-sample",
-  ConfigureAndSetupSample = "configure-and-setup-sample",
-  BuildSample = "build-sample",
-  RunSample = "run-sample"
-}
-
-export enum AzureLoginTelemetryProperty {
-  IdType = "idtyp",
-  Name = "name",
-  AzureSubscriptionId = "oid",
-  AzureTenantId = "tid",
-  Email = "upn"
+  DOWNLOAD_SAMPLE = "download-sample",
+  CONFIGURE_AND_SETUP_SAMPLE = "configure-and-setup-sample",
+  BUILD_SAMPLE = "build-sample",
+  RUN_SAMPLE = "run-sample"
 }
 
 export enum DownloadSampleTelemetryProperty {

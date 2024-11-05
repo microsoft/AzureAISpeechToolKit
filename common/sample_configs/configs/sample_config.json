@@ -258,6 +258,35 @@
                 "ref": "master",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
+        },
+        {
+            "id": "sample-video-translation-csharp-windows",
+            "onboardDate": "2024-11-05",
+            "title": "Sample: video translation csharp windows",
+            "shortId": "video-translation-csharp-windows",
+            "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
+            "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",
+            "types": [
+                "Video translation"
+            ],
+            "tags": [
+                "Video translation",
+                "C#",
+                ".NET Core"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/video-translation.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/video-translation/csharp/readme.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/video-translation/csharp",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-shaota/VideoTranslationCsharpWindowsSample",
+                "dir": "samples/video-translation/csharp"
+            }
         }
     ]
 }

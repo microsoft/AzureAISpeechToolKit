@@ -233,7 +233,7 @@
         {
             "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
             "onboardDate": "2024-11-01",
-            "title": "Scenarios: Call Center Transcription and Analytics with csharp dotnetcore",
+            "title": "Call Center Transcription and Analytics with csharp dotnetcore",
             "shortId": "call-center-csharp-dotnetcore",
             "shortDescription": "Call Center transcription and analytics with with csharp dotnetcore",
             "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore.",
@@ -262,7 +262,7 @@
         {
             "id": "sample-video-translation-csharp-windows",
             "onboardDate": "2024-11-05",
-            "title": "Sample: video translation csharp windows",
+            "title": "video translation csharp windows",
             "shortId": "video-translation-csharp-windows",
             "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
             "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",

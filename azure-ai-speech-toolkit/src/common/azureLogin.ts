@@ -661,12 +661,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       location: vscode.ProgressLocation.Notification,
       title: 'Fetching Azure subscriptions...',
       cancellable: false
-    }, async (progress) => {
+    }, async () => {
       return await this.listSubscriptions();
     });
 
     if (!subscriptionList || subscriptionList.length == 0) {
-      throw new Error("[UserError] failToFindSubscription");
+      throw new Error("We couldn't find a subscription.");
     }
 
     if (subscriptionList && subscriptionList.length == 1) {

@@ -51,6 +51,9 @@ class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeIt
 
       // Root level: Get Azure subscriptions
       const subs = await azureAccountProvider.listSubscriptions();
+      if (!subs || subs.length === 0) {
+        return [];
+      }
       const subItems = subs.map(sub => new ResourceTreeItem(sub.name!, sub.tenantId!, sub.id!, vscode.TreeItemCollapsibleState.Collapsed, SubscriptionItemType.Subscription, sub));
       return subItems;
     }

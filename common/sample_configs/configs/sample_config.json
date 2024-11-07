@@ -4,7 +4,6 @@
             "Speech To Text",
             "Text To Speech",
             "Speech Translation"
-            "Video Translation"
         ],
         "languages": [
             "C++",
@@ -268,12 +267,14 @@
             "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
             "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",
             "types": [
-                "Video Translation"
+                "Speech Translation"
             ],
             "tags": [
                 "Video Translation",
+                "Speech Translation",
                 "C#",
-                ".NET Core"
+                ".NET Core",
+                "Windows"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",

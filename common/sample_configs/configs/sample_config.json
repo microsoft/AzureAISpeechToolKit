@@ -262,7 +262,7 @@
         {
             "id": "sample-video-translation-csharp-windows",
             "onboardDate": "2024-11-05",
-            "title": "video translation csharp windows",
+            "title": "Video translation csharp windows",
             "shortId": "video-translation-csharp-windows",
             "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
             "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",

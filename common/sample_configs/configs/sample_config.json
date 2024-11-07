@@ -253,9 +253,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/call-center",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         },

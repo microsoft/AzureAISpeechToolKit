@@ -343,7 +343,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/RecognizeSpeechInCompressedAudioInputStreamCppLinuxSample",
+                "ref": "extension",
                 "dir": "samples/cpp/linux/compressed-audio-input"
             }
         }

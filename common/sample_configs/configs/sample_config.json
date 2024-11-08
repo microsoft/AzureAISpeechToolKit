@@ -320,6 +320,32 @@
                 "ref": "extension",
                 "dir": "samples/python/web/avatar"
             }
+        },
+        {
+            "id": "samples-recognize-speech-in-compressed-audio-input-stream-cpp-linux",
+            "onboardDate": "2024-11-08",
+            "title": "Compressed Audio Input",
+            "shortId": "recognize-speech-in-compressed-audio-input-stream-cpp-linux",
+            "shortDescription": "Recognize speech from a compressed audio with Speech SDK.",
+            "fullDescription": "How to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux.",
+            "types": [],
+            "tags": [
+                "C++",
+                "Linux"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/custom-keyword.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/cpp/linux/compressed-audio-input/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/cpp/linux/compressed-audio-input",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-shaota/RecognizeSpeechInCompressedAudioInputStreamCppLinuxSample",
+                "dir": "samples/cpp/linux/compressed-audio-input"
+            }
         }
     ]
 }

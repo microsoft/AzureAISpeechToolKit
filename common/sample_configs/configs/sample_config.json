@@ -294,7 +294,7 @@
         {
             "id": "sample-python-web-avatar",
             "onboardDate": "2024-11-07",
-            "title": "Microsoft Azure TTS Talking Avatar",
+            "title": "Talking Avatar",
             "shortId": "sample-python-web-avatar",
             "shortDescription": "Instructions to run Microsoft Azure TTS Talking Avatar sample code.",
             "fullDescription": "Instructions to run Microsoft Azure TTS Talking Avatar sample code.",

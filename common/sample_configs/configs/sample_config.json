@@ -198,7 +198,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/csharp-dotnetcore-translates-stt",
+                "ref": "extension",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },

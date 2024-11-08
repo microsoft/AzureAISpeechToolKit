@@ -58,6 +58,7 @@ export enum EnvKeys {
   TenantId = 'TENANT_ID',
   SpeechResourceName = 'SPEECH_RESOURCE_NAME',
   SpeechResourceSKU = 'SPEECH_RESOURCE_SKU',
+  CustomSubDomainName = 'CUSTOM_SUBDOMAIN_NAME',
 }
 
 export class ConstantString {

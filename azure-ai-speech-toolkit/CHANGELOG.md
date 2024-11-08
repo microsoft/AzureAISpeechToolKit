@@ -34,3 +34,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.7
 
 - Infra updates.
+
+## 0.0.8
+
+- Add more samples.
+- Support language endpoint.

@@ -60,18 +60,19 @@ export function getResourceGroupNameFromId(speechServiceId: string): string {
   return segments[resourceGroupIndex];
 }
 
-// Fetch the Speech Service key and region from Azure.
-export async function fetchSpeechServiceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo): Promise<{ key: string, region: string }> {
+// Fetch the Speech Service key, region and customSubDomainName from Azure.
+export async function fetchSpeechServiceInfo(speechResourceInfo: AzureSpeechResourceInfo): Promise<{ key: string, region: string, customSubDomainName: string|undefined }> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const resourceGroupName = getResourceGroupNameFromId(speechResourceInfo.id);
-  const { key, region } = await azureAccountProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceInfo.name);
+  const { key, region, customSubDomainName } = await azureAccountProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceInfo.name);
   if (!key || !region) {
     throw new Error("Fail to fetch key and region");
   }
 
   return {
     key: key,
-    region: region
+    region: region,
+    customSubDomainName: customSubDomainName
   };
 }
 

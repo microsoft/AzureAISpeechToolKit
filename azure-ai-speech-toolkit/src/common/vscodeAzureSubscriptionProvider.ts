@@ -98,15 +98,13 @@ export class VSCodeAzureSubscriptionProvider {
     return sortSubscriptions(results);
   }
 
-  public async fetchSpeechResourceKeyAndRegion(azureSpeechResourceInfo:AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
-    console.log("[fetchSpeechResourceKeyAndRegion] azureSpeechResourceInfo: ", azureSpeechResourceInfo);
+  public async fetchSpeechResourceKeyAndRegion(azureSpeechResourceInfo: AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined, customSubDomainName: string | undefined }> {
     const credential = await getCredentialFromVSCodeSession(azureSpeechResourceInfo.tenantId, AzureScopes);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, azureSpeechResourceInfo.subscriptionId);
 
     try {
       // Fetch Speech Resource details, including the region
       const speechService = await cognitiveClient.accounts.get(resourceGroupName, speechResourceName);
-      const region = speechService.location;
 
       // Fetch the keys for the Speech Service
       const keys = await cognitiveClient.accounts.listKeys(resourceGroupName, speechResourceName);
@@ -114,7 +112,8 @@ export class VSCodeAzureSubscriptionProvider {
 
       return {
         key: primaryKey,
-        region: region
+        region: speechService.location,
+        customSubDomainName: speechService.properties?.customSubDomainName
       };
     } catch (error) {
       throw new Error(`Unable to retrieve keys and region for Speech Resource: ${speechResourceName}. Error: ${error}`);
@@ -123,7 +122,6 @@ export class VSCodeAzureSubscriptionProvider {
 
   public async getAzureResourceListWithType(subscriptionInfo: SubscriptionInfo, accountTypes: AzureResourceAccountType[]): Promise<AzureSpeechResourceInfo[]> {
     const credential = await getCredentialFromVSCodeSession(subscriptionInfo.tenantId, AzureScopes);
-    console.log("credential: ", credential);
     const cognitiveClient = new CognitiveServicesManagementClient(credential, subscriptionInfo.id);
     const accountsIterator = await cognitiveClient.accounts.list();
 

@@ -13,7 +13,7 @@ import { AzureAccountManager } from "./common/azureLogin";
 import { CommandKeys, ConstantString, EnvKeys, ExternalUrls, TaskName, VSCodeCommands } from "./constants";
 import { AzureSpeechResourceInfo, SubscriptionInfo } from "./api/login";
 import { VS_CODE_UI } from "./extension";
-import { extractEnvValue, fetchSpeechServiceKeyAndRegion, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
+import { extractEnvValue, fetchSpeechServiceInfo, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 import { ExtTelemetry } from './telemetry/extTelemetry';
 import { TelemetryEvent, DownloadSampleTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
@@ -111,8 +111,8 @@ async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceT
 }
 
 async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechResourceInfo): Promise<string> {
-  const { key, region } = await fetchSpeechServiceKeyAndRegion(azureSpeechResourceInfo);
-  const properties = [
+  const { key, region, customSubDomainName } = await fetchSpeechServiceInfo(azureSpeechResourceInfo);
+  let properties = [
     `SPEECH_RESOURCE_KEY=${key}`,
     `SERVICE_REGION=${region}`,
     `AZURE_SUBSCRIPTION_ID=${azureSpeechResourceInfo.subscriptionId}`,
@@ -120,6 +120,9 @@ async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechR
     `SPEECH_RESOURCE_NAME=${azureSpeechResourceInfo.name}`,
     `SPEECH_RESOURCE_SKU=${azureSpeechResourceInfo.sku}`
   ].join('\n');
+  if (customSubDomainName) {
+    properties += `\nCUSTOM_SUBDOMAIN_NAME=${customSubDomainName}`;
+  }
   return properties;
 }
 
@@ -266,7 +269,6 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
         // Fail to find a speech service.
         return;
       }
-      console.log("Selected speech service: ", speechServiceInfo);
       properties = await getSpeechResourceProperties(speechServiceInfo);
 
       envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);
@@ -281,11 +283,12 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     // Update the config.json file with the new values.
     const key = extractEnvValue(properties, EnvKeys.SpeechResourceKey);
     const region = extractEnvValue(properties, EnvKeys.ServiceRegion);
+    const customSubDomainName = extractEnvValue(properties, EnvKeys.CustomSubDomainName);
     if (!key || !region) {
       vscode.window.showErrorMessage('Fail to configure speech resource. Missing key or region.');
       return;
     }
-    updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region);
+    updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region, customSubDomainName);
   } catch (error) {
     vscode.window.showErrorMessage('Fail to update config.json file: ' + error);
     return;
@@ -346,7 +349,7 @@ async function updateEnvfileAndOpen(workspaceFolder: string, content: string): P
   return envFilePath;
 }
 
-function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, region: string) {
+function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, region: string, customSubDomainName: string | undefined) {
   const configFilePath = path.join(workspaceFolder, 'config.json');
   if (fs.existsSync(configFilePath)) {
     let configContent = fs.readFileSync(configFilePath, 'utf8');
@@ -357,6 +360,9 @@ function updateConfigJsonWithKeyAndRegion(workspaceFolder: string, key: string, 
     }
     if (configJson.ServiceRegion) {
       configJson.ServiceRegion = region;
+    }
+    if (customSubDomainName && configJson.CustomSubDomainName) {
+      configJson.CustomSubDomainName = customSubDomainName;
     }
 
     configContent = JSON.stringify(configJson, null, 2);
@@ -425,9 +431,6 @@ export async function downloadSampleApp(...args: unknown[]) {
   if (res.isErr()) {
     throw new Error("Fail to select folder for sample app." + res.error);
   } else {
-    console.log("Selected folder: ", res.value.result);
-    console.log("sampleId: " + sampleId);
-
     // Ensure result is not undefined
     if (!res.value.result) {
       throw new Error("No folder selected or result is undefined.");

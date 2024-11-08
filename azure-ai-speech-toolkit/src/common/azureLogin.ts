@@ -388,12 +388,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
   }
 
-  async fetchSpeechResourceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined }> {
+  async fetchSpeechResourceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined, customSubDomainName: string | undefined }> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
       throw new Error("can only fetch speech service details when logged in.");
     }
-    const { key, region } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceName);
-    return { key, region };
+    const { key, region, customSubDomainName } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceName);
+    return { key, region, customSubDomainName };
   }
 
   async getSelectedSubscription(triggerUI = false): Promise<SubscriptionInfo | undefined> {

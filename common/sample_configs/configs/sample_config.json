@@ -283,7 +283,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-bingyang/sample-batch-avatar-python",
+                "ref": "v-bingyang/update-sample-batch-avatar-python",
                 "dir": "samples/python/web/avatar"
             }
         }

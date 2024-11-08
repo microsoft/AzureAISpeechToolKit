@@ -77,7 +77,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "dilin/cpp-linux-stt-microphone",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },

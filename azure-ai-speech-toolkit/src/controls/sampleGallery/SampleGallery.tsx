@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 
 import "./SampleGallery.scss";
-
-import Fuse from "fuse.js";
 import * as React from "react";
 
 import { Icon, Link } from "@fluentui/react";
@@ -21,6 +19,8 @@ import SampleCard from "./sampleCard";
 import SampleDetailPage from "./sampleDetailPage";
 import SampleFilter from "./sampleFilter";
 import SampleListItem from "./sampleListItem";
+
+const Fuse = require('fuse.js');
 
 interface SampleGalleryProps {
   shouldShowChat: string;

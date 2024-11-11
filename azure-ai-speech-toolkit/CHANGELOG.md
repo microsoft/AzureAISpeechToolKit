@@ -39,3 +39,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Add more samples.
 - Support language endpoint.
+
+## 0.0.9
+
+- Support searching sample.

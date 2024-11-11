@@ -104,7 +104,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
       const ScenarioSamples = (this.state.filteredSamples ?? this.samples).filter(
         (sample) => sample.scenario
       );
-      const filteredSamples = (this.state.filteredSamples ?? this.samples).filter(
+      const quickstartSamples = (this.state.filteredSamples ?? this.samples).filter(
         (sample) => !sample.scenario
       );
       return (
@@ -153,39 +153,44 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
                           );
                         })}
                   </div>
-                  <hr/>
                 </div>
               )}
-              <div className="sample-section-with-title">
-                <h4>Speech features and capabilities</h4>
-                <div className={`sample-section ${this.state.layout}`}>
-                  {this.state.layout === "grid"
-                    ? filteredSamples.map((sample: SampleInfo) => {
-                        return (
-                          <SampleCard
-                            key={sample.id}
-                            sample={sample}
-                            selectSample={this.onSampleSelected}
-                            createSample={this.onCreateSample}
-                            viewGitHub={this.onViewGithub}
-                            upgradeToolkit={this.onUpgradeToolkit}
-                          />
-                        );
-                      })
-                    : filteredSamples.map((sample: SampleInfo) => {
-                        return (
-                          <SampleListItem
-                            key={sample.id}
-                            sample={sample}
-                            selectSample={this.onSampleSelected}
-                            createSample={this.onCreateSample}
-                            viewGitHub={this.onViewGithub}
-                            upgradeToolkit={this.onUpgradeToolkit}
-                          />
-                        );
-                      })}
+              {ScenarioSamples.length > 0 && quickstartSamples.length > 0 && (
+                <div>
+                  <hr />
                 </div>
-              </div>
+                )}
+              {quickstartSamples.length > 0 && (
+                <div className="sample-section-with-title">
+                  <h4>Speech features and capabilities</h4>
+                  <div className={`sample-section ${this.state.layout}`}>
+                    {this.state.layout === "grid"
+                      ? quickstartSamples.map((sample: SampleInfo) => {
+                          return (
+                            <SampleCard
+                              key={sample.id}
+                              sample={sample}
+                              selectSample={this.onSampleSelected}
+                              createSample={this.onCreateSample}
+                              viewGitHub={this.onViewGithub}
+                              upgradeToolkit={this.onUpgradeToolkit}
+                            />
+                          );
+                        })
+                      : quickstartSamples.map((sample: SampleInfo) => {
+                          return (
+                            <SampleListItem
+                              key={sample.id}
+                              sample={sample}
+                              selectSample={this.onSampleSelected}
+                              createSample={this.onCreateSample}
+                              viewGitHub={this.onViewGithub}
+                              upgradeToolkit={this.onUpgradeToolkit}
+                            />
+                          );
+                        })}
+                  </div>
+                </div>)}
             </>
           )}
         </div>

@@ -320,6 +320,37 @@
                 "ref": "extension",
                 "dir": "samples/python/web/avatar"
             }
+        },
+        {
+            "id": "samples-cpp-linux-compressed-audio-input",
+            "onboardDate": "2024-11-08",
+            "title": "Recognize speech in C++ for Linux from an MP3/Opus file",
+            "shortId": "samples-cpp-linux-compressed-audio-input",
+            "shortDescription": "demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux.",
+            "fullDescription": "Demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux. The compressed audio input stream should be either in MP3 or Opus format.",
+            "types": [
+                "Speech To Text",
+                "Realtime Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text",
+                "Realtime Speech To Text",
+                "C++",
+                "Linux"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/realtime-speech-to-text.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/cpp/linux/compressed-audio-input/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/cpp/linux/compressed-audio-input",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "samples/cpp/linux/compressed-audio-input"
+            }
         }
     ]
 }

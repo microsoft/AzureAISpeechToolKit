@@ -286,6 +286,34 @@
                 "ref": "v-bingyang/update-sample-batch-avatar-python",
                 "dir": "samples/python/web/avatar"
             }
+        },
+        {
+            "id": "post-call-analytics-dotnetcore",
+            "onboardDate": "2024-11-12",
+            "title": "post-call-analytics-dotnetcore",
+            "shortId": "post-call-analytics",
+            "shortDescription": "post-call-analytics-dotnetcore",
+            "fullDescription": "post-call-analytics-dotnetcore",
+            "types": [
+                "post-call-analytics-dotnetcore"
+            ],
+            "tags": [
+                ".NET Core 8.0",
+                "C#"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/captioning.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
+            "githubPath": "scenarios/python/console/captioning",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-bingyang/post-call-analytics",
+                "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
+            }
         }
     ]
 }

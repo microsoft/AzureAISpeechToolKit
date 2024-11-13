@@ -155,7 +155,7 @@ export default class SampleGallery extends React.Component<SampleGalleryProps, S
                   </div>
                 </div>
               )}
-              {ScenarioSamples.length > 0 && quickstartSamples.length > 0 && (
+              {this.state.layout === "grid" && ScenarioSamples.length > 0 && quickstartSamples.length > 0 && (
                 <div>
                   <hr />
                 </div>

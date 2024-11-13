@@ -379,7 +379,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "v-shaota/TranslateSpeechJavaJreSample",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
         },
@@ -409,7 +409,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "v-bingyang/post-call-analytics",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         }

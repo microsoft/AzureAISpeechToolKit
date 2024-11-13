@@ -382,6 +382,36 @@
                 "ref": "extension",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
+        },
+        {
+            "id": "scenarios-post-call-analytics-csharp-dotnetcore",
+            "onboardDate": "2024-11-01",
+            "title": "Post-call analytics csharp dotnetcore",
+            "shortId": "post-call-analytics-csharp-dotnetcore",
+            "shortDescription": "Post-call analytics with Fast Transcription API and Open AI",
+            "fullDescription": "Transcribes an audio recording using Fast Transcription API the summarizes the conversation transcription with Azure OpenAI SDK.",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "C#",
+                ".NET Core",
+                "Windows",
+                "Linux"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/call-center.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/csharp/dotnetcore/post-call-analytics/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/post-call-analytics",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
+            }
         }
     ]
 }

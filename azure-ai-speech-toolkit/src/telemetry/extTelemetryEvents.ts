@@ -12,7 +12,7 @@ export enum DownloadSampleTelemetryProperty {
   SAMPLE_ID = "sample-id"
 }
 
-export enum BuildAndRunSampleTelemetryProperty {
+export enum SampleTaskTelemetryProperty {
   SUCCESS = "success",
   AZURE_SUBSCRIPTION_ID = "azure-subscription-id",
   SPEECH_RESOURCE_NAME = "speech-resource-name",

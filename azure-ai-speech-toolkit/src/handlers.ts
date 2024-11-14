@@ -16,7 +16,7 @@ import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceInfo, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 import { ExtTelemetry } from './telemetry/extTelemetry';
-import { TelemetryEvent, DownloadSampleTelemetryProperty, BuildAndRunSampleTelemetryProperty } from "./telemetry/extTelemetryEvents";
+import { TelemetryEvent, DownloadSampleTelemetryProperty, SampleTaskTelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
@@ -157,16 +157,24 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   vscode.window.showInformationMessage(`Executing task: ${taskName}. Check terminal for output.`);
   const execution = await vscode.tasks.executeTask(task);
 
-  // Task completion handler to determine the next task intelligently
-  const sampleTelemetryProperties = TelemetryUtils.getBuildAndRunProperties(envFilePath);
-  sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+  let sampleTaskTelemetryProperties: { [p: string]: string };
+
+  if (fs.existsSync(envFilePath)) {
+    sampleTaskTelemetryProperties = TelemetryUtils.getSampleTaskTelemetryProperties(envFilePath);
+  } else {
+    sampleTaskTelemetryProperties = {};
+  }
+
+  if (fs.existsSync(ymlPath)) {
+    sampleTaskTelemetryProperties[SampleTaskTelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+  }
 
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
 
       if (e.exitCode === 0) {
-        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "true";
+        sampleTaskTelemetryProperties[SampleTaskTelemetryProperty.SUCCESS] = "true";
         const nextTaskName = await getNextAvailableTask(taskName);
 
         if (nextTaskName) {
@@ -179,11 +187,11 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
           vscode.window.showInformationMessage(`${taskName} completed successfully.`);
         }
       } else {
-        sampleTelemetryProperties[BuildAndRunSampleTelemetryProperty.SUCCESS] = "false";
+        sampleTaskTelemetryProperties[SampleTaskTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
       let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE : (taskName == TaskName.BuildApp ? TelemetryEvent.BUILD_SAMPLE : TelemetryEvent.RUN_SAMPLE));
-      ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTelemetryProperties);
+      ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTaskTelemetryProperties);
     }
   });
 }

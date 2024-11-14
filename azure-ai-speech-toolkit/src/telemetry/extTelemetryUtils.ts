@@ -3,15 +3,15 @@
 
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { BuildAndRunSampleTelemetryProperty } from "../telemetry/extTelemetryEvents";
+import { SampleTaskTelemetryProperty } from "../telemetry/extTelemetryEvents";
 
-export function getBuildAndRunProperties(envfilePath: string): { [p: string]: string } {
+export function getSampleTaskTelemetryProperties(envfilePath: string): { [p: string]: string } {
     const content = fs.readFileSync(envfilePath, 'utf-8');
     const lines = content.split('\n');
     const properties: { [p: string]: string } = {};
     lines.forEach(line => {
         const [key, value] = line.split('=').map(part => part.trim());
-        if (key && value && key in BuildAndRunSampleTelemetryProperty) {
+        if (key && value && key in SampleTaskTelemetryProperty) {
             properties[key] = value;
         }
     });

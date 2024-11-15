@@ -261,7 +261,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/TranslateSpeechJavaJreSample",
+                "ref": "extension",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
         },
@@ -401,7 +401,7 @@
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/call-center.png",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/post-call-analytics-with-fast-transcription-api-and-openai.jpg",
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/csharp/dotnetcore/post-call-analytics/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/post-call-analytics",
@@ -409,7 +409,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-bingyang/post-call-analytics",
+                "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         }

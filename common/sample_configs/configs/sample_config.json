@@ -9,7 +9,8 @@
             "C++",
             "C#",
             "JavaScript",
-            "Python"
+            "Python",
+            "Java"
         ],
         "platform": [
             "Linux",
@@ -23,7 +24,7 @@
         {
             "id": "quickstart-recognize-speech-from-a-microphone-python",
             "onboardDate": "2024-09-26",
-            "title": "Quickstart: Recognize speech from a microphone from Python using the Speech Service",
+            "title": "Quickstart: Recognize Speech from a Microphone in Python Using Speech SDK",
             "shortId": "recognize-speech-python",
             "shortDescription": "Demonstrates one-shot speech recognition from a microphone.",
             "fullDescription": "This sample shows how to use the Speech Service through the Speech SDK for Python.",
@@ -53,7 +54,7 @@
         {
             "id": "quickstart-recognize-speech-from-a-microphone-cpp-linux",
             "onboardDate": "2024-09-18",
-            "title": "Quickstart: Recognize speech from a microphone in C++ using Speech SDK for Linux",
+            "title": "Quickstart: Recognize Speech from a Microphone in C++ Using Speech SDK on Linux",
             "shortId": "recognize-speech-cpp-linux",
             "shortDescription": "Demonstrates one-shot speech recognition from a microphone.",
             "fullDescription": "This sample demonstrates how to recognize speech with C++ using the Speech SDK for Linux.",
@@ -84,7 +85,7 @@
         {
             "id": "quickstart-recognize-speech-from-a-microphone-javascript-browser",
             "onboardDate": "2024-09-26",
-            "title": "Quickstart: Recognize speech in JavaScript on a Web Browser",
+            "title": "Quickstart: Recognize Speech in JavaScript on a Web Browser",
             "shortId": "recognize-speech-javascript-browser",
             "shortDescription": "Demonstrates one-shot speech recognition from a microphone.",
             "fullDescription": "These samples demonstrate how to recognize speech using the Speech SDK for JavaScript on a web browser, like Microsoft Edge, or Chrome.",
@@ -115,7 +116,7 @@
         {
             "id": "quickstart-recognize-speech-from-a-file-javascript-browser",
             "onboardDate": "2024-09-18",
-            "title": "Quickstart: Recognize speech from an audio file in JavaScript on a Web Browser",
+            "title": "Quickstart: Recognize Speech from an Audio File in JavaScript on a Web Browser",
             "shortId": "recognize-speech-javascript-browser",
             "shortDescription": "Demonstrates one-shot speech recognition from a wave file.",
             "fullDescription": "This sample demonstrates how to recognize speech from an audio file using the Speech SDK for JavaScript on a web browser, like Microsoft Edge, or Chrome.",
@@ -144,9 +145,40 @@
             }
         },
         {
+            "id": "samples-cpp-linux-compressed-audio-input",
+            "onboardDate": "2024-11-08",
+            "title": "Recognize Speech from an MP3/Opus file",
+            "shortId": "samples-cpp-linux-compressed-audio-input",
+            "shortDescription": "demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux.",
+            "fullDescription": "Demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux. The compressed audio input stream should be either in MP3 or Opus format.",
+            "types": [
+                "Speech To Text",
+                "Realtime Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text",
+                "Realtime Speech To Text",
+                "C++",
+                "Linux"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/realtime-speech-to-text.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/cpp/linux/compressed-audio-input/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/cpp/linux/compressed-audio-input",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "samples/cpp/linux/compressed-audio-input"
+            }
+        },
+        {
             "id": "quickstart-synthesize-speech-python",
             "onboardDate": "2024-09-26",
-            "title": "Quickstart: Synthesize speech from Python using the Speech Service",
+            "title": "Quickstart: Synthesize Speech in Python Using the Speech Service",
             "shortId": "synthesize-speech-python",
             "shortDescription": "Demonstrates one-shot speech synthesis to the default speaker.",
             "fullDescription": "This sample demonstrates how to synthesize speech with C++ using the Speech SDK for Linux.",
@@ -174,7 +206,7 @@
         {
             "id": "quickstart-translate-speech-csharp-dotnetcore",
             "onboardDate": "2024-09-18",
-            "title": "Quickstart: Translate speech in C# for .NET Core on Windows or Linux",
+            "title": "Quickstart: Translate Speech in C# for .NET Core on Windows or Linux",
             "shortId": "translate-speech-csharp-dotnetcore",
             "shortDescription": "Demonstrates one-shot speech translation/transcription from a microphone.",
             "fullDescription": "This sample demonstrates how to translate speech with C# under .NET 6.0 (Windows or Linux) using the Speech SDK.",
@@ -203,9 +235,71 @@
             }
         },
         {
+            "id": "quickstart-translate-speech-java-jre",
+            "onboardDate": "2024-11-12",
+            "title": "Quickstart: Translate speech with SDK in Java",
+            "shortId": "translate-speech-java-jre",
+            "shortDescription": "Translate speech in Java on Windows, macOS or Linux.",
+            "fullDescription": "Translate speech with the Speech SDK for Java on Windows, macOS or Linux.",
+            "types": [
+                "Speech Translation"
+            ],
+            "tags": [
+                "Speech Translation",
+                "Java",
+                "Windows",
+                "Linux",
+                "MacOS"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/speech-translation.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/quickstart/java/jre/translate-speech-to-text/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/java/jre/translate-speech-to-text",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "quickstart/java/jre/translate-speech-to-text"
+            }
+        },
+        {
+            "id": "sample-video-translation-csharp-windows",
+            "onboardDate": "2024-11-05",
+            "title": "Video Translation",
+            "shortId": "video-translation-csharp-windows",
+            "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
+            "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",
+            "types": [
+                "Speech Translation"
+            ],
+            "tags": [
+                "Video Translation",
+                "Speech Translation",
+                "C#",
+                ".NET Core",
+                "Windows"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/video-translation.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/video-translation/csharp/readme.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/video-translation/csharp",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "samples/video-translation/csharp"
+            }
+        },
+        {
             "id": "scenario-captioning-csharp-dotnetcore",
             "onboardDate": "2024-10-16",
-            "title": "Create captions with speech to text with csharp dotnetcore",
+            "title": "Captioning with Speech to Text",
             "shortId": "captioning-csharp-dotnetcore",
             "shortDescription": "Create captions with speech to text with csharp dotnetcore",
             "fullDescription": "Create captions with speech to text with csharp dotnetcore",
@@ -234,9 +328,9 @@
         {
             "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
             "onboardDate": "2024-11-01",
-            "title": "Call Center Transcription and Analytics with csharp dotnetcore",
+            "title": "Call Center Transcription and Analytics",
             "shortId": "call-center-csharp-dotnetcore",
-            "shortDescription": "Call Center transcription and analytics with with csharp dotnetcore",
+            "shortDescription": "Call Center transcription and analytics with csharp dotnetcore",
             "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore.",
             "types": [
                 "Speech To Text"
@@ -258,37 +352,6 @@
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
-            }
-        },
-        {
-            "id": "sample-video-translation-csharp-windows",
-            "onboardDate": "2024-11-05",
-            "title": "Video translation csharp windows",
-            "shortId": "video-translation-csharp-windows",
-            "shortDescription": "Video translation enables users seamlessly translate and generate videos in multiple languages automatically",
-            "fullDescription": "Video translation is a feature in Azure AI Speech that enables users to seamlessly translate and generate videos in multiple languages automatically.",
-            "types": [
-                "Speech Translation"
-            ],
-            "tags": [
-                "Video Translation",
-                "Speech Translation",
-                "C#",
-                ".NET Core",
-                "Windows"
-            ],
-            "time": "5min to run",
-            "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/video-translation.png",
-            "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/video-translation/csharp/readme.md",
-            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/video-translation/csharp",
-            "scenario": false,
-            "downloadUrlInfo": {
-                "owner": "BinarywoodB",
-                "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
-                "dir": "samples/video-translation/csharp"
             }
         },
         {
@@ -322,34 +385,32 @@
             }
         },
         {
-            "id": "samples-cpp-linux-compressed-audio-input",
-            "onboardDate": "2024-11-08",
-            "title": "Recognize speech in C++ for Linux from an MP3/Opus file",
-            "shortId": "samples-cpp-linux-compressed-audio-input",
-            "shortDescription": "demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux.",
-            "fullDescription": "Demonstrates how to recognize speech in compressed audio input stream with C++ using the Speech SDK for Linux. The compressed audio input stream should be either in MP3 or Opus format.",
+            "id": "scenarios-post-call-analytics-csharp-dotnetcore",
+            "onboardDate": "2024-11-01",
+            "title": "Post Call Analytics with Fast Transcription API and Open AI",
+            "shortId": "post-call-analytics-csharp-dotnetcore",
+            "shortDescription": "Post-call analytics with Fast Transcription API and Open AI",
+            "fullDescription": "Transcribes an audio recording using Fast Transcription API the summarizes the conversation transcription with Azure OpenAI SDK.",
             "types": [
-                "Speech To Text",
-                "Realtime Speech To Text"
+                "Speech To Text"
             ],
             "tags": [
                 "Speech To Text",
-                "Realtime Speech To Text",
-                "C++",
-                "Linux"
+                "C#",
+                ".NET Core"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/realtime-speech-to-text.png",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/post-call-analytics-with-fast-transcription-api-and-openai.jpg",
             "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/cpp/linux/compressed-audio-input/README.md",
-            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/cpp/linux/compressed-audio-input",
-            "scenario": false,
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/csharp/dotnetcore/post-call-analytics/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/post-call-analytics",
+            "scenario": true,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "extension",
-                "dir": "samples/cpp/linux/compressed-audio-input"
+                "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         }
     ]

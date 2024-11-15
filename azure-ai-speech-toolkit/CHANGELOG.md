@@ -43,3 +43,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.9
 
 - Support searching sample.
+
+## 0.0.10
+
+- fix: remove unwanted pop-up.

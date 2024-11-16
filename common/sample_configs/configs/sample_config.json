@@ -328,7 +328,7 @@
         {
             "id": "scenarios-call-center-transcription-and-analytics-csharp-dotnetcore",
             "onboardDate": "2024-11-01",
-            "title": "Call Center Transcription and Analytics",
+            "title": "Post Call Analytics with Azure Speech and Language",
             "shortId": "call-center-csharp-dotnetcore",
             "shortDescription": "Call Center transcription and analytics with csharp dotnetcore",
             "fullDescription": "This sample demonstrates how to use call center transcription and analytics with csharp dotnetcore.",
@@ -387,9 +387,9 @@
         {
             "id": "scenarios-post-call-analytics-csharp-dotnetcore",
             "onboardDate": "2024-11-01",
-            "title": "Post Call Analytics with Fast Transcription API and Open AI",
+            "title": "Post Call Analytics with Fast Transcription API and Azure Open AI",
             "shortId": "post-call-analytics-csharp-dotnetcore",
-            "shortDescription": "Post-call analytics with Fast Transcription API and Open AI",
+            "shortDescription": "Post-call analytics with Fast Transcription API and Azure Open AI",
             "fullDescription": "Transcribes an audio recording using Fast Transcription API the summarizes the conversation transcription with Azure OpenAI SDK.",
             "types": [
                 "Speech To Text"

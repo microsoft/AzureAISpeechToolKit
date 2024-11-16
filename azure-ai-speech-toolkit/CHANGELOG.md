@@ -47,3 +47,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.10
 
 - fix: remove unwanted pop-up.
+
+## 0.0.11
+
+- Update extension category and description.

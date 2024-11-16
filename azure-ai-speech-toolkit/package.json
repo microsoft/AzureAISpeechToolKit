@@ -1,8 +1,8 @@
 {
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
-  "description": "Learn about Azure Speech Service Capabilities through Azure AI Speech Toolkit",
-  "version": "0.0.10",
+  "description": "Build Azure Speech empowered apps with just a few clicks",
+  "version": "0.0.11",
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,
@@ -16,7 +16,8 @@
   },
   "license": "MIT",
   "categories": [
-    "Azure"
+    "Azure",
+    "AI"
   ],
   "icon": "media/azure-ai-speech-toolkit-icon.png",
   "activationEvents": [

@@ -321,7 +321,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "dilin/update-sample",
                 "dir": "scenarios/csharp/dotnetcore/captioning"
             }
         },

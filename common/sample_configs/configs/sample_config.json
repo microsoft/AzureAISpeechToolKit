@@ -314,6 +314,34 @@
                 "ref": "v-bingyang/post-call-analytics",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
+        },
+        {
+            "id": "test-captioning-dotnetcore",
+            "onboardDate": "2024-11-12",
+            "title": "test-captioning-dotnetcore",
+            "shortId": "test-captioning",
+            "shortDescription": "test-captioning-dotnetcore",
+            "fullDescription": "test-captioning-dotnetcore",
+            "types": [
+                "test-captioning-dotnetcore"
+            ],
+            "tags": [
+                ".NET Core 6.0",
+                "C#"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/captioning.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
+            "githubPath": "scenarios/python/console/captioning",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-bingyang/captioning-dotnetcore",
+                "dir": "scenarios/csharp/dotnetcore/captioning"
+            }
         }
     ]
 }

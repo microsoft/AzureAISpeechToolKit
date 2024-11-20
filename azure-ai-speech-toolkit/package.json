@@ -135,6 +135,7 @@
       }
     ],
     "menus": {
+      "view/title": [],
       "view/item/context": [
         {
           "command": "azure-ai-speech-toolkit.openInAzurePortal",

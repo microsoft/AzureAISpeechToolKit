@@ -70,8 +70,10 @@ export async function signInAzureHandler(...args: unknown[]) {
   const azureAccountProvider = AzureAccountManager.getInstance();
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.AZURE_LOGIN, TelemetryUtils.getAzureLoginProperties(true, ""));
   } catch (error) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.AZURE_LOGIN, TelemetryUtils.getAzureLoginProperties(false, error));
   }
   return;
 }
@@ -155,6 +157,7 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   }
 
   vscode.window.showInformationMessage(`Executing task: ${taskName}. Check terminal for output.`);
+  
   const execution = await vscode.tasks.executeTask(task);
 
   let sampleTaskTelemetryProperties: { [p: string]: string };
@@ -190,7 +193,12 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
         sampleTaskTelemetryProperties[SampleTaskTelemetryProperty.SUCCESS] = "false";
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
-      let telemetryEvent = (taskName == TaskName.ConfigureAndSetupApp ? TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE : (taskName == TaskName.BuildApp ? TelemetryEvent.BUILD_SAMPLE : TelemetryEvent.RUN_SAMPLE));
+      let telemetryEvent = 
+        taskName === TaskName.ConfigureAndSetupApp 
+          ? TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE 
+          : taskName === TaskName.BuildApp 
+            ? TelemetryEvent.BUILD_SAMPLE 
+            : TelemetryEvent.RUN_SAMPLE;
       ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTaskTelemetryProperties);
     }
   });

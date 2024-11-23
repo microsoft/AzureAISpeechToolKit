@@ -3,7 +3,7 @@
 
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { SampleTaskTelemetryProperty } from "../telemetry/extTelemetryEvents";
+import * as TelemetryEvent from "../telemetry/extTelemetryEvents";
 
 export function getSampleTaskTelemetryProperties(envfilePath: string): { [p: string]: string } {
     const content = fs.readFileSync(envfilePath, 'utf-8');
@@ -11,7 +11,7 @@ export function getSampleTaskTelemetryProperties(envfilePath: string): { [p: str
     const properties: { [p: string]: string } = {};
     lines.forEach(line => {
         const [key, value] = line.split('=').map(part => part.trim());
-        if (key && value && key in SampleTaskTelemetryProperty) {
+        if (key && value && key in TelemetryEvent.SampleTaskTelemetryProperty) {
             properties[key] = value;
         }
     });
@@ -24,3 +24,15 @@ export function getSampleId(ymlFilePath: string) {
     const data = yaml.load(fileContents) as { name: string; version: string };  
     return data.name;
 }
+
+export function getAzureLoginProperties(success: boolean, errorMessage: any): { [key: string]: string } {  
+    const properties: { [key: string]: string } = {  
+        [TelemetryEvent.AzureLoginTelemetryProperty.SUCCESS]: success.toString()  
+    };  
+  
+    if (!success) {  
+        properties[TelemetryEvent.AzureLoginTelemetryProperty.ERROR_MESSAGE] = typeof errorMessage === 'string' && errorMessage.trim() !== '' ? errorMessage : "Unknown";  
+    }  
+  
+    return properties;  
+}  

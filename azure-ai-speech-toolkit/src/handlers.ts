@@ -54,6 +54,8 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     console.log("Creating Azure AI Service with subscription: " + subscriptionInfo.id + ", resource group: " + resourceGroupName + ", region: " + region + ", name: " + name + ", sku: " + sku);
     const azureResourceInfo = await azureAccountProvider.createAzureAIService(subscriptionInfo, resourceGroupName, region, name, sku);
     console.log("Azure AI Service created: ", azureResourceInfo);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CREATE_AZURE_AI_SERVICE, 
+      TelemetryUtils.getCreateAzureAISpeechServiceProperties(true, null, subscriptionInfo.id, resourceGroupName, region, name, sku));
 
     return azureResourceInfo;
   } catch (error) {
@@ -63,6 +65,7 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     }
 
     vscode.window.showErrorMessage('Fail to create Azure AI Service: ' + error);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CREATE_AZURE_AI_SERVICE, TelemetryUtils.getCreateAzureAISpeechServiceProperties(false, error));
   }
 }
 
@@ -116,7 +119,7 @@ async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechR
   const { key, region, customSubDomainName } = await fetchSpeechServiceInfo(azureSpeechResourceInfo);
   let properties = [
     `SPEECH_RESOURCE_KEY=${key}`,
-    `SERVICE_REGION=${region}`,
+    `SERVICE_REGION=${region.toLowerCase().replace(/\s+/g, '')}`,
     `AZURE_SUBSCRIPTION_ID=${azureSpeechResourceInfo.subscriptionId}`,
     `TENANT_ID=${azureSpeechResourceInfo.tenantId}`,
     `SPEECH_RESOURCE_NAME=${azureSpeechResourceInfo.name}`,

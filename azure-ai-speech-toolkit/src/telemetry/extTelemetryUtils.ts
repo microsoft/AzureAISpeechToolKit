@@ -25,14 +25,40 @@ export function getSampleId(ymlFilePath: string) {
     return data.name;
 }
 
-export function getAzureLoginProperties(success: boolean, errorMessage: any): { [key: string]: string } {  
+export function getAzureLoginProperties(success: boolean, error: any): { [key: string]: string } {  
     const properties: { [key: string]: string } = {  
         [TelemetryEvent.AzureLoginTelemetryProperty.SUCCESS]: success.toString()  
     };  
   
     if (!success) {  
-        properties[TelemetryEvent.AzureLoginTelemetryProperty.ERROR_MESSAGE] = typeof errorMessage === 'string' && errorMessage.trim() !== '' ? errorMessage : "Unknown";  
+        properties[TelemetryEvent.AzureLoginTelemetryProperty.ERROR_MESSAGE] = error.message ? error.message : "Unknown";  
     }  
   
     return properties;  
 }  
+
+export function getCreateAzureAISpeechServiceProperties(
+    success: boolean,
+    error: any,
+    azureSubscriptionId: string = "",
+    resourceGroup: string = "",
+    region: string = "",
+    name: string = "",
+    sku: string = ""
+): { [key: string]: string } {
+    const properties: { [key: string]: string } = {  
+        [TelemetryEvent.CreateAzureAIServiceTelemetryProperty.SUCCESS]: success.toString()  
+    };  
+
+    if (success) {
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.AZURE_SUBSCRIPTION_ID] = azureSubscriptionId;
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.RESOURCE_GROUP] = resourceGroup;
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.REGION] = region;
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.NAME] = name;
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.SKU] = sku;
+    } else {
+        properties[TelemetryEvent.CreateAzureAIServiceTelemetryProperty.ERROR_MESSAGE] = error.message ? error.message : "Unknown";
+    }
+
+    return properties;
+}

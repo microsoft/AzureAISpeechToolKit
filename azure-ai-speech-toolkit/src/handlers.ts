@@ -21,11 +21,12 @@ import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
-  if (args.length > 0) {
+  if (args.length > 0 && args[0]) {
     subscriptionInfo = args[0] as SubscriptionInfo;
+    console.log("Subscription info passed in: ", subscriptionInfo);
   } else {
     console.log("No subscription info passed in. Ask user to select subscription.");
-    return;
+    subscriptionInfo = await askUserForSubscription();
   }
 
   try {
@@ -140,8 +141,6 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   const task = await findTaskWithName(taskName);
   const envFilePath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.EnvFolderName, ConstantString.EnvFileName);
   const ymlPath = path.join(globalVariables.workspaceUri?.fsPath, ConstantString.AzureAISpeechAppYmlFileName);
-  // const tasks = await vscode.tasks.fetchTasks();
-  // const buildTask = tasks.find(task => task.name === TaskName.BuildApp);
 
   // Check if the requested task exists
   if (!task) {
@@ -163,12 +162,9 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   
   const execution = await vscode.tasks.executeTask(task);
 
-  let sampleTaskTelemetryProperties: { [p: string]: string };
-
+  let sampleTaskTelemetryProperties: { [p: string]: string } = {};
   if (fs.existsSync(envFilePath)) {
     sampleTaskTelemetryProperties = TelemetryUtils.getSampleTaskTelemetryProperties(envFilePath);
-  } else {
-    sampleTaskTelemetryProperties = {};
   }
 
   if (fs.existsSync(ymlPath)) {
@@ -215,28 +211,17 @@ async function findTaskWithName(taskName: TaskName): Promise<vscode.Task | undef
 
 // Helper function to find the next available task. Task sequence: ConfigureAndSetupApp -> BuildApp -> RunApp
 async function getNextAvailableTask(currentTaskName: TaskName | null): Promise<TaskName | null> {
-  if (!currentTaskName) {
-    const configureAndSetupAppTask = await findTaskWithName(TaskName.ConfigureAndSetupApp);
-    if (configureAndSetupAppTask) return TaskName.ConfigureAndSetupApp;
+  const taskSequence = [
+    TaskName.ConfigureAndSetupApp,
+    TaskName.BuildApp,
+    TaskName.RunApp
+  ];
 
-    const buildTask = await findTaskWithName(TaskName.BuildApp);
-    if (buildTask) return TaskName.BuildApp;
+  const startIndex = currentTaskName ? taskSequence.indexOf(currentTaskName) + 1 : 0;
 
-    const runTask = await findTaskWithName(TaskName.RunApp);
-    if (runTask) return TaskName.RunApp;
-  }
-
-  if (currentTaskName === TaskName.ConfigureAndSetupApp) {
-    const buildTask = await findTaskWithName(TaskName.BuildApp);
-    if (buildTask) return TaskName.BuildApp;
-
-    const runTask = await findTaskWithName(TaskName.RunApp);
-    if (runTask) return TaskName.RunApp;
-  } else if (currentTaskName === TaskName.BuildApp) {
-    const runTask = await findTaskWithName(TaskName.RunApp);
-    if (runTask) return TaskName.RunApp;
-  } else if (currentTaskName === TaskName.RunApp) {
-    return null;
+  for (let i = startIndex; i < taskSequence.length; i++) {
+    const task = await findTaskWithName(taskSequence[i]);
+    if (task) return taskSequence[i];
   }
 
   return null;

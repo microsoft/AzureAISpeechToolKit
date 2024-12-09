@@ -2,12 +2,7 @@
 // Licensed under the MIT license.
 
 import axios from "axios";
-import { hooks } from "@feathersjs/hooks";
-// import { ErrorContextMW } from "../core/globalVars";
-// import { AccessGithubError } from "../error/common";
-// import { FeatureFlagName } from "./constants";
 import { sendRequestWithTimeout } from "./requestUtils";
-import * as fs from 'fs';
 
 const packageJson = require("../../package.json");
 
@@ -46,7 +41,7 @@ export interface SampleConfig {
   configuration: string;
   suggested: boolean;
   thumbnailPath: string;
-  gifUrl?: string;
+  // gifUrl?: string;
   // maximum TTK & CLI version to run sample
   maximumToolkitVersion?: string;
   maximumCliVersion?: string;
@@ -130,34 +125,34 @@ class SampleProvider {
   private parseOnlineSampleConfig(samplesConfig: SampleConfigType, ref: string): SampleCollection {
     const samples =
       samplesConfig?.samples.map((sample) => {
-        const isExternal = sample["downloadUrlInfo"] ? true : false;
-        let gifUrl =
-          sample["gifPath"] !== undefined
-            ? `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${ref}/${
-                sample["id"] as string
-              }/${sample["gifPath"] as string}`
-            : undefined;
-        if (isExternal) {
-          const info = sample["downloadUrlInfo"] as SampleUrlInfo;
-          gifUrl =
-            sample["gifPath"] !== undefined
-              ? `https://raw.githubusercontent.com/${info.owner}/${info.repository}/${info.ref}/${
-                  info.dir
-                }/${sample["gifPath"] as string}`
-              : undefined;
-        }
+        // const isExternal = sample["downloadUrlInfo"] ? true : false;
+        // let gifUrl =
+        //   sample["gifPath"] !== undefined
+        //     ? `https://raw.githubusercontent.com/${SampleConfigOwner}/${SampleConfigRepo}/${ref}/${
+        //         sample["id"] as string
+        //       }/${sample["gifPath"] as string}`
+        //     : undefined;
+        // if (isExternal) {
+        //   const info = sample["downloadUrlInfo"] as SampleUrlInfo;
+        //   gifUrl =
+        //     sample["gifPath"] !== undefined
+        //       ? `https://raw.githubusercontent.com/${info.owner}/${info.repository}/${info.ref}/${
+        //           info.dir
+        //         }/${sample["gifPath"] as string}`
+        //       : undefined;
+        // }
         return {
           ...sample,
           onboardDate: new Date(sample["onboardDate"] as string),
-          downloadUrlInfo: isExternal
-            ? sample["downloadUrlInfo"]
-            : {
-                owner: SampleConfigOwner,
-                repository: SampleConfigRepo,
-                ref: ref,
-                dir: sample["id"] as string,
-              },
-          gifUrl: gifUrl,
+          downloadUrlInfo: sample["downloadUrlInfo"]
+            // ? sample["downloadUrlInfo"]
+            // : {
+            //     owner: SampleConfigOwner,
+            //     repository: SampleConfigRepo,
+            //     ref: ref,
+            //     dir: sample["id"] as string,
+            //   },
+          // gifUrl: gifUrl,
         } as SampleConfig;
       }) || [];
 

@@ -296,7 +296,7 @@ export class VSCodeAzureSubscriptionProvider {
       const result = await rmClient.resourceGroups.checkExistence(resourceGroupName);
       return (!!result.body);
     } catch (error) {
-      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
+      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${JSON.stringify(error)}`);
     }
   }
 
@@ -370,7 +370,7 @@ export class VSCodeAzureSubscriptionProvider {
       const azurePortalUrl = `https://portal.azure.com/#@${tenantId}/resource${account.id}`;
 
       const openInAzurePortal = "Open in Azure Portal";
-      await vscode.window.showInformationMessage(`Successfully created new AI Service resource: ${serviceName}.`, "Open in Azure Portal")
+      vscode.window.showInformationMessage(`Successfully created new AI Service resource: ${serviceName}.`, "Open in Azure Portal")
         .then(async (action) => {
           if (action === openInAzurePortal) {
             vscode.env.openExternal(vscode.Uri.parse(azurePortalUrl));

@@ -609,7 +609,7 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
         } catch (error) {
           console.log("Failed to validate resource group name: ", error);
           vscode.window.showErrorMessage("Failed to validate resource group name: " + error);
-          throw error;
+          return "Failed to validate resource group name. Check the permission and try again.";
         }
       }
     };

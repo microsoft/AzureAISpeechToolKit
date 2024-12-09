@@ -21,11 +21,12 @@ import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
-  if (args.length > 0) {
+  if (args.length > 0 && args[0]) {
     subscriptionInfo = args[0] as SubscriptionInfo;
+    console.log("Subscription info passed in: ", subscriptionInfo);
   } else {
     console.log("No subscription info passed in. Ask user to select subscription.");
-    return;
+    subscriptionInfo = await askUserForSubscription();
   }
 
   try {

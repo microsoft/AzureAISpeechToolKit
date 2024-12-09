@@ -11,6 +11,7 @@ import TreeViewManagerInstance from "./treeview/treeViewManager";
 import { isSpeechResourceSeleted } from './utils';
 import resourceTreeViewProvider from './treeview/resourceTreeViewProvider';
 import { ExtTelemetry } from './telemetry/extTelemetry';
+import { signedIn } from './common/constants';
 
 export let VS_CODE_UI: VSCodeUI;
 
@@ -35,10 +36,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.SelectResource, handlers.configureResourcehandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.ConfigureAndSetupApp,  () => handlers.taskHandler(TaskName.ConfigureAndSetupApp)));
+		vscode.commands.registerCommand(CommandKeys.ConfigureAndSetupApp, () => handlers.taskHandler(TaskName.ConfigureAndSetupApp)));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.BuildApp,() => handlers.taskHandler(TaskName.BuildApp)));
+		vscode.commands.registerCommand(CommandKeys.BuildApp, () => handlers.taskHandler(TaskName.BuildApp)));
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.RunApp, () => handlers.taskHandler(TaskName.RunApp)));
@@ -62,15 +63,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.OpenSpeechResourceInAzurePortalUrl, handlers.OpenSpeechResourceInAzurePortalUrlHandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, handlers.createAzureAIServiceHandler));
+		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, async () => {
+			try {
+				await handlers.createAzureAIServiceHandler();
+			} catch (error) {
+				console.error("Error executing createAzureAIServiceHandler command:", error);
+				// TODO: if user cancels the operation, do not show error message
+				// vscode.window.showErrorMessage("Failed to create Azure AI Service.");
+			}
+		}));
 
-	// set loading status as true for extension initialization to load account status
-	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsLoadingAccountStatus, true);
+	// when first activate extension, azure account status is not loaded yet
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.azureAccountStatusLoaded, false);
 
 	// UI is ready to show & interact
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
-	activateSpeechFxRegistration(context);
+	await activateSpeechFxRegistration(context);
 
 	if (isSpeechFxProject) {
 		await vscode.commands.executeCommand(CommandKeys.OpenReadMe);
@@ -91,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
 }
 
-function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
+async function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	TreeViewManagerInstance.registerTreeViews(context);
 
 	accountTreeViewProviderInstance.subscribeToStatusChanges({
@@ -101,9 +110,17 @@ function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	resourceTreeViewProvider.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),
 	});
+
+	const azureAccountProvider = AzureAccountManager.getInstance();
+	const accountInfo = await azureAccountProvider.getStatus();
+	// set context to indicate that the account status has been loaded
+	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.azureAccountStatusLoaded, true);
+	if (accountInfo.status === signedIn) {
+		await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.isAzureAccountLoggedIn, true);
+	}
 }
 
 // This method is called when your extension is deactivated
 export async function deactivate() {
 	await ExtTelemetry.dispose();
- }
+}

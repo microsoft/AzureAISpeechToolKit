@@ -51,3 +51,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.11
 
 - Update extension category and description.
+
+## 0.0.12
+
+- Support creating Azure AI Service from resource tree view.

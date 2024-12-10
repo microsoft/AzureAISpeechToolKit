@@ -13,3 +13,4 @@ node_modules
 *.vsix
 webpack.config.js
 img/**
+updateAiKey.js

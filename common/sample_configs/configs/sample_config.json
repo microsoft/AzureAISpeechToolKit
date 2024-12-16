@@ -369,6 +369,33 @@
                 "ref": "v-bingyang/captioning-python",
                 "dir": "scenarios/python/console/captioning"
             }
+        },
+        {
+            "id": "test-premium_speech_demo-python",
+            "onboardDate": "2024-12-16",
+            "title": "test-premium_speech_demo-python",
+            "shortId": "premium_speech_demo-python",
+            "shortDescription": "test-premium_speech_demo-python",
+            "fullDescription": "test-premium_speech_demo-python",
+            "types": [
+                "test-premium_speech_demo-python"
+            ],
+            "tags": [
+                "Python"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/captioning.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/README.md",
+            "githubPath": "scenarios/python/console/captioning",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-bingyang/premium_speech_demo",
+                "dir": "scenarios/python/console/premium_speech_demo"
+            }
         }
     ]
 }

@@ -7,7 +7,8 @@ export enum TelemetryEvent {
   DOWNLOAD_SAMPLE = "download-sample",
   CONFIGURE_AND_SETUP_SAMPLE = "configure-and-setup-sample",
   BUILD_SAMPLE = "build-sample",
-  RUN_SAMPLE = "run-sample"
+  RUN_SAMPLE = "run-sample",
+  SURVEY = "survey",
 }
 
 export enum AzureLoginTelemetryProperty {

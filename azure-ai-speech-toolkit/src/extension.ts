@@ -12,6 +12,7 @@ import { isSpeechResourceSeleted } from './utils';
 import resourceTreeViewProvider from './treeview/resourceTreeViewProvider';
 import { ExtTelemetry } from './telemetry/extTelemetry';
 import { signedIn } from './common/constants';
+import { ExtensionSurvey } from './utils/survey';
 
 export let VS_CODE_UI: VSCodeUI;
 
@@ -21,7 +22,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "azure-ai-speech-toolkit" is now active!');
 
 	context.subscriptions.push(new ExtTelemetry.Reporter(context));
-	await ExtTelemetry.sendCachedTelemetryEventsAsync();
 
 	VS_CODE_UI = new VSCodeUI(TerminalName);
 	initializeGlobalVariables(context);
@@ -79,8 +79,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	// UI is ready to show & interact
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.IsSpeechFx, isSpeechFxProject);
 
-	await activateSpeechFxRegistration(context);
+	await activateResourceTreeRegistration(context);
 
+	// after loading a SpeechFx project, open the README.md file and ask user to configure a Speech Resource if not already selected.
 	if (isSpeechFxProject) {
 		await vscode.commands.executeCommand(CommandKeys.OpenReadMe);
 
@@ -97,10 +98,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
+	// Don't wait this async method to let it run in background.
+	void runBackgroundAsyncTasks();
+
 	await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.Initialized, true);
 }
 
-async function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
+async function activateResourceTreeRegistration(context: vscode.ExtensionContext) {
 	TreeViewManagerInstance.registerTreeViews(context);
 
 	accountTreeViewProviderInstance.subscribeToStatusChanges({
@@ -118,6 +122,18 @@ async function activateSpeechFxRegistration(context: vscode.ExtensionContext) {
 	if (accountInfo.status === signedIn) {
 		await vscode.commands.executeCommand(VSCodeCommands.SetContext, ContextKeys.isAzureAccountLoggedIn, true);
 	}
+}
+
+/**
+ * Tasks that doesn't block the user interaction so that they can be processed in background.
+ */
+async function runBackgroundAsyncTasks() {
+	// Send cached telemetry events
+	await ExtTelemetry.sendCachedTelemetryEventsAsync();
+
+	// Survey
+	const survey = ExtensionSurvey.getInstance();
+	survey.activate();
 }
 
 // This method is called when your extension is deactivated

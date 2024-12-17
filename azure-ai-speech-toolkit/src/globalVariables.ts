@@ -34,7 +34,7 @@ export function initializeGlobalVariables(ctx: vscode.ExtensionContext): void {
   }
 }
 
-function isValidProject(workspacePath?: string): boolean {
+export function isValidProject(workspacePath?: string): boolean {
   if (!workspacePath) return false;
 
   const ymlPath = path.join(workspacePath, ConstantString.AzureAISpeechAppYmlFileName);

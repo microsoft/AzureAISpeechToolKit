@@ -296,6 +296,9 @@ export class VSCodeAzureSubscriptionProvider {
       const result = await rmClient.resourceGroups.checkExistence(resourceGroupName);
       return (!!result.body);
     } catch (error) {
+      if ((error as any).statusCode === 403) {
+        throw new Error(`You do not have permission to check resource group existence. Error: ${JSON.stringify(error)}`);
+      }
       throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${JSON.stringify(error)}`);
     }
   }

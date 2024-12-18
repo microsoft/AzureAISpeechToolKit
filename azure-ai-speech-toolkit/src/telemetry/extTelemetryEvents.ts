@@ -9,33 +9,21 @@ export enum TelemetryEvent {
   BUILD_SAMPLE = "build-sample",
   RUN_SAMPLE = "run-sample",
   SURVEY = "survey",
+  OPEN_DOCUMENT = "open-document",
+  OPEN_AZURE_ACCOUNT_HELP = "open-azure-account-help",
+  OPEN_SAMPLES = "open-samples",
+  CONFIGURE_RESOURCE = "configure-resource",
+  VIEW_SPEECH_RESOURCE_PROPERTIES = "view-speech-resource-properties",
+  OPEN_SPEECH_RESOURCE_IN_AZURE_PORTAL_URL = "open-speech-resource-in-azure-portal-url",
 }
 
-export enum AzureLoginTelemetryProperty {
-  SUCCESS = "success",
-  ERROR_MESSAGE = "error_message"
-}
-
-export enum CreateAzureAIServiceTelemetryProperty {
-  SUCCESS = "success",
-  ERROR_MESSAGE = "error_message",
-  AZURE_SUBSCRIPTION_ID = "azure_subscription_id",
-  RESOURCE_GROUP = "resource_group",
-  REGION = "region",
-  NAME = "name",
-  SKU = "sku"
-}
-
-export enum DownloadSampleTelemetryProperty {
+export enum TelemetryProperty {
   SUCCESS = "success",
   ERROR_MESSAGE = "error_message",
   SAMPLE_ID = "sample_id",
-}
-
-export enum SampleTaskTelemetryProperty {
-  SUCCESS = "success",
-  ERROR_MESSAGE = "error_message",
   AZURE_SUBSCRIPTION_ID = "azure_subscription_id",
+  RESOURCE_GROUP = "resource_group",
+  SERVICE_REGION = "service_region",
+  SPEECH_RESOURCE_SKU = "speech_resource_sku",
   SPEECH_RESOURCE_NAME = "speech_resource_name",
-  SAMPLE_ID = "sample_id"
 }

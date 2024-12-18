@@ -596,21 +596,17 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     }
     const defaultResourceGroupName = `${username}_speechaiproj_rg_${timestamp}`;
 
+    // check if the user has permission to create a resource group. If lacks permission, throw error directly to terminate the process.
+    await this.vscodeAzureSubscriptionProvider.checkResourceGroupExistence(subscriptionInfo, defaultResourceGroupName);
+
     // Define dropdown options
     const options: vscode.InputBoxOptions = {
       prompt: "Enter a resource group name or use the default one",
       placeHolder: defaultResourceGroupName,
       value: defaultResourceGroupName, // Set the default value
       validateInput: async (input) => {
-        // Validate the resource group name
-        try {
-          const validationError = await this.vscodeAzureSubscriptionProvider.isValidResourceGroupName(subscriptionInfo, input.trim());
-          return validationError ? validationError : null;
-        } catch (error) {
-          console.log("Failed to validate resource group name: ", error);
-          vscode.window.showErrorMessage("Failed to validate resource group name: " + error);
-          return "Failed to validate resource group name. Check the permission and try again.";
-        }
+        const validationError = await this.vscodeAzureSubscriptionProvider.isValidResourceGroupName(subscriptionInfo, input.trim());
+        return validationError ? validationError : null;
       }
     };
 

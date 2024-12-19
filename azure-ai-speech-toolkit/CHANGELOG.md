@@ -55,3 +55,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.12
 
 - Support creating Azure AI Service from resource tree view.
+
+## 0.0.13
+
+- Support survey.

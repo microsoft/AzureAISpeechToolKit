@@ -2,7 +2,7 @@
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
   "description": "Build Azure Speech empowered apps with just a few clicks",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,
@@ -205,7 +205,7 @@
     "@typescript-eslint/parser": "^7.11.0",
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
-    "@vscode/vsce": "^3.1.1",
+    "@vscode/vsce": "^3.2.1",
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "async-mutex": "^0.5.0",
     "axios": "^1.7.7",
@@ -226,7 +226,6 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
-    "vsce": "^2.15.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {

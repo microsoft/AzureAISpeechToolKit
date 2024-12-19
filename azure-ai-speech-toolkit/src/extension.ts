@@ -60,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(CommandKeys.ViewSpeechResourceProperties, handlers.viewSpeechResourcePropertiesHandler));
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand(CommandKeys.OpenSpeechResourceInAzurePortalUrl, handlers.OpenSpeechResourceInAzurePortalUrlHandler));
+		vscode.commands.registerCommand(CommandKeys.OpenSpeechResourceInAzurePortal, handlers.openSpeechResourceInAzurePortalUrlHandler));
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(CommandKeys.CreateAzureAIService, async () => {

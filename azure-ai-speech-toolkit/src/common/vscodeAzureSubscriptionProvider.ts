@@ -12,6 +12,7 @@ import { Environment } from "@azure/ms-rest-azure-env";
 import { AzureResourceGroupInfo, AzureSpeechResourceInfo, SubscriptionInfo } from "../api/login";
 import { AzureResourceAccountType } from "./constants";
 import { delay, getAzureResourceAccountTypeDisplayName } from "../utils";
+import { openSpeechResourceInAzurePortalUrl } from "../handlers";
 
 export const Microsoft = "microsoft";
 
@@ -370,13 +371,11 @@ export class VSCodeAzureSubscriptionProvider {
       const account = await cognitiveServicesClient.accounts.beginCreateAndWait(resourceGroupName, serviceName, parameters);
       const tenantId = subscriptionInfo.tenantId;
 
-      const azurePortalUrl = `https://portal.azure.com/#@${tenantId}/resource${account.id}`;
-
       const openInAzurePortal = "Open in Azure Portal";
       vscode.window.showInformationMessage(`Successfully created new AI Service resource: ${serviceName}.`, "Open in Azure Portal")
         .then(async (action) => {
           if (action === openInAzurePortal) {
-            vscode.env.openExternal(vscode.Uri.parse(azurePortalUrl));
+            openSpeechResourceInAzurePortalUrl(tenantId, account.id!);
           }
         });
 

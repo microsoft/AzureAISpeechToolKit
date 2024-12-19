@@ -102,10 +102,14 @@ export async function signInAzureHandler(...args: unknown[]) {
   return;
 }
 
-export async function OpenSpeechResourceInAzurePortalUrlHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {
-  const azurePortalUrl = `https://portal.azure.com/#@${resourceItem.tenantId}/resource${resourceItem.azureResourceInfo.id}`;
+export async function openSpeechResourceInAzurePortalUrlHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {
+  openSpeechResourceInAzurePortalUrl(resourceItem.tenantId, resourceItem.azureResourceInfo.id);
+}
+
+export function openSpeechResourceInAzurePortalUrl(tenantId: string, resourceId: string) {
+  const azurePortalUrl = `https://portal.azure.com/#@${tenantId}/resource${resourceId}`;
   vscode.env.openExternal(vscode.Uri.parse(azurePortalUrl));
-  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.OPEN_SPEECH_RESOURCE_IN_AZURE_PORTAL_URL);
+  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.OPEN_AZURE_PORTAL);
 }
 
 export async function viewSpeechResourcePropertiesHandler(resourceItem: ResourceTreeItem, ...args: unknown[]) {

@@ -14,7 +14,7 @@ export enum TelemetryEvent {
   OPEN_SAMPLES = "open-samples",
   CONFIGURE_RESOURCE = "configure-resource",
   VIEW_SPEECH_RESOURCE_PROPERTIES = "view-speech-resource-properties",
-  OPEN_SPEECH_RESOURCE_IN_AZURE_PORTAL_URL = "open-speech-resource-in-azure-portal-url",
+  OPEN_AZURE_PORTAL = "open-azure-portal",
 }
 
 export enum TelemetryProperty {

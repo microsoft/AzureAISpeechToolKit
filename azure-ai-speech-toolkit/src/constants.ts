@@ -15,7 +15,7 @@ export enum CommandKeys {
   BuildApp = "azure-ai-speech-toolkit.buildApp",
   RunApp = "azure-ai-speech-toolkit.runApp",
   ViewSpeechResourceProperties = "azure-ai-speech-toolkit.viewSpeechResourceProperties",
-  OpenSpeechResourceInAzurePortalUrl = "azure-ai-speech-toolkit.openInAzurePortal",
+  OpenSpeechResourceInAzurePortal = "azure-ai-speech-toolkit.openInAzurePortal",
 }
 
 export enum ViewId {

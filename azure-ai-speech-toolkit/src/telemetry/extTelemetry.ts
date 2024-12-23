@@ -4,7 +4,7 @@
 import * as vscode from "vscode";
 import * as extensionPackage from "../../package.json";
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { globalStateGet, globalStateUpdate } from "./extTelemetryCache";
+import { globalStateGet, globalStateUpdate } from "../common/globalState";
 
 const TelemetryCacheKey = "TelemetryEvents";
 

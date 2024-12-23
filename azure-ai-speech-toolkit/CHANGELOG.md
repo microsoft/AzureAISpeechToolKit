@@ -59,3 +59,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.13
 
 - Support survey.
+
+## 0.0.14
+
+- Expand survey.

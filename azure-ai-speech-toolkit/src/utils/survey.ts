@@ -18,9 +18,9 @@ enum ExtensionSurveyStateKeys {
   DisableSurveyForTime = "survey/disableSurveyForTime",
 }
 
-const TIME_TO_DISABLE_SURVEY = 1000 * 60 * 60 * 24 * 7 * 12; // 12 weeks
-const TIME_TO_REMIND_ME_LATER = 1000 * 60 * 60 * 24 * 7 * 2; // 2 weeks
-const TIME_TO_SHOW_SURVEY = 1000 * 60 * 15; // 15 minutes
+const TIME_TO_DISABLE_SURVEY = 1000 * 60 * 60 * 24 * 7 * 6; // 6 weeks
+const TIME_TO_REMIND_ME_LATER = 1000 * 60 * 60 * 24 * 7 * 1; // 1 weeks
+const TIME_TO_SHOW_SURVEY = 1000 * 60 * 5; // 5 minutes
 const SAMPLE_PERCENTAGE = 25; // 25 percent for public preview
 const V3PREVIEW_SAMPLE_PERCENTAGE = 100; // always pop up survey
 const V3PREVIEW_TIME_TO_DISABLE_SURVEY = -1; // negtive value stands for never show again
@@ -39,7 +39,7 @@ export class ExtensionSurvey {
     if (!ExtensionSurvey.instance) {
       ExtensionSurvey.instance = new ExtensionSurvey(
         TIME_TO_SHOW_SURVEY,
-        SAMPLE_PERCENTAGE,
+        V3PREVIEW_SAMPLE_PERCENTAGE,
         TIME_TO_DISABLE_SURVEY,
         TIME_TO_REMIND_ME_LATER
       );
@@ -57,7 +57,7 @@ export class ExtensionSurvey {
     this.timeToShowSurvey = timeToShowSurvey ? timeToShowSurvey : TIME_TO_SHOW_SURVEY;
 
     const randomSample: number = Math.floor(Math.random() * 100) + 1;
-    if (randomSample <= (samplePercentage ? samplePercentage : SAMPLE_PERCENTAGE)) {
+    if (randomSample <= (samplePercentage ? samplePercentage : V3PREVIEW_SAMPLE_PERCENTAGE)) {
       this.needToShow = true;
     }
 

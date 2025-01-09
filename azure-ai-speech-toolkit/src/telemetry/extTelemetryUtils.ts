@@ -24,3 +24,4 @@ export function getSampleId(ymlFilePath: string) {
     const data = yaml.load(fileContents) as { name: string; version: string };  
     return data.name;
 }
+

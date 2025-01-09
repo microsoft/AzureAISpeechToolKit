@@ -3,7 +3,6 @@
 
 import * as vscode from "vscode";
 import { globalStateGet, globalStateUpdate } from "../common/globalState";
-import { isValidProject } from "../globalVariables";
 import { ExtTelemetry } from "../telemetry/extTelemetry";
 import { TelemetryEvent } from "../telemetry/extTelemetryEvents";
 import * as globalVariables from "../globalVariables";
@@ -72,7 +71,7 @@ export class ExtensionSurvey {
           return;
         }
 
-        if (!this.showSurveyTimeout && isValidProject(globalVariables.workspaceUri?.fsPath)) {
+        if (!this.showSurveyTimeout && globalVariables.isValidProject(globalVariables.workspaceUri?.fsPath)) {
           this.showSurveyTimeout = setTimeout(() => this.showSurvey(), this.timeToShowSurvey);
         }
       }, 2000);

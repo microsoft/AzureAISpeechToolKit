@@ -74,7 +74,7 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     }
     telemetryProperties = {
       [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error as string
+      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
     }
   }
 
@@ -94,7 +94,7 @@ export async function signInAzureHandler(...args: unknown[]) {
     vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
     azureLoginTelemetry = {
       [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error as string
+      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
     };
   }
 
@@ -121,7 +121,7 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
     vscode.window.showErrorMessage("Fail to get speech resource properties: " + error);
     ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES, {
       [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error as string
+      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
     });
     return;
   }
@@ -313,7 +313,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
       ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, {
         [TelemetryProperty.SUCCESS]: "false",
-        [TelemetryProperty.ERROR_MESSAGE]: error as string
+      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
       });
       return;
     }

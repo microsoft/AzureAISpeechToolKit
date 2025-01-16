@@ -412,6 +412,35 @@
                 "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
+        },
+        {
+            "id": "scenarios-python-console-speech-rewrite-sample",
+            "onboardDate": "20254-01-16",
+            "title": "Continuous Speech Recognition and Rewriting via Azure OpenAI",
+            "shortId": "scenarios-python-console-speech-rewrite-sample",
+            "shortDescription": "Continuous speech recognition and rewriting via Azure OpenAI",
+            "fullDescription": "This project integrates Azure Cognitive Services Speech SDK with Azure OpenAI Service to perform real-time speech recognition and refine the recognized text for improved grammar and readability.",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text",
+                "Realtime Speech To Text",
+                "Python"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/speech_rewrite_sample.jpg",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/python/console/speech_rewrite_sample/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/python/console/speech_rewrite_sample",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "extension",
+                "dir": "scenarios/python/console/speech_rewrite_sample"
+            }
         }
     ]
 }

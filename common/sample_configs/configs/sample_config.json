@@ -440,7 +440,13 @@
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "extension",
                 "dir": "scenarios/python/console/speech_rewrite_sample"
-            }
+            },
+            "dependencies": [
+                {
+                    "language": "Python",
+                    "version": ">=3.7.0"
+                }
+            ]
         }
     ]
 }

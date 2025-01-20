@@ -20,6 +20,10 @@ export type SampleDetailState = {
   error?: Error;
 };
 
+export type DepedencyInfo = {
+  language: string;
+  version: string;
+}
 export interface SampleInfo {
   id: string;
   title: string;
@@ -46,6 +50,8 @@ export interface SampleInfo {
   maximumToolkitVersion?: string;
   readmePath: string;
   githubPath: string;
+  dependencies: DepedencyInfo[];
+  platform: string[];
 }
 
 export type SampleProps = {

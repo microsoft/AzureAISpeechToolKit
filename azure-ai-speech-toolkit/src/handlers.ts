@@ -6,7 +6,7 @@ const path = require('node:path');
 import { PanelType } from "./controls/PanelType";
 import { WebviewPanel } from "./controls/webviewPanel";
 import { sendRequestWithRetry } from "./common/requestUtils";
-import { SampleInfo } from "./controls/sampleGallery/ISamples";
+import { DepedencyInfo, SampleInfo } from "./controls/sampleGallery/ISamples";
 import { SampleUrlInfo, SampleFileInfo } from "./common/samples";
 import * as globalVariables from "./globalVariables";
 import { AzureAccountManager } from "./common/azureLogin";
@@ -18,6 +18,7 @@ import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/re
 import { ExtTelemetry } from './telemetry/extTelemetry';
 import { TelemetryEvent, TelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
+import { DependencyManager } from "./depedencyCheckers/dependencyManager";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -145,6 +146,15 @@ async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceT
 
   return await getSpeechResourceProperties(azureSpeechResourceInfo);
 }
+async function getDependenciesInfo(ymlPath: string): Promise<any> {
+  if (!fs.existsSync(ymlPath)) {
+    return;
+  }
+
+  const ymlContent = fs.readFileSync(ymlPath, 'utf8');
+  const ymlJson = JSON.parse(ymlContent);
+  return ymlJson.dependencies;
+}
 
 async function getSpeechResourceProperties(azureSpeechResourceInfo: AzureSpeechResourceInfo): Promise<string> {
   const { key, region, customSubDomainName } = await fetchSpeechServiceInfo(azureSpeechResourceInfo);
@@ -189,6 +199,19 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
   }
 
   vscode.window.showInformationMessage(`Executing task: ${taskName}. Check terminal for output.`);
+
+  // before build and run app, check dependencies for the sample.
+  if (taskName === TaskName.BuildApp || taskName === TaskName.RunApp) {
+    const dependenciesInfo = await getDependenciesInfo(ymlPath);
+    if (dependenciesInfo) {
+      for (const dependency of dependenciesInfo) {
+        await DependencyManager.ensureDependency(dependency.type);
+      }
+
+    } else {
+      console.log("No dependencies found for the sample. Skip dependencies installation steps.");
+    }
+  }
 
   const execution = await vscode.tasks.executeTask(task);
 
@@ -462,6 +485,7 @@ async function askUserForSpeechResource(subscriptionInfo: SubscriptionInfo): Pro
 export async function downloadSampleApp(...args: unknown[]) {
   const sampleInfo = args[0] as SampleInfo;
   const sampleId = sampleInfo.id;
+  const dependencies = sampleInfo.dependencies;
 
   // Validate sampleId
   if (!sampleId || typeof sampleId !== "string") {
@@ -513,13 +537,27 @@ export async function downloadSampleApp(...args: unknown[]) {
     await ExtTelemetry.cacheTelemetryEventAsync(TelemetryEvent.DOWNLOAD_SAMPLE, { [TelemetryProperty.SAMPLE_ID]: sampleId });
 
     // generate azureAiSpeechApp.yml file
-    const ymlPath = path.join(projectPath, ConstantString.AzureAISpeechAppYmlFileName);
-    if (!fs.existsSync(ymlPath)) {
-      fs.writeFileSync(ymlPath, `name: ${sampleId}\nversion: 1.0\n`);
-    }
+    generateProjectYaml(projectPath, sampleId, dependencies);
 
     return await vscode.commands.executeCommand(VSCodeCommands.OpenFolder, vscode.Uri.file(projectPath));
   }
+}
+
+export function generateProjectYaml(projectPath: string, sampleId: string, dependencies: DepedencyInfo[]): void {
+  const ymlPath = path.join(projectPath, ConstantString.AzureAISpeechAppYmlFileName);
+  if (fs.existsSync(ymlPath)) {
+    throw new Error("Yaml file already exists.");
+  }
+
+  const content = `name: ${sampleId}\nversion: 1.0\n`;
+  const dependenciesContent = dependencies.map((dependency) => {
+    return `  - type: ${dependency.language}\n    version: ${dependency.version}`;
+  }).join("\n");
+  if (dependenciesContent) {
+    content.concat(`dependencies:\n${dependenciesContent}`);
+  }
+
+  fs.writeFileSync(ymlPath, content);
 }
 
 export async function getSampleFileInfo(sampleInfo: SampleInfo, retryLimits: number): Promise<any> {

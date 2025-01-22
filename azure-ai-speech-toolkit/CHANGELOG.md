@@ -63,3 +63,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.14
 
 - Expand survey.
+
+## 0.0.15
+
+- Error handling: track user failure.
+- Add new sample: rewrite via LLM sample.

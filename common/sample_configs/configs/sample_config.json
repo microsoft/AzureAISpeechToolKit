@@ -421,7 +421,7 @@
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "v-bingyang/BatchSynthesis",
-                "dir": "samples/batch-synthesis/csharp/BatchSynthesisSample"
+                "dir": "samples/batch-synthesis/csharp"
             }
         }
     ]

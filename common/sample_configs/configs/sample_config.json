@@ -444,7 +444,7 @@
         },
         {
             "id": "sample-batch-transcription-from-Azure-blob-csharp-dotnetcore",
-            "onboardDate": "2024-11-01",
+            "onboardDate": "2025-01-22",
             "title": "Csharp example to use the Speech Services Batch Transcription API",
             "shortId": "batch-transcription-from-Azure-blob-csharp-dotnetcore",
             "shortDescription": "Csharp example to use the Speech Services Batch Transcription API",

@@ -441,6 +441,34 @@
                 "ref": "extension",
                 "dir": "scenarios/python/console/speech_rewrite_sample"
             }
+        },
+        {
+            "id": "sample-batch-transcription-from-Azure-blob-nodejs",
+            "onboardDate": "2025-01-24",
+            "title": "Node.js example to use the Speech Services Batch Transcription API",
+            "shortId": "batch-transcription-from-Azure-blob-nodejs",
+            "shortDescription": "Node.js example to use the Speech Services Batch Transcription API",
+            "fullDescription": "Use REST API directly for speech service batch transcription.",
+            "types": [
+                "Batch Transcription"
+            ],
+            "tags": [
+                "Batch Transcription",
+                "Node.js"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/call-center.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/batch/js/node/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/js/node",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-shaota/AddBatchTranscriptionNodejsSample",
+                "dir": "samples/batch/js/node"
+            }
         }
     ]
 }

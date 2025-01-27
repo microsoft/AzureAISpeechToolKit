@@ -498,6 +498,34 @@
                 "ref": "v-shaota/AddBatchTranscriptionNodejsSample",
                 "dir": "samples/batch/js/node"
             }
+        },
+        {
+            "id": "sample-batch-transcription-from-Azure-blob-python",
+            "onboardDate": "2025-01-23",
+            "title": "Python example to use the Speech Services Batch Transcription API",
+            "shortId": "batch-transcription-from-Azure-blob-python",
+            "shortDescription": "Python example to use the Speech Services Batch Transcription API",
+            "fullDescription": "Use REST API directly for speech service batch transcription.",
+            "types": [
+                "Batch Transcription"
+            ],
+            "tags": [
+                "Batch Transcription",
+                "Python"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/call-center.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/batch/python/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/python",
+            "scenario": false,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-shaota/AddBatchTranscriptionPythonSample",
+                "dir": "samples/batch/python"
+            }
         }
     ]
 }

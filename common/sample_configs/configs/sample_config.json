@@ -415,7 +415,7 @@
         },
         {
             "id": "scenarios-python-console-speech-rewrite-sample",
-            "onboardDate": "20254-01-16",
+            "onboardDate": "2025-01-16",
             "title": "Continuous Speech Recognition and Rewriting via Azure OpenAI",
             "shortId": "scenarios-python-console-speech-rewrite-sample",
             "shortDescription": "Continuous speech recognition and rewriting via Azure OpenAI",

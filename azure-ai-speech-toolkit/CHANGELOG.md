@@ -68,3 +68,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Error handling: track user failure.
 - Add new sample: rewrite via LLM sample.
+
+## 0.0.16
+
+- hotfix: CodeQL compliance.

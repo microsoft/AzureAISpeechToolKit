@@ -535,17 +535,18 @@
             "shortDescription": "C# example to use the Speech Services Batch Synthesis API",
             "fullDescription": " C# example to use the Speech Services Batch Synthesis API",
             "types": [
-                "Text To Speech",
-                "Batch Synthesis"
+                "Text To Speech"
             ],
             "tags": [
+                "Text To Speech",
+                "Batch Synthesis",
                 "C#"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.png",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/v-bingyang/BatchSynthesis/common/sample_configs/img/batch-synthesis.png",
             "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/samples/batch-synthesis/csharp/README.md",
+            "readmePath": "https://api.github.com/repos/BinarywoodB/cognitive-services-speech-sdk/contents/samples/batch-synthesis/csharp/README.md?ref=v-bingyang/BatchSynthesis",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/csharp",
             "scenario": true,
             "downloadUrlInfo": {
@@ -567,13 +568,15 @@
                 "Batch Synthesis"
             ],
             "tags": [
+                "Text To Speech",
+                "Batch Synthesis",
                 "python"
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.png",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/v-bingyang/BatchSynthesis/common/sample_configs/img/batch-synthesis.png",
             "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/samples/batch-synthesis/python/README.md",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/batch-synthesis/python/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/python",
             "scenario": true,
             "downloadUrlInfo": {

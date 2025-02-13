@@ -532,8 +532,8 @@
             "onboardDate": "2025-01-22",
             "title": "Speech Services Batch Synthesis API",
             "shortId": "batch-synthesis-csharp",
-            "shortDescription": "test batch synthesis csharp",
-            "fullDescription": "test batch synthesis csharp",
+            "shortDescription": "C# example to use the Speech Services Batch Synthesis API",
+            "fullDescription": " C# example to use the Speech Services Batch Synthesis API",
             "types": [
                 "Text To Speech",
                 "Batch Synthesis"
@@ -560,8 +560,8 @@
             "onboardDate": "2025-02-08",
             "title": "Speech Services Batch Synthesis API",
             "shortId": "batch-synthesis-python",
-            "shortDescription": "test batch synthesis python",
-            "fullDescription": "test batch synthesis python",
+            "shortDescription": "Python example to use the Speech Services Batch Synthesis API",
+            "fullDescription": "Python example to use the Speech Services Batch Synthesis API",
             "types": [
                 "Text To Speech",
                 "Batch Synthesis"

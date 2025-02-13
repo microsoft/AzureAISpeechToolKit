@@ -526,6 +526,62 @@
                 "ref": "v-shaota/AddBatchTranscriptionPythonSample",
                 "dir": "samples/batch/python"
             }
+        },
+        {
+            "id": "batch-synthesis-csharp",
+            "onboardDate": "2025-01-22",
+            "title": "Speech Services Batch Synthesis API",
+            "shortId": "batch-synthesis-csharp",
+            "shortDescription": "C# example to use the Speech Services Batch Synthesis API",
+            "fullDescription": " C# example to use the Speech Services Batch Synthesis API",
+            "types": [
+                "Text To Speech",
+                "Batch Synthesis"
+            ],
+            "tags": [
+                "C#"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/samples/batch-synthesis/csharp/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/csharp",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-bingyang/BatchSynthesis",
+                "dir": "samples/batch-synthesis/csharp"
+            }
+        },
+        {
+            "id": "batch-synthesis-python",
+            "onboardDate": "2025-02-08",
+            "title": "Speech Services Batch Synthesis API",
+            "shortId": "batch-synthesis-python",
+            "shortDescription": "Python example to use the Speech Services Batch Synthesis API",
+            "fullDescription": "Python example to use the Speech Services Batch Synthesis API",
+            "types": [
+                "Text To Speech",
+                "Batch Synthesis"
+            ],
+            "tags": [
+                "python"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.png",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/samples/batch-synthesis/python/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/python",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "BinarywoodB",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "v-bingyang/BatchSynthesisPython",
+                "dir": "samples/batch-synthesis/python"
+            }
         }
     ]
 }

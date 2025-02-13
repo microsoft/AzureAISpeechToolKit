@@ -580,7 +580,7 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/python",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "v-bingyang",
                 "repository": "cognitive-services-speech-sdk",
                 "ref": "v-bingyang/BatchSynthesisPython",
                 "dir": "samples/batch-synthesis/python"

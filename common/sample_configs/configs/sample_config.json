@@ -445,10 +445,10 @@
         {
             "id": "sample-batch-transcription-from-Azure-blob-csharp-dotnetcore",
             "onboardDate": "2025-01-22",
-            "title": "Csharp example to use the Speech Services Batch Transcription API",
+            "title": "C# example to use the Speech Services Batch Transcription API",
             "shortId": "batch-transcription-from-Azure-blob-csharp-dotnetcore",
-            "shortDescription": "Csharp example to use the Speech Services Batch Transcription API",
-            "fullDescription": "Use csharp dotnetcore REST API directly for speech service batch transcription.",
+            "shortDescription": "C# example to use the Speech Services Batch Transcription API",
+            "fullDescription": "Use C# dotnetcore REST API directly for speech service batch transcription.",
             "types": [
                 "Batch Transcription"
             ],
@@ -523,7 +523,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/AddBatchTranscriptionPythonSample",
+                "ref": "extension",
                 "dir": "samples/batch/python"
             }
         },

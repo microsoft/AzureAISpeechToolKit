@@ -467,7 +467,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "v-shaota/CreateBatchTranscriptionCsharpSample",
+                "ref": "extension",
                 "dir": "samples/batch/csharp"
             }
         },

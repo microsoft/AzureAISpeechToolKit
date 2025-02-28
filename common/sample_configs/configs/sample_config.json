@@ -524,7 +524,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/sync-dilin/sync-extension",
+                "ref": "dilin/sync-extension",
                 "dir": "samples/batch-synthesis/csharp"
             }
         },

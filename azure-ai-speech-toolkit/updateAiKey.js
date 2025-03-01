@@ -4,9 +4,14 @@ const path = require('path');
 // Path to the package.json file
 const packageJsonPath = path.join(__dirname, 'package.json');
 
-// development AI key: a8c3bee3-1c76-4c07-9b4f-ea1e937816cb
-// The production AI key. only replace in release pipeline.
-const prodAiKey = '0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255';
+// Get production AI key from command line arguments
+if (process.argv.length < 3) {
+  console.error('Error: Production AI key not provided');
+  console.error('Usage: node updateAiKey.js <production-ai-key>');
+  process.exit(1);
+}
+const prodAiKey = process.argv[2];
+
 
 // Read the package.json file
 fs.readFile(packageJsonPath, 'utf8', (err, data) => {

@@ -2,7 +2,7 @@
   "name": "azure-ai-speech-toolkit",
   "displayName": "Azure AI Speech Toolkit",
   "description": "Build Azure Speech empowered apps with just a few clicks",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "publisher": "ms-azureaispeech",
   "author": "Microsoft Corporation",
   "preview": true,

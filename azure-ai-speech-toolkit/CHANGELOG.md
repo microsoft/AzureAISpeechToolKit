@@ -72,3 +72,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.16
 
 - hotfix: CodeQL compliance.
+
+## 0.0.17
+
+- Move API key to pipeline.
+- Add new samples: batch synthesis; batch transcription.

@@ -29,8 +29,7 @@ export class VSCodeAzureSubscriptionProvider {
   }> {
     const armSubs = await import("@azure/arm-resources-subscriptions");
     const session = await getSessionFromVSCode(scopes, tenantId, {
-      createIfNone: false,
-      silent: true,
+      createIfNone: true
     });
     if (!session) {
       return Promise.reject(Error("getSubscriptionClient error"));
@@ -89,7 +88,9 @@ export class VSCodeAzureSubscriptionProvider {
 
         // For each tenant, get the list of subscriptions
         results.push(...(await this.getSubscriptionsForTenant(tenantId)));
-      } catch (e) { }
+      } catch (e) {
+        console.error(`Error getting subscriptions for tenant ${tenant.tenantId}: ${e}`);
+      }
     }
     if (results.length === 0) {
       console.log("No subscriptions found.");

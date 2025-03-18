@@ -8,7 +8,7 @@ import { TreeCategory } from "../api/tree";
 import { /*isDeclarativeCopilotApp, isSPFxProject, */workspaceUri } from "../globalVariables";
 // import { hasAdaptiveCardInWorkspace } from "../utils/commonUtils";
 // import { localize } from "../utils/localizeUtils";
-import accountTreeViewProviderInstance from "./account/accountTreeViewProvider";
+// import accountTreeViewProviderInstance from "./account/accountTreeViewProvider";
 import { CommandsTreeViewProvider } from "./commandsTreeViewProvider";
 // import envTreeProviderInstance from "./environmentTreeViewProvider";
 import { CommandStatus, TreeViewCommand } from "./treeViewCommand";

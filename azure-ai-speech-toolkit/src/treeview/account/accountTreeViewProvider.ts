@@ -1,109 +1,109 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// // Copyright (c) Microsoft Corporation.
+// // Licensed under the MIT license.
 
-import * as vscode from "vscode";
+// import * as vscode from "vscode";
 
-import { TokenProvider } from "../../api/login";
-import { DynamicNode } from "../dynamicNode";
-import { AzureAccountNode } from "./azureNode";
+// import { TokenProvider } from "../../api/login";
+// import { DynamicNode } from "../dynamicNode";
+// import { AzureAccountNode } from "./azureNode";
 
-class AccountTreeViewProvider implements vscode.TreeDataProvider<DynamicNode> {
-  private static instance: AccountTreeViewProvider;
-  private _onDidChangeTreeData: vscode.EventEmitter<DynamicNode | undefined | void> =
-    new vscode.EventEmitter<DynamicNode | undefined | void>();
-  readonly onDidChangeTreeData: vscode.Event<DynamicNode | undefined | void> =
-    this._onDidChangeTreeData.event;
+// class AccountTreeViewProvider implements vscode.TreeDataProvider<DynamicNode> {
+//   private static instance: AccountTreeViewProvider;
+//   private _onDidChangeTreeData: vscode.EventEmitter<DynamicNode | undefined | void> =
+//     new vscode.EventEmitter<DynamicNode | undefined | void>();
+//   readonly onDidChangeTreeData: vscode.Event<DynamicNode | undefined | void> =
+//     this._onDidChangeTreeData.event;
 
-  public azureAccountNode = new AzureAccountNode(this._onDidChangeTreeData);
+//   public azureAccountNode = new AzureAccountNode(this._onDidChangeTreeData);
 
-  private constructor() {}
+//   private constructor() {}
 
-  public static getInstance() {
-    if (!AccountTreeViewProvider.instance) {
-      AccountTreeViewProvider.instance = new AccountTreeViewProvider();
-    }
-    return AccountTreeViewProvider.instance;
-  }
+//   public static getInstance() {
+//     if (!AccountTreeViewProvider.instance) {
+//       AccountTreeViewProvider.instance = new AccountTreeViewProvider();
+//     }
+//     return AccountTreeViewProvider.instance;
+//   }
 
-  public subscribeToStatusChanges(tokenProvider: TokenProvider) {
-    // void tokenProvider.m365TokenProvider?.setStatusChangeMap(
-    //   "tree-view",
-    //   { scopes: AppStudioScopes },
-    //   (status, token, accountInfo) =>
-    //     m365AccountStatusChangeHandler("appStudio", status, token, accountInfo)
-    // );
-    void tokenProvider.azureAccountProvider?.setStatusChangeMap(
-      "tree-view",
-      azureAccountStatusChangeHandler
-    );
-  }
+//   public subscribeToStatusChanges(tokenProvider: TokenProvider) {
+//     // void tokenProvider.m365TokenProvider?.setStatusChangeMap(
+//     //   "tree-view",
+//     //   { scopes: AppStudioScopes },
+//     //   (status, token, accountInfo) =>
+//     //     m365AccountStatusChangeHandler("appStudio", status, token, accountInfo)
+//     // );
+//     void tokenProvider.azureAccountProvider?.setStatusChangeMap(
+//       "tree-view",
+//       azureAccountStatusChangeHandler
+//     );
+//   }
 
-  public getTreeItem(element: DynamicNode): vscode.TreeItem | Promise<vscode.TreeItem> {
-    return element.getTreeItem();
-  }
+//   public getTreeItem(element: DynamicNode): vscode.TreeItem | Promise<vscode.TreeItem> {
+//     return element.getTreeItem();
+//   }
 
-  public getChildren(element?: DynamicNode): vscode.ProviderResult<DynamicNode[]> {
-    if (!element) {
-      return this.getAccountNodes();
-    }
-    return element.getChildren();
-  }
+//   public getChildren(element?: DynamicNode): vscode.ProviderResult<DynamicNode[]> {
+//     if (!element) {
+//       return this.getAccountNodes();
+//     }
+//     return element.getChildren();
+//   }
 
-  private getAccountNodes(): DynamicNode[] {
-    // if (isSPFxProject) {
-    //   return [this.m365AccountNode];
-    // } else {
-      return [/*this.m365AccountNode,*/ this.azureAccountNode];
-    // }
-  }
-}
+//   private getAccountNodes(): DynamicNode[] {
+//     // if (isSPFxProject) {
+//     //   return [this.m365AccountNode];
+//     // } else {
+//       return [/*this.m365AccountNode,*/ this.azureAccountNode];
+//     // }
+//   }
+// }
 
-// async function m365AccountStatusChangeHandler(
-//   source: string,
+// // async function m365AccountStatusChangeHandler(
+// //   source: string,
+// //   status: string,
+// //   token?: string | undefined,
+// //   accountInfo?: Record<string, unknown> | undefined
+// // ) {
+// //   const instance = AccountTreeViewProvider.getInstance();
+// //   if (status === "SignedIn") {
+// //     if (accountInfo) {
+// //       instance.m365AccountNode.setSignedIn(
+// //         (accountInfo.upn as string) ? (accountInfo.upn as string) : ""
+// //       );
+// //       if (token && source === "appStudio") {
+// //         instance.m365AccountNode.updateChecks(token, true, true);
+// //       }
+// //     }
+// //   } else if (status === "SigningIn") {
+// //     instance.m365AccountNode.setSigningIn();
+// //   } else if (status === "SignedOut") {
+// //     instance.m365AccountNode.setSignedOut();
+// //   } else if (status == "Switching") {
+// //     instance.m365AccountNode.setSwitching();
+// //   }
+// //   await envTreeProviderInstance.reloadEnvironments();
+// //   return Promise.resolve();
+// // }
+
+// async function azureAccountStatusChangeHandler(
 //   status: string,
 //   token?: string | undefined,
 //   accountInfo?: Record<string, unknown> | undefined
 // ) {
 //   const instance = AccountTreeViewProvider.getInstance();
 //   if (status === "SignedIn") {
-//     if (accountInfo) {
-//       instance.m365AccountNode.setSignedIn(
-//         (accountInfo.upn as string) ? (accountInfo.upn as string) : ""
-//       );
-//       if (token && source === "appStudio") {
-//         instance.m365AccountNode.updateChecks(token, true, true);
-//       }
+//     const username = (accountInfo?.email as string) || (accountInfo?.upn as string);
+//     if (username) {
+//       instance.azureAccountNode.setSignedIn(username);
+//       // await envTreeProviderInstance.reloadEnvironments();
 //     }
 //   } else if (status === "SigningIn") {
-//     instance.m365AccountNode.setSigningIn();
+//     instance.azureAccountNode.setSigningIn();
 //   } else if (status === "SignedOut") {
-//     instance.m365AccountNode.setSignedOut();
-//   } else if (status == "Switching") {
-//     instance.m365AccountNode.setSwitching();
+//     instance.azureAccountNode.setSignedOut();
+//     // await envTreeProviderInstance.reloadEnvironments();
 //   }
-//   await envTreeProviderInstance.reloadEnvironments();
 //   return Promise.resolve();
 // }
 
-async function azureAccountStatusChangeHandler(
-  status: string,
-  token?: string | undefined,
-  accountInfo?: Record<string, unknown> | undefined
-) {
-  const instance = AccountTreeViewProvider.getInstance();
-  if (status === "SignedIn") {
-    const username = (accountInfo?.email as string) || (accountInfo?.upn as string);
-    if (username) {
-      instance.azureAccountNode.setSignedIn(username);
-      // await envTreeProviderInstance.reloadEnvironments();
-    }
-  } else if (status === "SigningIn") {
-    instance.azureAccountNode.setSigningIn();
-  } else if (status === "SignedOut") {
-    instance.azureAccountNode.setSignedOut();
-    // await envTreeProviderInstance.reloadEnvironments();
-  }
-  return Promise.resolve();
-}
-
-export default AccountTreeViewProvider.getInstance();
+// export default AccountTreeViewProvider.getInstance();

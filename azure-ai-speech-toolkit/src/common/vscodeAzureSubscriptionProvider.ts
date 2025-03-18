@@ -32,8 +32,9 @@ export class VSCodeAzureSubscriptionProvider {
       createIfNone: false,
       silent: true,
     });
+
     if (!session) {
-      return Promise.reject(Error("getSubscriptionClient error"));
+      return Promise.reject(Error("Failed to get session from VS Code with scopes: " + scopes + " and tenantId: " + tenantId));
     }
 
     const credential: TokenCredential = {
@@ -64,7 +65,10 @@ export class VSCodeAzureSubscriptionProvider {
    * @returns A list of tenants.
    */
   public async getTenants(): Promise<TenantIdDescription[]> {
-    const { client } = await this.getSubscriptionClient(undefined, AzureScopes);
+    const { client } = await this.getSubscriptionClient(undefined, AzureScopes).catch((e) => {
+      return Promise.reject(new Error("Failed to get subscription client: " + e));
+    }
+    );
 
     const results: TenantIdDescription[] = [];
 
@@ -89,10 +93,14 @@ export class VSCodeAzureSubscriptionProvider {
 
         // For each tenant, get the list of subscriptions
         results.push(...(await this.getSubscriptionsForTenant(tenantId)));
-      } catch (e) { }
+      } catch (e) {
+        // print error message. Don't throw error for certain tenantId.
+        console.error("Failed to get subscriptions for tenantId: " + tenant.tenantId + ". Error: " + e);
+      }
     }
     if (results.length === 0) {
-      console.log("No subscriptions found.");
+      console.log("No subscriptions found for the user.");
+      return [];
     }
     const sortSubscriptions = (subscriptions: AzureSubscription[]): AzureSubscription[] =>
       subscriptions.sort((a, b) => a.name.localeCompare(b.name));
@@ -406,24 +414,28 @@ export class VSCodeAzureSubscriptionProvider {
     const { client, credential, authentication } = await this.getSubscriptionClient(
       tenantId,
       AzureScopes
-    );
+    ).catch((e) => {
+      return Promise.reject(new Error("Failed to get subscription client for tenantId: " + tenantId + " and scopes: " + AzureScopes + ". Error: " + e));
+    });
+
     const environment = getConfiguredAzureEnv();
 
     const subscriptions: AzureSubscription[] = [];
 
     for await (const subscription of client.subscriptions.list()) {
-
-      subscriptions.push({
-        authentication: authentication,
-        environment: environment,
-        credential: credential,
-        isCustomCloud: environment.isCustomCloud,
-        /* eslint-disable @typescript-eslint/no-non-null-assertion */
-        name: subscription.displayName!,
-        subscriptionId: subscription.subscriptionId!,
-        /* eslint-enable @typescript-eslint/no-non-null-assertion */
-        tenantId: tenantId,
-      });
+      if (subscription.tenantId === tenantId) {
+        subscriptions.push({
+          authentication: authentication,
+          environment: environment,
+          credential: credential,
+          isCustomCloud: environment.isCustomCloud,
+          /* eslint-disable @typescript-eslint/no-non-null-assertion */
+          name: subscription.displayName!,
+          subscriptionId: subscription.subscriptionId!,
+          /* eslint-enable @typescript-eslint/no-non-null-assertion */
+          tenantId: tenantId,
+        });
+      }
     }
 
     return subscriptions;
@@ -435,7 +447,14 @@ export async function getSessionFromVSCode(
   tenantId?: string,
   options?: vscode.AuthenticationGetSessionOptions
 ): Promise<vscode.AuthenticationSession | undefined> {
-  return await vscode.authentication.getSession(Microsoft, getScopes(scopes, tenantId), options);
+  const sessionWithTenantId = await vscode.authentication.getSession(Microsoft, getScopes(scopes, tenantId), options);
+
+  if (sessionWithTenantId == undefined) {
+    // Failed to get session with tenantId, try to get default session without tenantId.
+    return await vscode.authentication.getSession(Microsoft, getScopes(scopes), options);
+  }
+
+  return sessionWithTenantId;
 }
 
 function ensureEndingSlash(value: string): string {
@@ -470,8 +489,9 @@ async function getCredentialFromVSCodeSession(
     createIfNone: false,
     silent: true,
   });
+
   if (!session) {
-    return Promise.reject(Error("Fail to get session from VS Code."));
+    return Promise.reject(Error("Failed to get session from VS Code with scopes: " + scopes + " and tenantId: " + tenantId));
   }
 
   const credential: TokenCredential = {

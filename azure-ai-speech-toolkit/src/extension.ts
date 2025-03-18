@@ -5,7 +5,7 @@ import { CommandKeys, ContextKeys, TaskName, TerminalName, VSCodeCommands } from
 import * as handlers from "./handlers";
 import { initializeGlobalVariables, isSpeechFxProject } from './globalVariables';
 import { VSCodeUI } from './ui/ui';
-import accountTreeViewProviderInstance from "./treeview/account/accountTreeViewProvider";
+// import accountTreeViewProviderInstance from "./treeview/account/accountTreeViewProvider";
 import { AzureAccountManager } from './common/azureLogin';
 import TreeViewManagerInstance from "./treeview/treeViewManager";
 import { isSpeechResourceSeleted } from './utils';
@@ -107,9 +107,9 @@ export async function activate(context: vscode.ExtensionContext) {
 async function activateResourceTreeRegistration(context: vscode.ExtensionContext) {
 	TreeViewManagerInstance.registerTreeViews(context);
 
-	accountTreeViewProviderInstance.subscribeToStatusChanges({
-		azureAccountProvider: AzureAccountManager.getInstance(),
-	});
+	// accountTreeViewProviderInstance.subscribeToStatusChanges({
+	// 	azureAccountProvider: AzureAccountManager.getInstance(),
+	// });
 
 	resourceTreeViewProvider.subscribeToStatusChanges({
 		azureAccountProvider: AzureAccountManager.getInstance(),

@@ -77,3 +77,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Move API key to pipeline.
 - Add new samples: batch synthesis; batch transcription.
+
+## 0.0.18
+
+- Fix: fix issue that fails to get VS Code session with tenantId

@@ -81,3 +81,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.18
 
 - Fix: fix issue that fails to get VS Code session with tenantId
+
+
+## 0.0.19
+
+- Fix: fix production ai key update.

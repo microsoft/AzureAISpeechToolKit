@@ -192,18 +192,19 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
 
   const execution = await vscode.tasks.executeTask(task);
 
-  let sampleTaskTelemetryProperties: { [p: string]: string } = {};
-  if (fs.existsSync(envFilePath)) {
-    sampleTaskTelemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
-  }
-
-  if (fs.existsSync(ymlPath)) {
-    sampleTaskTelemetryProperties[TelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
-  }
 
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
+
+      let sampleTaskTelemetryProperties: { [p: string]: string } = {};
+      if (fs.existsSync(envFilePath)) {
+        sampleTaskTelemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
+      }
+
+      if (fs.existsSync(ymlPath)) {
+        sampleTaskTelemetryProperties[TelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+      }
 
       if (e.exitCode === 0) {
         sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "true";
@@ -313,7 +314,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
       ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, {
         [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
+        [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
       });
       return;
     }

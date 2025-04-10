@@ -26,7 +26,8 @@ import {
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
 import { createAzureAIServiceHandler } from "../handlers";
-
+import { UserError } from "../api/error";
+import { ErrorMessages, ErrorSource, ExtensionErrors } from "./extensionErrors";
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 
 export class AzureAccountManager extends login implements AzureAccountProvider {
@@ -79,13 +80,14 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       const userConfirmation: boolean = await this.doesUserConfirmLogin();
       if (!userConfirmation) {
         // throw user cancel error
-        throw new Error("[UserError] user cancel to login");
-        // throw new UserError(
-        //   "Login",
-        //   ExtensionErrors.UserCancel,
-        //   getDefaultString("teamstoolkit.common.userCancel"),
-        //   localize("teamstoolkit.common.userCancel")
-        // );
+        throw new UserError(
+          ErrorSource.login,
+          ExtensionErrors.UserCancel,
+          ErrorMessages.UserCancel,
+          "User cancel to sign in",
+          // getDefaultString("teamstoolkit.common.userCancel"),
+          // localize("teamstoolkit.common.userCancel")
+        );
       }
     }
 
@@ -97,13 +99,18 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       void this.notifyStatus();
       const session = await getSessionFromVSCode(AzureScopes, undefined, { createIfNone: true });
       if (session === undefined) {
-        throw new Error("[UserError] loginTimeoutDescription");
-        // throw new UserError(
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginComponent"),
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutTitle"),
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutDescription"),
-        //   localize("teamstoolkit.codeFlowLogin.loginTimeoutDescription")
-        // );
+        // throw new UserError("Login", "LoginTimeout", "Login timeout", "Login timeout");
+        // throw new Error("[UserError] loginTimeoutDescription");
+        throw new UserError(
+          ErrorSource.login,
+          ExtensionErrors.LoginTimeout,
+          ErrorMessages.LoginTimeout,
+          ErrorMessages.LoginTimeout,
+          // getDefaultString("teamstoolkit.codeFlowLogin.loginComponent"),
+          // getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutTitle"),
+          // getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutDescription"),
+          // localize("teamstoolkit.codeFlowLogin.loginTimeoutDescription")
+        );
       }
       if (await globalStateGet(showAzureSignOutHelp, true)) {
         void vscode.window
@@ -123,13 +130,15 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       void this.notifyStatus();
       if ((e as Error)?.message.includes("User did not consent ")) {
         // throw user cancel error
-        throw new Error("[UserError] UserCancel");
-        // throw new UserError(
-        //   "Login",
-        //   ExtensionErrors.UserCancel,
-        //   getDefaultString("teamstoolkit.common.userCancel"),
-        //   localize("teamstoolkit.common.userCancel")
-        // );
+        // throw new UserError("Login", "UserCancel", "User cancel to sign in", "User cancel to sign in");
+        throw new UserError(
+          ErrorSource.login,
+          ExtensionErrors.UserCancel,
+          ErrorMessages.UserCancel,
+          ErrorMessages.UserCancel,
+          // getDefaultString("teamstoolkit.common.userCancel"),
+          // localize("teamstoolkit.common.userCancel")
+        );
       } else {
         throw e;
       }
@@ -237,13 +246,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     const userConfirmation: boolean = await this.doesUserConfirmSignout();
     if (!userConfirmation) {
       // throw user cancel error
-      throw new Error("[UserError] user cancel to sign out");
-      //   throw new UserError(
-      //     "SignOut",
-      //     ExtensionErrors.UserCancel,
-      //     getDefaultString("teamstoolkit.common.userCancel"),
-      //     localize("teamstoolkit.common.userCancel")
-      //   );
+      throw new UserError(
+        ErrorSource.logout,
+        ExtensionErrors.UserCancel,
+        ErrorMessages.UserCancel,
+        ErrorMessages.UserCancel
+      );
     }
     try {
       // todo
@@ -323,14 +331,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       }
     }
     return Promise.reject(
-      new Error("[UserError] Login unknown subscription.")
-
-      //   new UserError(
-      //     "Login",
-      //     ExtensionErrors.UnknownSubscription,
-      //     getDefaultString("teamstoolkit.azureLogin.unknownSubscription"),
-      //     localize("teamstoolkit.azureLogin.unknownSubscription")
-      //   )
+      new UserError(
+        ErrorSource.login,
+        ExtensionErrors.UnknownSubscription,
+        ErrorMessages.UnknownSubscription,
+        ErrorMessages.UnknownSubscription,
+      )
     );
   }
 

@@ -18,6 +18,7 @@ import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/re
 import { ExtTelemetry } from './telemetry/extTelemetry';
 import { TelemetryEvent, TelemetryProperty } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
+import { UserError } from "./api/error";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -69,7 +70,7 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     };
   } catch (error) {
     console.error("Fail to create Azure AI Service: ", error);
-    if (!(error instanceof Error && error.message.startsWith("[UserError]"))) {
+    if (!(error instanceof Error && error instanceof UserError)) {
       vscode.window.showErrorMessage('Fail to create Azure AI Service: ' + error);
     }
     telemetryProperties = {
@@ -192,7 +193,6 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
 
   const execution = await vscode.tasks.executeTask(task);
 
-
   const disposable = vscode.tasks.onDidEndTaskProcess(async (e) => {
     if (e.execution === execution) {
       disposable.dispose();
@@ -311,18 +311,17 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);
 
     } catch (error) {
-      vscode.window.showErrorMessage('Fail to configure speech resource: ' + error);
+      var error_msg = 'Fail to select speech resource: ' + error;
+      vscode.window.showErrorMessage(error_msg);
       ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, {
         [TelemetryProperty.SUCCESS]: "false",
-        [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
+        [TelemetryProperty.ERROR_MESSAGE]: error_msg
       });
       return;
     }
   }
 
-  // send telemetry event
-  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE,
-    TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath));
+  var sampleTaskTelemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
 
   try {
     // Update the config.json file with the new values.
@@ -330,14 +329,24 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     const region = extractEnvValue(properties, EnvKeys.ServiceRegion);
     const customSubDomainName = extractEnvValue(properties, EnvKeys.CustomSubDomainName);
     if (!key || !region) {
-      vscode.window.showErrorMessage('Fail to configure speech resource. Missing key or region.');
+      var error_msg = 'Fail to configure speech resource. Missing key or region.';
+      vscode.window.showErrorMessage(error_msg);
+      sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "false";
+      sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = error_msg;
+      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
       return;
     }
     updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region, customSubDomainName);
   } catch (error) {
-    vscode.window.showErrorMessage('Fail to update config.json file: ' + error);
+    var error_msg = 'Fail to update config.json file: ' + error;
+    sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "false";
+    sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = error_msg;
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
     return;
   }
+
+  // send telemetry event
+  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
 
   // Step 5: execute available tasks if any exists.
   const nextAvailableTaskName = await getNextAvailableTask(null);
@@ -364,9 +373,6 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
   } else {
     vscode.window.showInformationMessage('Successfully updated environment file ' + envFilePath + '.');
   }
-
-  // send telemetry event
-  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath));
 }
 
 async function doesUserConfirmReConfigureSpeechResource(): Promise<boolean> {

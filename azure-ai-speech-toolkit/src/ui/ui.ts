@@ -46,17 +46,18 @@ import {
   SingleSelectConfig,
   SingleSelectResult,
 //   StaticOptions,
-//   SystemError,
+  // SystemError,
   UIConfig,
   UserInteraction,
 } from "../api/ui";
+import { SystemError} from "../api/error";
 import { OptionItem } from "../api/types";
 import { StaticOptions } from "../api/question";
 import { Err, ok, Result } from "neverthrow";
 import { ProgressHandler } from "./progressHandler";
 import { Colors } from "../api/log";
-// import { EmptyOptionsError, InternalUIError, ScriptTimeoutError, UserCancelError } from "./error";
-// import { DefaultLocalizer, Localizer } from "./localize";
+import { EmptyOptionsError, InternalUIError, ScriptTimeoutError, UserCancelError } from "./error";
+import { DefaultLocalizer, Localizer } from "./localize";
 
 export async function sleep(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -140,21 +141,20 @@ function isSame(set1: Set<string>, set2: Set<string>): boolean {
 export class VSCodeUI implements UserInteraction {
   terminalName: string;
 //   assembleError: (e: any) => Error;
-//   localizer: Localizer;
-  constructor(terminalName: string) {
+  localizer: Localizer;
+  constructor(terminalName: string, localizer?: Localizer) {
     this.terminalName = terminalName;
     // this.assembleError = assembleError;
-    // this.localizer = localizer || new DefaultLocalizer();
+    this.localizer = localizer || new DefaultLocalizer();
   }
 
   async selectOption(config: SingleSelectConfig): Promise<Result<SingleSelectResult, Error>> {
     if (typeof config.options === "object" && config.options.length === 0) {
       return new Err(
-        new Error("[EmptyOptionsError] select option is empty")
-        // new EmptyOptionsError(
-        //   this.localizer.emptyOptionErrorMessage(),
-        //   this.localizer.emptyOptionErrorDisplayMessage()
-        // )
+        new EmptyOptionsError(
+          this.localizer.emptyOptionErrorMessage(),
+          this.localizer.emptyOptionErrorDisplayMessage()
+        )
       );
     }
     const disposables: Disposable[] = [];
@@ -263,9 +263,9 @@ export class VSCodeUI implements UserInteraction {
           quickPick.onDidHide(() => {
             resolve(
               new Err(
-                new Error("User canceled."
-                //   this.localizer.cancelErrorMessage(),
-                //   this.localizer.cancelErrorDisplayMessage()
+                new UserCancelError(
+                  this.localizer.cancelErrorMessage(),
+                  this.localizer.cancelErrorDisplayMessage()
                 )
               )
             );
@@ -353,11 +353,10 @@ export class VSCodeUI implements UserInteraction {
   async selectOptions(config: MultiSelectConfig): Promise<Result<MultiSelectResult, Error>> {
     if (typeof config.options === "object" && config.options.length === 0) {
       return new Err(
-        new Error("[EmptyOptionsError] select option is empty")
-        // new EmptyOptionsError(
-        //   this.localizer.emptyOptionErrorMessage(),
-        //   this.localizer.emptyOptionErrorDisplayMessage()
-        // )
+        new EmptyOptionsError(
+          this.localizer.emptyOptionErrorMessage(),
+          this.localizer.emptyOptionErrorDisplayMessage()
+        )
       );
     }
     const disposables: Disposable[] = [];
@@ -452,11 +451,10 @@ export class VSCodeUI implements UserInteraction {
           quickPick.onDidHide(() => {
             resolve(
               new Err(
-                new Error("[UserCancel] select option is empty")
-                // new UserCancelError(
-                //   this.localizer.emptyOptionErrorMessage(),
-                //   this.localizer.emptyOptionErrorDisplayMessage()
-                // )
+                new UserCancelError(
+                  this.localizer.emptyOptionErrorMessage(),
+                  this.localizer.emptyOptionErrorDisplayMessage()
+                )
               )
             );
           }),
@@ -628,11 +626,10 @@ export class VSCodeUI implements UserInteraction {
           inputBox.onDidHide(() => {
             resolve(
               new Err(
-                new Error("[UserCancel] select option is empty")
-                // new UserCancelError(
-                //   this.localizer.emptyOptionErrorMessage(),
-                //   this.localizer.emptyOptionErrorDisplayMessage()
-                // )
+                new UserCancelError(
+                  this.localizer.emptyOptionErrorMessage(),
+                  this.localizer.emptyOptionErrorDisplayMessage()
+                )
               )
             );
           }),
@@ -731,12 +728,10 @@ export class VSCodeUI implements UserInteraction {
               } else {
                 resolve(
                   new Err(
-                new Error("[UserCancel] select option is empty")
-
-                    // new UserCancelError(
-                    //   this.localizer.emptyOptionErrorMessage(),
-                    //   this.localizer.emptyOptionErrorDisplayMessage()
-                    // )
+                    new UserCancelError(
+                      this.localizer.emptyOptionErrorMessage(),
+                      this.localizer.emptyOptionErrorDisplayMessage()
+                    )
                   )
                 );
               }
@@ -750,11 +745,10 @@ export class VSCodeUI implements UserInteraction {
             if (!hideByDialog) {
               resolve(
                 new Err(
-                new Error("[UserCancel] select option is empty")
-                //   new UserCancelError(
-                //     this.localizer.emptyOptionErrorMessage(),
-                //     this.localizer.emptyOptionErrorDisplayMessage()
-                //   )
+                  new UserCancelError(
+                    this.localizer.emptyOptionErrorMessage(),
+                    this.localizer.emptyOptionErrorDisplayMessage()
+                  )
                 )
               );
             }
@@ -820,12 +814,11 @@ export class VSCodeUI implements UserInteraction {
       if (config.possibleFiles.find((o) => o.id === "browse" || o.id === "default")) {
         return Promise.resolve(
           new Err(
-            new Error("[SystemError][UI] InvalidInput. " + 'Possible files should not contain item with id "browse" or "default".')
-            // new SystemError(
-            //   "UI",
-            //   "InvalidInput",
-            //   'Possible files should not contain item with id "browse" or "default".'
-            // )
+            new SystemError(
+              "UI",
+              "InvalidInput",
+              'Possible files should not contain item with id "browse" or "default".'
+            )
           )
         );
       }
@@ -925,11 +918,10 @@ export class VSCodeUI implements UserInteraction {
             if (fileSelectorIsOpen === false)
               resolve(
                 new Err(
-                new Error("[UserCancel] select option is empty")
-                //   new UserCancelError(
-                //     this.localizer.emptyOptionErrorMessage(),
-                //     this.localizer.emptyOptionErrorDisplayMessage()
-                //   )
+                  new UserCancelError(
+                    this.localizer.emptyOptionErrorMessage(),
+                    this.localizer.emptyOptionErrorDisplayMessage()
+                  )
                 )
               );
           }),
@@ -955,11 +947,10 @@ export class VSCodeUI implements UserInteraction {
       return ok(result);
     } else {
       return new Err(
-        new Error("[InternalUIError]" + `env.openExternal('${link}')`)
-        // new InternalUIError(
-        //   this.localizer.internalErrorMessage(`env.openExternal('${link}')`),
-        //   this.localizer.internalErrorDisplayMessage(`env.openExternal('${link}')`)
-        // )
+        new InternalUIError(
+          this.localizer.internalErrorMessage(`env.openExternal('${link}')`),
+          this.localizer.internalErrorDisplayMessage(`env.openExternal('${link}')`)
+        )
       );
     }
   }
@@ -1015,11 +1006,10 @@ export class VSCodeUI implements UserInteraction {
     const value = res.value;
     if (value === confirmText) return ok({ type: "success", result: true });
     return new Err(
-                new Error("[UserCancel] select option is empty")
-    //   new UserCancelError(
-    //     this.localizer.emptyOptionErrorMessage(),
-    //     this.localizer.emptyOptionErrorDisplayMessage()
-    //   )
+      new UserCancelError(
+        this.localizer.emptyOptionErrorMessage(),
+        this.localizer.emptyOptionErrorDisplayMessage()
+      )
     );
   }
 
@@ -1068,11 +1058,10 @@ export class VSCodeUI implements UserInteraction {
             else
               resolve(
                 new Err(
-                new Error("select option is empty")
-                //   new UserCancelError(
-                //     this.localizer.emptyOptionErrorMessage(),
-                //     this.localizer.emptyOptionErrorDisplayMessage()
-                //   )
+                  new UserCancelError(
+                    this.localizer.emptyOptionErrorMessage(),
+                    this.localizer.emptyOptionErrorDisplayMessage()
+                  )
                 )
               );
           },
@@ -1168,11 +1157,10 @@ export class VSCodeUI implements UserInteraction {
       return ok(true);
     } else {
       return new Err(
-        new Error("[InternalUIError]" + `workspace.openTextDocument('${filePath}')`)
-        // new InternalUIError(
-        //   this.localizer.internalErrorMessage(`workspace.openTextDocument('${filePath}')`),
-        //   this.localizer.internalErrorDisplayMessage(`workspace.openTextDocument('${filePath}')`)
-        // )
+        new InternalUIError(
+          this.localizer.internalErrorMessage(`workspace.openTextDocument('${filePath}')`),
+          this.localizer.internalErrorDisplayMessage(`workspace.openTextDocument('${filePath}')`)
+        )
       );
     }
   }

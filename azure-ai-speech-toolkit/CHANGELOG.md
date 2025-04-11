@@ -86,3 +86,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.19
 
 - Fix: fix production ai key update.
+
+## 0.0.20
+
+- Improve error handling.

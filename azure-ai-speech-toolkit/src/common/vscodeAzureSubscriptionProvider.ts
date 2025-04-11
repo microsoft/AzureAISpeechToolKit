@@ -13,6 +13,8 @@ import { AzureResourceGroupInfo, AzureSpeechResourceInfo, SubscriptionInfo } fro
 import { AzureResourceAccountType } from "./constants";
 import { delay, getAzureResourceAccountTypeDisplayName } from "../utils";
 import { openSpeechResourceInAzurePortalUrl } from "../handlers";
+import { SystemError, UserError } from "../api/error";
+import { ErrorMessages, ErrorNames, ExtensionSource } from "./extensionErrors";
 
 export const Microsoft = "microsoft";
 
@@ -125,7 +127,12 @@ export class VSCodeAzureSubscriptionProvider {
         customSubDomainName: speechService.properties?.customSubDomainName
       };
     } catch (error) {
-      throw new Error(`Unable to retrieve keys and region for Speech Resource: ${speechResourceName}. Error: ${error}`);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToGetSpeechResourceKeyAndRegion,
+        ErrorMessages.FailedToGetSpeechResourceKeyAndRegion + speechResourceName + `. Error: ${error}`,
+      );
+      // throw new Error(`Unable to retrieve keys and region for Speech Resource: ${speechResourceName}. Error: ${error}`);
     }
   }
 
@@ -179,7 +186,12 @@ export class VSCodeAzureSubscriptionProvider {
       return results;
 
     } catch (error) {
-      throw new Error(`Unable to retrieve resource groups for subscription: ${subscriptionInfo.name}. Error: ${error}`);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToGetResourceGroupListBySubscriptionId,
+        ErrorMessages.FailedToGetResourceGroupListBySubscriptionId + subscriptionInfo.name + `. Error: ${error}`,
+      );
+      // throw new Error(`Unable to retrieve resource groups for subscription: ${subscriptionInfo.name}. Error: ${error}`);
     }
   }
 
@@ -200,7 +212,13 @@ export class VSCodeAzureSubscriptionProvider {
 
       return Array.from(new Set(skusInLocation.map(sku => `${sku.tier} ${sku.name}`)));
     } catch (error) {
-      throw new Error(`Unable to retrieve available pricing tiers for Azure AI Service. Error: ${error}`);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToGetSpeechServiceAvailablePricingTiers,
+        ErrorMessages.FailedToGetAISpeechAvailablePricingTiers + ` Error: ${error}`,
+      );
+
+      // throw new Error(`Unable to retrieve available pricing tiers for Azure AI Service. Error: ${error}`);
     }
   }
 
@@ -216,7 +234,13 @@ export class VSCodeAzureSubscriptionProvider {
     if (resourceType && resourceType.locations) {
       return resourceType.locations;
     } else {
-      throw new Error('Unable to retrieve available regions for Azure AI Service');
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToGetSpeechServiceAvailableRegions,
+        ErrorMessages.FailedToGetSpeechServiceAvailableRegions,
+      );
+
+      // throw new Error('Unable to retrieve available regions for Azure AI Service');
     }
   }
 
@@ -293,7 +317,12 @@ export class VSCodeAzureSubscriptionProvider {
         return false;
       }
     } catch (error) {
-      throw new Error(`Unable to check resource existence: ${serviceName}. Error: ${error}`);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToCheckResourceExistence,
+        ErrorMessages.FailedToCheckResourceExistence + serviceName + `. Error: ${error}`,
+      );
+      // throw new Error(`Unable to check resource existence: ${serviceName}. Error: ${error}`);
     }
   }
 
@@ -306,9 +335,20 @@ export class VSCodeAzureSubscriptionProvider {
       return (!!result.body);
     } catch (error) {
       if ((error as any).statusCode === 403) {
-        throw new Error(`You do not have permission to check resource group existence. Error: ${JSON.stringify(error)}`);
+        throw new UserError(
+          ExtensionSource,
+          ErrorNames.AuthorizationError,
+          ErrorMessages.AuthorizationErrorWhenCheckingResourceGroupExistence + resourceGroupName + `. Error: ${error}`,
+        );
+        // throw new Error(`You do not have permission to check resource group existence. Error: ${JSON.stringify(error)}`);
       }
-      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${JSON.stringify(error)}`);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToCheckResourceGroupExistence,
+        ErrorMessages.FailedToCheckResourceGroupExistence + resourceGroupName + `. Error: ${error}`,
+      );
+
+      // throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${JSON.stringify(error)}`);
     }
   }
 
@@ -348,12 +388,23 @@ export class VSCodeAzureSubscriptionProvider {
         } catch (retryError) {
           retries++;
           if (retries >= maxRetries) {
-            throw new Error(`Unable to find resource group '${resourceGroupName}' after creation.`);
+            throw new SystemError(
+              ExtensionSource,
+              ErrorNames.FailedToCheckResourceGroupExistence,
+              ErrorMessages.FailedToCheckResourceGroupExistence + resourceGroupName + `. Error: ${retryError}`,
+            );
+            // throw new Error(`Unable to find resource group '${resourceGroupName}' after creation.`);
           }
         }
       }
+      
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.FailedToCheckResourceGroupExistence,
+        ErrorMessages.FailedToCheckResourceGroupExistence + resourceGroupName + `. Error: ${error}`,
+      );
 
-      throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
+      // throw new Error(`Unable to check resource group existence: ${resourceGroupName}. Error: ${error}`);
     }
   }
 

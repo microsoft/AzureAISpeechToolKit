@@ -16,9 +16,10 @@ import { VS_CODE_UI } from "./extension";
 import { extractEnvValue, fetchSpeechServiceInfo, isSpeechResourceSeleted, openDocumentInNewColumn } from "./utils";
 import { isAzureResourceInstanceItemType, ResourceTreeItem } from "./treeview/resourceTreeViewProvider";
 import { ExtTelemetry } from './telemetry/extTelemetry';
-import { TelemetryEvent, TelemetryProperty } from "./telemetry/extTelemetryEvents";
+import { TelemetryEvent, TelemetryProperty, TelemetrySucess } from "./telemetry/extTelemetryEvents";
 import * as TelemetryUtils from "./telemetry/extTelemetryUtils";
-import { UserError } from "./api/error";
+import { SystemError, UserError } from "./api/error";
+import { ErrorMessages, ErrorNames, ExtensionSource } from "./common/extensionErrors";
 
 export async function createAzureAIServiceHandler(...args: unknown[]): Promise<AzureSpeechResourceInfo | undefined> {
   let subscriptionInfo: SubscriptionInfo;
@@ -61,7 +62,7 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     console.log("Azure AI Service created: ", azureResourceInfo);
 
     telemetryProperties = {
-      [TelemetryProperty.SUCCESS]: "true",
+      [TelemetryProperty.SUCCESS]: TelemetrySucess.TRUE,
       [TelemetryProperty.AZURE_SUBSCRIPTION_ID]: subscriptionInfo.id,
       [TelemetryProperty.RESOURCE_GROUP]: resourceGroupName,
       [TelemetryProperty.SERVICE_REGION]: region,
@@ -69,14 +70,12 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
       [TelemetryProperty.SPEECH_RESOURCE_SKU]: sku
     };
   } catch (error) {
-    console.error("Fail to create Azure AI Service: ", error);
-    if (!(error instanceof Error && error instanceof UserError)) {
-      vscode.window.showErrorMessage('Fail to create Azure AI Service: ' + error);
+    let error_message = "Failed to create Azure AI Service: " + error;
+    if (!(error instanceof UserError)) {
+      vscode.window.showErrorMessage(error_message); // only show error message for system error
     }
-    telemetryProperties = {
-      [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
-    }
+    telemetryProperties = TelemetryUtils.getTelemetryErrorProperties(error as Error, error_message);
+
   }
 
   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CREATE_AZURE_AI_SERVICE, telemetryProperties);
@@ -89,14 +88,13 @@ export async function signInAzureHandler(...args: unknown[]) {
   try {
     await azureAccountProvider.getIdentityCredentialAsync(true);
     azureLoginTelemetry = {
-      [TelemetryProperty.SUCCESS]: "true"
+      [TelemetryProperty.SUCCESS]: TelemetrySucess.TRUE
     };
   } catch (error) {
-    vscode.window.showErrorMessage("Fail to sign in Azure: " + error);
-    azureLoginTelemetry = {
-      [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
-    };
+    // console.log("error: " + error);
+    let error_message = "Failed to sign in Azure: " + error;
+    vscode.window.showErrorMessage(error_message);
+    azureLoginTelemetry = TelemetryUtils.getTelemetryErrorProperties(error as Error, error_message);
   }
 
   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.AZURE_LOGIN, azureLoginTelemetry);
@@ -119,11 +117,11 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
     properties = await getSpeechResourcePropertiesByResourceItem(resourceItem);
     ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES);
   } catch (error) {
-    vscode.window.showErrorMessage("Fail to get speech resource properties: " + error);
-    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES, {
-      [TelemetryProperty.SUCCESS]: "false",
-      [TelemetryProperty.ERROR_MESSAGE]: error instanceof Error ? error.message : String(error)
-    });
+    let errorMessage = "Failed to get speech resource properties: " + error;
+    vscode.window.showErrorMessage(errorMessage);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES,
+      TelemetryUtils.getTelemetryErrorProperties(error as Error, errorMessage)
+    );
     return;
   }
 
@@ -136,12 +134,22 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
 
 async function getSpeechResourcePropertiesByResourceItem(resourceItem: ResourceTreeItem): Promise<string> {
   if (!isAzureResourceInstanceItemType(resourceItem.itemType)) {
-    throw new Error("Invalid resource type: " + resourceItem.itemType);
+    throw new SystemError(
+      ExtensionSource,
+      ErrorNames.InvalidResourceType,
+      ErrorMessages.InvalidResourceType + resourceItem.itemType,
+      ErrorMessages.InvalidResourceType + resourceItem.itemType
+    )
   }
 
   const azureSpeechResourceInfo = resourceItem.azureResourceInfo as AzureSpeechResourceInfo;
   if (!azureSpeechResourceInfo) {
-    throw new Error("Missing azure speech resource info.");
+    throw new SystemError(
+      ExtensionSource,
+      ErrorNames.MissingAzureSpeechResource,
+      ErrorMessages.MissingAzureSpeechResource,
+      ErrorMessages.MissingAzureSpeechResource
+    )
   }
 
   return await getSpeechResourceProperties(azureSpeechResourceInfo);
@@ -207,7 +215,7 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
       }
 
       if (e.exitCode === 0) {
-        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "true";
+        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.TRUE;
         const nextTaskName = await getNextAvailableTask(taskName);
 
         if (nextTaskName) {
@@ -220,15 +228,17 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
           vscode.window.showInformationMessage(`${taskName} completed successfully.`);
         }
       } else {
-        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "false";
+        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.FALSE;
+        sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = "Unknown error occurred during task execution.";
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
-      let telemetryEvent =
-        taskName === TaskName.ConfigureAndSetupApp
-          ? TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE
-          : taskName === TaskName.BuildApp
-            ? TelemetryEvent.BUILD_SAMPLE
-            : TelemetryEvent.RUN_SAMPLE;
+
+      const taskToTelemetryMap: { [key in TaskName]?: TelemetryEvent } = {
+        [TaskName.ConfigureAndSetupApp]: TelemetryEvent.CONFIGURE_AND_SETUP_SAMPLE,
+        [TaskName.BuildApp]: TelemetryEvent.BUILD_SAMPLE,
+        [TaskName.RunApp]: TelemetryEvent.RUN_SAMPLE,
+      };
+      let telemetryEvent = taskToTelemetryMap[taskName] ?? TelemetryEvent.RUN_SAMPLE;
       ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTaskTelemetryProperties);
     }
   });
@@ -303,7 +313,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       const subscriptionInfo = await askUserForSubscription();
       const speechServiceInfo = await askUserForSpeechResource(subscriptionInfo);
       if (!speechServiceInfo) {
-        // Fail to find a speech service.
+        // Failed to find a speech service.
         return;
       }
       properties = await getSpeechResourceProperties(speechServiceInfo);
@@ -311,12 +321,9 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       envFilePath = await updateEnvfileAndOpen(workspaceFolder, properties);
 
     } catch (error) {
-      var error_msg = 'Fail to select speech resource: ' + error;
+      var error_msg = 'Failed to select speech resource: ' + error;
       vscode.window.showErrorMessage(error_msg);
-      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, {
-        [TelemetryProperty.SUCCESS]: "false",
-        [TelemetryProperty.ERROR_MESSAGE]: error_msg
-      });
+      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, TelemetryUtils.getTelemetryErrorProperties(error as Error, error_msg));
       return;
     }
   }
@@ -329,18 +336,40 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     const region = extractEnvValue(properties, EnvKeys.ServiceRegion);
     const customSubDomainName = extractEnvValue(properties, EnvKeys.CustomSubDomainName);
     if (!key || !region) {
-      var error_msg = 'Fail to configure speech resource. Missing key or region.';
+      var error_msg = 'Failed to configure speech resource: ' + ErrorMessages.MissingKeyOrRegion;
       vscode.window.showErrorMessage(error_msg);
-      sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "false";
-      sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = error_msg;
+      Object.assign(
+        sampleTaskTelemetryProperties,
+        TelemetryUtils.getTelemetryErrorProperties(
+          new SystemError(
+            ExtensionSource,
+            ErrorNames.MissingKeyOrRegion,
+            ErrorMessages.MissingKeyOrRegion,
+            error_msg
+          )
+        )
+      );
+
       ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
       return;
     }
     updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region, customSubDomainName);
   } catch (error) {
-    var error_msg = 'Fail to update config.json file: ' + error;
-    sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = "false";
-    sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = error_msg;
+    var error_msg = 'Failed to update config.json file: ' + (error as Error).message;
+    vscode.window.showErrorMessage(error_msg);
+
+    Object.assign(
+      sampleTaskTelemetryProperties,
+      TelemetryUtils.getTelemetryErrorProperties(
+        new SystemError(
+          ExtensionSource,
+          ErrorNames.UpdateConfigJsonFileError,
+          ErrorMessages.UpdateConfigJsonFileError,
+          error_msg
+        )
+      )
+    );
+
     ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
     return;
   }
@@ -451,9 +480,14 @@ async function askUserForSubscription(): Promise<SubscriptionInfo> {
   let azureAccountProvider = AzureAccountManager.getInstance();
   const subscriptionInAccount = await azureAccountProvider.getSelectedSubscription(true);
   if (!subscriptionInAccount) {
-    throw new Error("SelectSubscriptionError");
-
+    throw new SystemError(
+      ExtensionSource,
+      ErrorNames.EmptySubscriptionInAccount,
+      ErrorMessages.EmptySubscriptionInAccount,
+      ErrorMessages.EmptySubscriptionInAccount
+    );
   }
+
   return subscriptionInAccount;
 }
 
@@ -472,7 +506,12 @@ export async function downloadSampleApp(...args: unknown[]) {
 
   // Validate sampleId
   if (!sampleId || typeof sampleId !== "string") {
-    throw new Error("Invalid sampleId. Received: " + sampleId);
+    throw new SystemError(
+      ExtensionSource,
+      ErrorNames.InvalidArgs,
+      ErrorMessages.InValidSampleId + sampleId,
+      ErrorMessages.InValidSampleId + sampleId
+    )
   }
 
   const res = await VS_CODE_UI.selectFolder({
@@ -483,11 +522,16 @@ export async function downloadSampleApp(...args: unknown[]) {
   });
 
   if (res.isErr()) {
-    throw new Error("Fail to select folder for sample app." + res.error);
+    console.log("[debug] Error selecting folder: " + res.error.message);
+    throw res.error;
   } else {
     // Ensure result is not undefined
     if (!res.value.result) {
-      throw new Error("No folder selected or result is undefined.");
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.EmptyFolderSelected,
+        ErrorMessages.EmptyFolderSelected,
+      )
     }
     const selectedFolder = res.value.result as string;
     let projectPath = path.join(selectedFolder, sampleId);

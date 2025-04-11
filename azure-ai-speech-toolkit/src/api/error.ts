@@ -148,11 +148,6 @@ export class UserError extends Error implements FxError {
     }
 }
 
-// export enum UserErrorNames {
-//     UserCancel = "UserCancel",
-//     UnknownSubscription = "UnknownSubscription",
-// }
-
 /**
  * Users cannot handle it by themselves.
  */

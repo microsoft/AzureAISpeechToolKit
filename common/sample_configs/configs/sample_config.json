@@ -47,7 +47,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/python/from-microphone"
             }
         },
@@ -78,7 +78,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },
@@ -109,7 +109,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/javascript/browser/from-microphone"
             }
         },
@@ -140,7 +140,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/javascript/browser/from-file"
             }
         },
@@ -171,7 +171,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/cpp/linux/compressed-audio-input"
             }
         },
@@ -199,7 +199,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -230,7 +230,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },
@@ -261,7 +261,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
         },
@@ -292,7 +292,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/video-translation/csharp"
             }
         },
@@ -321,7 +321,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/captioning"
             }
         },
@@ -350,7 +350,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         },
@@ -380,7 +380,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/python/web/avatar"
             }
         },
@@ -409,7 +409,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         },
@@ -438,7 +438,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "scenarios/python/console/speech_rewrite_sample"
             }
         },
@@ -467,7 +467,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/batch/csharp"
             }
         },
@@ -495,7 +495,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/batch/python"
             }
         },
@@ -518,13 +518,13 @@
             "configuration": "Ready for debug",
             "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.jpg",
             "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/BinarywoodB/cognitive-services-speech-sdk/contents/samples/batch-synthesis/csharp/README.md?ref=extension-sync-master",
+            "readmePath": "https://api.github.com/repos/BinarywoodB/cognitive-services-speech-sdk/contents/samples/batch-synthesis/csharp/README.md?ref=extension",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/csharp",
             "scenario": false,
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/batch-synthesis/csharp"
             }
         },
@@ -554,7 +554,7 @@
             "downloadUrlInfo": {
                 "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension-sync-master",
+                "ref": "extension",
                 "dir": "samples/batch-synthesis/python"
             }
         }

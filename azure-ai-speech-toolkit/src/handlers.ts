@@ -534,6 +534,9 @@ export async function downloadSampleApp(...args: unknown[]) {
   });
 
   if (res.isErr()) {
+    if (res.error instanceof UserError) {
+      return; // User cancelled the folder selection
+    }
     throw res.error;
   } else {
     // Ensure result is not undefined

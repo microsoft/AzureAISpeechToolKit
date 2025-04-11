@@ -580,7 +580,6 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     };
     const result = await VS_CODE_UI.selectOption(config);
     if (result.isErr()) {
-      vscode.window.showErrorMessage("Error selecting resource group: " + result.error.message);
       throw result.error;
     } else {
       const selectedResourceGroupId = result.value.result as string;

@@ -20,10 +20,22 @@ export enum TelemetryEvent {
 export enum TelemetryProperty {
   SUCCESS = "success",
   ERROR_MESSAGE = "error_message",
+  ERROR_CODE = "error_code",
+  ERROR_TYPE = "error_type",
   SAMPLE_ID = "sample_id",
   AZURE_SUBSCRIPTION_ID = "azure_subscription_id",
   RESOURCE_GROUP = "resource_group",
   SERVICE_REGION = "service_region",
   SPEECH_RESOURCE_SKU = "speech_resource_sku",
   SPEECH_RESOURCE_NAME = "speech_resource_name",
+}
+
+export enum TelemetrySucess {
+  TRUE = "true",
+  FALSE = "false"
+}
+
+export enum TelemetryErrorType {
+  UserError = "user",
+  SystemError = "system",
 }

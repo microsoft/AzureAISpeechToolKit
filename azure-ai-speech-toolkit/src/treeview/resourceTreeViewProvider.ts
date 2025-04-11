@@ -8,6 +8,8 @@ import { AzureAccountManager } from "../common/azureLogin";
 import * as path from 'path';
 import { AzureResourceAccountType, AzureResourceDisplayName, signedOut } from "../common/constants";
 import { ContextKeys, VSCodeCommands } from "../constants";
+import { SystemError } from "../api/error";
+import { ErrorMessages, ErrorNames, ExtensionSource } from "../common/extensionErrors";
 
 class ResourceTreeViewProvider implements vscode.TreeDataProvider<ResourceTreeItem> {
   private static instance: ResourceTreeViewProvider;
@@ -176,9 +178,6 @@ export function isAzureResourceInstanceItemType(itemType: AzureResourceTreeViewI
   return Object.values(AzureResourceInstanceItemType).includes(itemType as AzureResourceInstanceItemType);
 }
 function getAzureResourceAccountType(itemType: AzureResourceTreeViewItemType): AzureResourceAccountType {
-  if (!isAzureResourceTypeItemType(itemType)) {
-    throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
-  }
   switch (itemType) {
     case AzureResourceTypeItemType.AIServiceType:
       return AzureResourceAccountType.AIService;
@@ -187,13 +186,14 @@ function getAzureResourceAccountType(itemType: AzureResourceTreeViewItemType): A
     case AzureResourceTypeItemType.SpeechServiceType:
       return AzureResourceAccountType.SpeechServices;
     default:
-      throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.InvalidResourceType,
+        ErrorMessages.InvalidResourceType + itemType,
+      )
   }
 }
 function getAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemType): AzureResourceInstanceItemType {
-  if (!isAzureResourceTypeItemType(itemType)) {
-    throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
-  }
   switch (itemType) {
     case AzureResourceTypeItemType.AIServiceType:
       return AzureResourceInstanceItemType.AIService;
@@ -202,7 +202,11 @@ function getAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemTyp
     case AzureResourceTypeItemType.SpeechServiceType:
       return AzureResourceInstanceItemType.SpeechService;
     default:
-      throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.InvalidResourceType,
+        ErrorMessages.InvalidResourceType + itemType,
+      )
   }
 }
 

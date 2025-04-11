@@ -26,7 +26,8 @@ import {
   getSessionFromVSCode,
 } from "./vscodeAzureSubscriptionProvider";
 import { createAzureAIServiceHandler } from "../handlers";
-
+import { SystemError, UserError } from "../api/error";
+import { ErrorMessages, ErrorNames, ExtensionSource } from "./extensionErrors";
 const showAzureSignOutHelp = "ShowAzureSignOutHelp";
 
 export class AzureAccountManager extends login implements AzureAccountProvider {
@@ -78,14 +79,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     if (showDialog) {
       const userConfirmation: boolean = await this.doesUserConfirmLogin();
       if (!userConfirmation) {
-        // throw user cancel error
-        throw new Error("[UserError] user cancel to login");
-        // throw new UserError(
-        //   "Login",
-        //   ExtensionErrors.UserCancel,
-        //   getDefaultString("teamstoolkit.common.userCancel"),
-        //   localize("teamstoolkit.common.userCancel")
-        // );
+        throw new UserError(
+          ExtensionSource,
+          ErrorNames.UserCancel,
+          ErrorMessages.UserCancelSignIn,
+          ErrorMessages.UserCancelSignIn
+        );
       }
     }
 
@@ -97,13 +96,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       void this.notifyStatus();
       const session = await getSessionFromVSCode(AzureScopes, undefined, { createIfNone: true });
       if (session === undefined) {
-        throw new Error("[UserError] loginTimeoutDescription");
-        // throw new UserError(
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginComponent"),
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutTitle"),
-        //   getDefaultString("teamstoolkit.codeFlowLogin.loginTimeoutDescription"),
-        //   localize("teamstoolkit.codeFlowLogin.loginTimeoutDescription")
-        // );
+        throw new UserError(
+          ExtensionSource,
+          ErrorNames.LoginTimeout,
+          ErrorMessages.LoginTimeout,
+          ErrorMessages.LoginTimeout,
+        );
       }
       if (await globalStateGet(showAzureSignOutHelp, true)) {
         void vscode.window
@@ -122,14 +120,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       AzureAccountManager.currentStatus = loggedOut;
       void this.notifyStatus();
       if ((e as Error)?.message.includes("User did not consent ")) {
-        // throw user cancel error
-        throw new Error("[UserError] UserCancel");
-        // throw new UserError(
-        //   "Login",
-        //   ExtensionErrors.UserCancel,
-        //   getDefaultString("teamstoolkit.common.userCancel"),
-        //   localize("teamstoolkit.common.userCancel")
-        // );
+        throw new UserError(
+          ExtensionSource,
+          ErrorNames.UserCancel,
+          ErrorMessages.UserCancelSignIn,
+          ErrorMessages.UserCancelSignIn,
+        );
       } else {
         throw e;
       }
@@ -236,14 +232,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   async signout(): Promise<boolean> {
     const userConfirmation: boolean = await this.doesUserConfirmSignout();
     if (!userConfirmation) {
-      // throw user cancel error
-      throw new Error("[UserError] user cancel to sign out");
-      //   throw new UserError(
-      //     "SignOut",
-      //     ExtensionErrors.UserCancel,
-      //     getDefaultString("teamstoolkit.common.userCancel"),
-      //     localize("teamstoolkit.common.userCancel")
-      //   );
+      throw new UserError(
+        ExtensionSource,
+        ErrorNames.UserCancel,
+        ErrorMessages.UserCancelSignOut,
+        ErrorMessages.UserCancelSignOut
+      );
     }
     try {
       // todo
@@ -323,14 +317,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
       }
     }
     return Promise.reject(
-      new Error("[UserError] Login unknown subscription.")
-
-      //   new UserError(
-      //     "Login",
-      //     ExtensionErrors.UnknownSubscription,
-      //     getDefaultString("teamstoolkit.azureLogin.unknownSubscription"),
-      //     localize("teamstoolkit.azureLogin.unknownSubscription")
-      //   )
+      new UserError(
+        ExtensionSource,
+        ErrorNames.UnknownSubscription,
+        ErrorMessages.UnknownSubscription,
+        ErrorMessages.UnknownSubscription,
+      )
     );
   }
 
@@ -390,7 +382,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async fetchSpeechResourceKeyAndRegion(speechResourceInfo: AzureSpeechResourceInfo, resourceGroupName: string, speechResourceName: string): Promise<{ key: string | undefined, region: string | undefined, customSubDomainName: string | undefined }> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
-      throw new Error("can only fetch speech service details when logged in.");
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.InvalidLoginStatus,
+        ErrorMessages.InvalidLoginStatusFetchingSpeechServiceInfo
+      )
     }
     const { key, region, customSubDomainName } = await this.vscodeAzureSubscriptionProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceName);
     return { key, region, customSubDomainName };
@@ -419,7 +415,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async getSelectedSpeechService(subscriptionInfo: SubscriptionInfo): Promise<AzureSpeechResourceInfo | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
-      throw new Error("can only select speech resource when logged in.");
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.InvalidLoginStatus,
+        ErrorMessages.InvalidLoginStatusFetchingSpeechServiceInfo
+      )
     }
 
     const azureResourceAccountTypesToSelect = [AzureResourceAccountType.SpeechServices, AzureResourceAccountType.CognitiveServices, AzureResourceAccountType.AIService];
@@ -516,7 +516,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     });
 
     if (pricingTierList.length == 0) {
-      throw new Error("No pricing tier available for the selected region " + location);
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.NoPricingTierAvailableInRegion,
+        ErrorMessages.NoPricingTierAvailableInRegion + location
+      )
     }
 
     const config: SingleSelectConfig = {
@@ -540,7 +544,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
 
   async getSelectedResourceGroups(subscriptionInfo: SubscriptionInfo): Promise<string | undefined> {
     if (AzureAccountManager.currentStatus !== loggedIn) {
-      throw new Error("can only select resource group when logged in.");
+      throw new UserError(
+        ExtensionSource,
+        ErrorNames.InvalidLoginStatus,
+        ErrorMessages.InvalidLoginStatusSelectingResourceGroup
+      )
     }
 
     const resourceGroupsList = await vscode.window.withProgress({
@@ -614,7 +622,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     const resourceGroupName = await vscode.window.showInputBox(options);
     if (!resourceGroupName) {
       // Handle case where user cancels the input
-      throw new Error("[UserError] user cancel to input resource group name");
+      throw new UserError(
+        ExtensionSource,
+        ErrorNames.UserCancel,
+        ErrorMessages.UserCancelInputResourceGroupName,
+        ErrorMessages.UserCancelInputResourceGroupName
+      );
     }
 
     return resourceGroupName.trim(); // Return the valid resource group name
@@ -646,7 +659,12 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     const resourceGroupName = await vscode.window.showInputBox(options);
     if (!resourceGroupName) {
       // Handle case where user cancels the input
-      throw new Error("[UserError] user cancel to input resource group name");
+      throw new UserError(
+        ExtensionSource,
+        ErrorNames.UserCancel,
+        ErrorMessages.UserCancelInputResourceGroupName,
+        ErrorMessages.UserCancelInputResourceGroupName
+      );
     }
 
     return resourceGroupName.trim(); // Return the valid resource group name
@@ -662,7 +680,11 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
     });
 
     if (!subscriptionList || subscriptionList.length == 0) {
-      throw new Error("We couldn't find a subscription.");
+      throw new SystemError(
+        ExtensionSource,
+        ErrorNames.EmptySubscriptionInAccount,
+        ErrorMessages.EmptySubscriptionInAccount
+      )
     }
 
     if (subscriptionList && subscriptionList.length == 1) {

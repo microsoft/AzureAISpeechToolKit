@@ -7,6 +7,8 @@ import * as globalVariables from "./globalVariables";
 import { AzureSpeechResourceInfo } from "./api/login";
 import { AzureAccountManager } from "./common/azureLogin";
 import { AzureResourceAccountType, AzureResourceDisplayName } from "./common/constants";
+import { SystemError } from "./api/error";
+import { ErrorMessages, ErrorNames, ExtensionSource } from "./common/extensionErrors";
 
 export function isSpeechResourceSeleted(): boolean {
   const workspaceFolder = globalVariables.workspaceUri?.fsPath;
@@ -66,7 +68,12 @@ export async function fetchSpeechServiceInfo(speechResourceInfo: AzureSpeechReso
   const resourceGroupName = getResourceGroupNameFromId(speechResourceInfo.id);
   const { key, region, customSubDomainName } = await azureAccountProvider.fetchSpeechResourceKeyAndRegion(speechResourceInfo, resourceGroupName, speechResourceInfo.name);
   if (!key || !region) {
-    throw new Error("Fail to fetch key and region");
+    throw new SystemError(
+      ExtensionSource,
+      ErrorNames.MissingKeyOrRegion,
+      ErrorMessages.MissingKeyOrRegion,
+      `Failed to fetch key and region for resource: ${speechResourceInfo.name}`,
+    )
   }
 
   return {

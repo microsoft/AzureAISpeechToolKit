@@ -3,6 +3,7 @@
 
 import axios from "axios";
 import { sendRequestWithTimeout } from "./requestUtils";
+import { SystemError } from "../api/error";
 
 const packageJson = require("../../package.json");
 
@@ -67,6 +68,9 @@ type SampleConfigType = {
   filterOptions: Record<string, Array<string>>;
 };
 
+
+const SampleProviderSource = "SampleProvider";
+const AccessGithubError = "AccessGithubError"; 
 class SampleProvider {
   private sampleCollection: SampleCollection | undefined;
 
@@ -190,8 +194,12 @@ class SampleProvider {
         return "";
       }
     } catch (e) {
-    //   throw new AccessGithubError(url, "SampleProvider", e);
-      throw new Error("AccessGithubError: SampleProvider" + e)
+      throw new SystemError(
+        SampleProviderSource,
+        AccessGithubError,
+        AccessGithubError,
+        `Access GitHub ${url} Error: ${e}`,
+      )
     }
   }
 
@@ -210,8 +218,12 @@ class SampleProvider {
         return fileResponse.data;
       }
     } catch (e) {
-    //   throw new AccessGithubError(url, "SampleProvider", e);
-      throw new Error("AccessGithubError: SampleProvider" + e)
+      throw new SystemError(
+        SampleProviderSource,
+        AccessGithubError,
+        AccessGithubError,
+        `Access GitHub ${url} Error: ${e}`,
+      )
     }
   }
 }

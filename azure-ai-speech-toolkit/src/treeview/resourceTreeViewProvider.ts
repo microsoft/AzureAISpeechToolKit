@@ -178,14 +178,6 @@ export function isAzureResourceInstanceItemType(itemType: AzureResourceTreeViewI
   return Object.values(AzureResourceInstanceItemType).includes(itemType as AzureResourceInstanceItemType);
 }
 function getAzureResourceAccountType(itemType: AzureResourceTreeViewItemType): AzureResourceAccountType {
-  // if (!isAzureResourceTypeItemType(itemType)) {
-  //   throw new SystemError(
-  //     ExtensionSource,
-  //     ErrorNames.InvalidResourceType,
-  //     ErrorMessages.InvalidResourceType + itemType,
-  //   )
-  //   // throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
-  // }
   switch (itemType) {
     case AzureResourceTypeItemType.AIServiceType:
       return AzureResourceAccountType.AIService;
@@ -199,13 +191,9 @@ function getAzureResourceAccountType(itemType: AzureResourceTreeViewItemType): A
         ErrorNames.InvalidResourceType,
         ErrorMessages.InvalidResourceType + itemType,
       )
-      // throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
   }
 }
 function getAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemType): AzureResourceInstanceItemType {
-  // if (!isAzureResourceTypeItemType(itemType)) {
-  //   throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType + ' is not a resource type');
-  // }
   switch (itemType) {
     case AzureResourceTypeItemType.AIServiceType:
       return AzureResourceInstanceItemType.AIService;
@@ -219,7 +207,6 @@ function getAzureResourceInstanceItemType(itemType: AzureResourceTreeViewItemTyp
         ErrorNames.InvalidResourceType,
         ErrorMessages.InvalidResourceType + itemType,
       )
-      // throw new Error('Invalid AzureResourceTreeViewItemType: ' + itemType);
   }
 }
 

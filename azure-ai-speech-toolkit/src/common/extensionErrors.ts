@@ -23,6 +23,7 @@ export enum ErrorNames {
   FailedToCheckResourceExistence = "FailedToCheckResourceExistence",
   AuthorizationError = "AuthorizationError",
   FailedToCheckResourceGroupExistence = "FailedToCheckResourceGroupExistence",
+  FailedToCreateResource = "FailedToCreateResource",
 }
 
 
@@ -49,4 +50,5 @@ export enum ErrorMessages {
   FailedToCheckResourceExistence = "Failed to check resource existence with name: ",
   AuthorizationErrorWhenCheckingResourceGroupExistence = "You do not have permission to check resource group existence. Resource group name: ",
   FailedToCheckResourceGroupExistence = "Failed to check resource group existence with name: ",
+  FailedToCreateCognitiveServiceResource = "Failed to create cognitive service resource with name: ",
 }

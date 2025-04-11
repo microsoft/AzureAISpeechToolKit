@@ -522,7 +522,6 @@ export async function downloadSampleApp(...args: unknown[]) {
   });
 
   if (res.isErr()) {
-    console.log("[debug] Error selecting folder: " + res.error.message);
     throw res.error;
   } else {
     // Ensure result is not undefined

@@ -71,9 +71,12 @@ export async function createAzureAIServiceHandler(...args: unknown[]): Promise<A
     };
   } catch (error) {
     let error_message = "Failed to create Azure AI Service: " + error;
-    if (!(error instanceof UserError)) {
+    if (error instanceof UserError) {
+      vscode.window.showInformationMessage(error_message);
+    } else {
       vscode.window.showErrorMessage(error_message); // only show error message for system error
     }
+
     telemetryProperties = TelemetryUtils.getTelemetryErrorProperties(error as Error, error_message);
 
   }
@@ -91,7 +94,6 @@ export async function signInAzureHandler(...args: unknown[]) {
       [TelemetryProperty.SUCCESS]: TelemetrySucess.TRUE
     };
   } catch (error) {
-    // console.log("error: " + error);
     let error_message = "Failed to sign in Azure: " + error;
     vscode.window.showErrorMessage(error_message);
     azureLoginTelemetry = TelemetryUtils.getTelemetryErrorProperties(error as Error, error_message);
@@ -205,17 +207,17 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
     if (e.execution === execution) {
       disposable.dispose();
 
-      let sampleTaskTelemetryProperties: { [p: string]: string } = {};
+      let telemetryProperties: { [p: string]: string } = {};
       if (fs.existsSync(envFilePath)) {
-        sampleTaskTelemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
+        telemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
       }
 
       if (fs.existsSync(ymlPath)) {
-        sampleTaskTelemetryProperties[TelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
+        telemetryProperties[TelemetryProperty.SAMPLE_ID] = TelemetryUtils.getSampleId(ymlPath);
       }
 
       if (e.exitCode === 0) {
-        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.TRUE;
+        telemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.TRUE;
         const nextTaskName = await getNextAvailableTask(taskName);
 
         if (nextTaskName) {
@@ -228,8 +230,17 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
           vscode.window.showInformationMessage(`${taskName} completed successfully.`);
         }
       } else {
-        sampleTaskTelemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.FALSE;
-        sampleTaskTelemetryProperties[TelemetryProperty.ERROR_MESSAGE] = "Unknown error occurred during task execution.";
+        Object.assign(
+          telemetryProperties,
+          TelemetryUtils.getTelemetryErrorProperties(
+            new UserError(
+              ExtensionSource,
+              ErrorNames.TaskExecutionError,
+              ErrorMessages.TaskExecutionError,
+              `${taskName} failed with exit code ${e.exitCode}`
+            )
+          )
+        );
         vscode.window.showErrorMessage(`${taskName} failed. Please check the terminal output for errors.`);
       }
 
@@ -239,7 +250,7 @@ export async function taskHandler(taskName: TaskName, ...args: unknown[]) {
         [TaskName.RunApp]: TelemetryEvent.RUN_SAMPLE,
       };
       let telemetryEvent = taskToTelemetryMap[taskName] ?? TelemetryEvent.RUN_SAMPLE;
-      ExtTelemetry.sendTelemetryEvent(telemetryEvent, sampleTaskTelemetryProperties);
+      ExtTelemetry.sendTelemetryEvent(telemetryEvent, telemetryProperties);
     }
   });
 }
@@ -328,7 +339,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     }
   }
 
-  var sampleTaskTelemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
+  var telemetryProperties = TelemetryUtils.getTelemetryPropertiesFromEnvFile(envFilePath);
 
   try {
     // Update the config.json file with the new values.
@@ -339,7 +350,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       var error_msg = 'Failed to configure speech resource: ' + ErrorMessages.MissingKeyOrRegion;
       vscode.window.showErrorMessage(error_msg);
       Object.assign(
-        sampleTaskTelemetryProperties,
+        telemetryProperties,
         TelemetryUtils.getTelemetryErrorProperties(
           new SystemError(
             ExtensionSource,
@@ -350,7 +361,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
         )
       );
 
-      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
+      ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, telemetryProperties);
       return;
     }
     updateConfigJsonWithKeyAndRegion(workspaceFolder, key, region, customSubDomainName);
@@ -359,7 +370,7 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
     vscode.window.showErrorMessage(error_msg);
 
     Object.assign(
-      sampleTaskTelemetryProperties,
+      telemetryProperties,
       TelemetryUtils.getTelemetryErrorProperties(
         new SystemError(
           ExtensionSource,
@@ -370,12 +381,13 @@ export async function configureResourcehandler(resourceItem: ResourceTreeItem, .
       )
     );
 
-    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, telemetryProperties);
     return;
   }
 
   // send telemetry event
-  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, sampleTaskTelemetryProperties);
+  telemetryProperties[TelemetryProperty.SUCCESS] = TelemetrySucess.TRUE;
+  ExtTelemetry.sendTelemetryEvent(TelemetryEvent.CONFIGURE_RESOURCE, telemetryProperties);
 
   // Step 5: execute available tasks if any exists.
   const nextAvailableTaskName = await getNextAvailableTask(null);

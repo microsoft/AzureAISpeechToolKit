@@ -45,9 +45,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/python/from-microphone",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/python/from-microphone"
             }
         },
@@ -76,9 +76,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/cpp/linux/from-microphone",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },
@@ -107,9 +107,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/javascript/browser/from-microphone/from-microphone",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/javascript/browser/from-microphone"
             }
         },
@@ -138,9 +138,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/javascript/browser/from-file/from-microphone",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/javascript/browser/from-file"
             }
         },
@@ -169,9 +169,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/cpp/linux/compressed-audio-input",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/cpp/linux/compressed-audio-input"
             }
         },
@@ -197,9 +197,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/python/text-to-speech",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -228,9 +228,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/csharp/dotnetcore/translate-speech-to-text",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },
@@ -259,9 +259,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/quickstart/java/jre/translate-speech-to-text",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
         },
@@ -290,9 +290,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/video-translation/csharp",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/video-translation/csharp"
             }
         },
@@ -319,9 +319,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/captioning",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "scenarios/csharp/dotnetcore/captioning"
             }
         },
@@ -348,9 +348,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/call-center",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         },
@@ -378,9 +378,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/python/web/avatar",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/python/web/avatar"
             }
         },
@@ -407,9 +407,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/csharp/dotnetcore/post-call-analytics",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         },
@@ -436,9 +436,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/python/console/speech_rewrite_sample",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "scenarios/python/console/speech_rewrite_sample"
             }
         },
@@ -465,9 +465,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/csharp",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/batch/csharp"
             }
         },
@@ -493,9 +493,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/python",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/batch/python"
             }
         },
@@ -518,13 +518,13 @@
             "configuration": "Ready for debug",
             "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.jpg",
             "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/BinarywoodB/cognitive-services-speech-sdk/contents/samples/batch-synthesis/csharp/README.md?ref=extension",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/samples/batch-synthesis/csharp/README.md",
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/csharp",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/batch-synthesis/csharp"
             }
         },
@@ -552,9 +552,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch-synthesis/python",
             "scenario": false,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "extension",
+                "ref": "master",
                 "dir": "samples/batch-synthesis/python"
             }
         }

@@ -443,6 +443,35 @@
             }
         },
         {
+            "id": "scenarios-python-console-language-learning",
+            "onboardDate": "2025-05-27",
+            "title": "Language Learning via Azure Pronunciation Assessment with Speech to Text",
+            "shortId": "scenarios-python-console-language-learning",
+            "shortDescription": "Language Learning via Azure Pronunciation Assessment with Speech to Text",
+            "fullDescription": "This sample demonstrates how to use Azure pronunciation assessment SDK and REST API for language learning.",
+            "types": [
+                "Speech To Text"
+            ],
+            "tags": [
+                "Speech To Text",
+                "Realtime Speech To Text",
+                "Python"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/dilin/switch-sample-base/common/sample_configs/img/pronunciation-assessment.jpg",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/cognitive-services-speech-sdk/contents/scenarios/python/console/language-learning/README.md",
+            "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/python/console/language-learning",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "Azure-Samples",
+                "repository": "cognitive-services-speech-sdk",
+                "ref": "master",
+                "dir": "scenarios/python/console/language-learning"
+            }
+        },
+        {
             "id": "sample-batch-transcription-from-Azure-blob-csharp-dotnetcore",
             "onboardDate": "2025-01-22",
             "title": "C# example to use the Speech Services Batch Transcription API",

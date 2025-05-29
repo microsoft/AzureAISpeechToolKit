@@ -465,9 +465,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/python/console/language-learning",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "Azure-Samples",
+                "owner": "BinarywoodB",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "dilin/add-ap",
                 "dir": "scenarios/python/console/language-learning"
             }
         },

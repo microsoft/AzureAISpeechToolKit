@@ -117,7 +117,9 @@ export async function viewSpeechResourcePropertiesHandler(resourceItem: Resource
   let properties = "";
   try {
     properties = await getSpeechResourcePropertiesByResourceItem(resourceItem);
-    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES);
+    ExtTelemetry.sendTelemetryEvent(TelemetryEvent.VIEW_SPEECH_RESOURCE_PROPERTIES, {
+      [TelemetryProperty.SUCCESS]: TelemetrySucess.TRUE,
+    });
   } catch (error) {
     let errorMessage = "Failed to get speech resource properties: " + error;
     vscode.window.showErrorMessage(errorMessage);

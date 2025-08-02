@@ -606,7 +606,7 @@
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.jpg",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/voice-live.png",
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/communication-services-dotnet-quickstarts/contents/CallAutomation_AzureAI_VoiceLive/README.md",
             "githubPath": "https://github.com/Azure-Samples/communication-services-dotnet-quickstarts/tree/main/CallAutomation_AzureAI_VoiceLive",

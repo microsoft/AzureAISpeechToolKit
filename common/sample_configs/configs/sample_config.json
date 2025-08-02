@@ -47,7 +47,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/python/from-microphone"
             }
         },
@@ -78,7 +78,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/cpp/linux/from-microphone"
             }
         },
@@ -109,7 +109,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/javascript/browser/from-microphone"
             }
         },
@@ -140,7 +140,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/javascript/browser/from-file"
             }
         },
@@ -171,7 +171,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/cpp/linux/compressed-audio-input"
             }
         },
@@ -199,7 +199,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/python/text-to-speech"
             }
         },
@@ -230,7 +230,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/csharp/dotnetcore/translate-speech-to-text"
             }
         },
@@ -261,7 +261,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "quickstart/java/jre/translate-speech-to-text"
             }
         },
@@ -292,7 +292,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/video-translation/csharp"
             }
         },
@@ -321,7 +321,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "scenarios/csharp/dotnetcore/captioning"
             }
         },
@@ -350,7 +350,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "scenarios/csharp/dotnetcore/call-center"
             }
         },
@@ -380,7 +380,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/python/web/avatar"
             }
         },
@@ -409,7 +409,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "scenarios/csharp/dotnetcore/post-call-analytics"
             }
         },
@@ -438,7 +438,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "scenarios/python/console/speech_rewrite_sample"
             }
         },
@@ -496,7 +496,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/batch/csharp"
             }
         },
@@ -524,7 +524,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/batch/python"
             }
         },
@@ -553,7 +553,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/batch-synthesis/csharp"
             }
         },
@@ -583,8 +583,39 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "master",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/batch-synthesis/python"
+            }
+        },
+        {
+            "id": "call-automation-azureai-voicelive-csharp",
+            "onboardDate": "2025-02-08",
+            "title": "Speech Services Batch Synthesis API",
+            "shortId": "call-automation-azureai-voicelive-csharp",
+            "shortDescription": "C# example to use the Speech Services Batch Synthesis API",
+            "fullDescription": "C# example to use the Speech Services Batch Synthesis API",
+            "types": [
+                "Text To Speech",
+                "Batch Synthesis"
+            ],
+            "tags": [
+                "Text To Speech",
+                "Batch Synthesis",
+                "Azure Coommunication Services",
+                "C#"
+            ],
+            "time": "5min to run",
+            "configuration": "Ready for debug",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/batch-synthesis.jpg",
+            "gifPath": "assets/sampleDemo.gif",
+            "readmePath": "https://api.github.com/repos/Azure-Samples/communication-services-dotnet-quickstarts/contents/CallAutomation_AzureAI_VoiceLive/README.md",
+            "githubPath": "https://github.com/Azure-Samples/communication-services-dotnet-quickstarts/tree/main/CallAutomation_AzureAI_VoiceLive",
+            "scenario": true,
+            "downloadUrlInfo": {
+                "owner": "Azure-Samples",
+                "repository": "communication-services-dotnet-quickstarts",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
+                "dir": "CallAutomation_AzureAI_VoiceLive"
             }
         }
     ]

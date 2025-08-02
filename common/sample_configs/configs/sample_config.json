@@ -465,9 +465,9 @@
             "githubPath": "https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/scenarios/python/console/language-learning",
             "scenario": true,
             "downloadUrlInfo": {
-                "owner": "BinarywoodB",
+                "owner": "Azure-Samples",
                 "repository": "cognitive-services-speech-sdk",
-                "ref": "dilin/add-ap",
+                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "scenarios/python/console/language-learning"
             }
         },
@@ -606,7 +606,7 @@
             ],
             "time": "5min to run",
             "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/main/common/sample_configs/img/voice-live.png",
+            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/dilin/switch-sample-base/common/sample_configs/img/voice-live.png",
             "gifPath": "assets/sampleDemo.gif",
             "readmePath": "https://api.github.com/repos/Azure-Samples/communication-services-dotnet-quickstarts/contents/CallAutomation_AzureAI_VoiceLive/README.md",
             "githubPath": "https://github.com/Azure-Samples/communication-services-dotnet-quickstarts/tree/main/CallAutomation_AzureAI_VoiceLive",

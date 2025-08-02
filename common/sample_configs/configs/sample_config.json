@@ -614,7 +614,7 @@
             "downloadUrlInfo": {
                 "owner": "Azure-Samples",
                 "repository": "communication-services-dotnet-quickstarts",
-                "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
+                "ref": "main",
                 "dir": "CallAutomation_AzureAI_VoiceLive"
             }
         }

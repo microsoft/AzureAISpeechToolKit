@@ -586,37 +586,6 @@
                 "ref": "37dec5cf00c5dfc884a3d38d436b2a1e94d883de",
                 "dir": "samples/batch-synthesis/python"
             }
-        },
-        {
-            "id": "call-automation-azureai-voicelive-csharp",
-            "onboardDate": "2025-02-08",
-            "title": "Speech Services Batch Synthesis API",
-            "shortId": "call-automation-azureai-voicelive-csharp",
-            "shortDescription": "C# example to use the Speech Services Batch Synthesis API",
-            "fullDescription": "C# example to use the Speech Services Batch Synthesis API",
-            "types": [
-                "Text To Speech",
-                "Batch Synthesis"
-            ],
-            "tags": [
-                "Text To Speech",
-                "Batch Synthesis",
-                "Azure Coommunication Services",
-                "C#"
-            ],
-            "time": "5min to run",
-            "configuration": "Ready for debug",
-            "thumbnailPath": "https://raw.githubusercontent.com/microsoft/AzureAISpeechToolKit/refs/heads/dilin/switch-sample-base/common/sample_configs/img/voice-live.png",
-            "gifPath": "assets/sampleDemo.gif",
-            "readmePath": "https://api.github.com/repos/Azure-Samples/communication-services-dotnet-quickstarts/contents/CallAutomation_AzureAI_VoiceLive/README.md",
-            "githubPath": "https://github.com/Azure-Samples/communication-services-dotnet-quickstarts/tree/main/CallAutomation_AzureAI_VoiceLive",
-            "scenario": true,
-            "downloadUrlInfo": {
-                "owner": "Azure-Samples",
-                "repository": "communication-services-dotnet-quickstarts",
-                "ref": "main",
-                "dir": "CallAutomation_AzureAI_VoiceLive"
-            }
         }
     ]
 }

@@ -220,7 +220,7 @@
     "path": "^0.12.7",
     "proper-lockfile": "^4.1.2",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.1",
+    "react-router-dom": "^6.30.3",
     "sass": "^1.78.0",
     "sass-loader": "^16.0.1",
     "style-loader": "^4.0.0",

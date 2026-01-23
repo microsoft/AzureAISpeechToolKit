@@ -215,7 +215,7 @@
     "fs-extra": "^11.2.0",
     "fuse.js": "^7.0.0",
     "loadsh": "^0.0.4",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "neverthrow": "^8.0.0",
     "path": "^0.12.7",
     "proper-lockfile": "^4.1.2",
